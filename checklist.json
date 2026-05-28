@@ -3044,6 +3044,345 @@
           "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
         }
       ]
+    },
+    {
+      "id": "4.1.3-presence-list-changes-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "dynamic_collaborative",
+      "title": "Changes to the active presence list (join/leave) announce in a polite live region",
+      "description": "The presence list — the avatar stack showing 'who else is here right now' — is a real-time status surface unique to collaborative review tools. When a collaborator joins or leaves, the change is meaningful: it affects whether private feedback is safe, whether typing a comment will produce a typing indicator visible to specific people, and whether the artifact will be reviewed by the expected audience. Under WCAG 4.1.3 these presence changes are status messages and must be programmatically determinable without stealing focus. Polite live-region announcements are the right pattern: 'Bob joined. 3 reviewers present.' The list itself must also expose its current count and roster to assistive tech via a role / aria-label.",
+      "how_to_test": [
+        "Open a review with two real users and watch the presence avatar stack as the second user joins; confirm a polite live-region announcement names the joining user.",
+        "Have the second user leave; confirm a 'Bob left. 1 reviewer present.' announcement.",
+        "Inspect the presence list container and confirm it has a role (e.g. role=list or role=group) and an aria-label naming what it is ('Active reviewers').",
+        "Confirm each presence avatar has an accessible name (reviewer's name + role) so screen-reader users can navigate the list.",
+        "Confirm focus is not stolen by any join/leave announcement.",
+        "Rapid-fire join/leave (multiple users joining quickly) does not produce an unreadable wall of speech — announcements are batched or summarised."
+      ],
+      "pass_criteria": [
+        "Join and leave events announce via a polite live region without stealing focus.",
+        "Announcements name the user and update the active count.",
+        "The presence list is itself navigable as a list / group with an accessible name.",
+        "Each avatar has a meaningful accessible name (user + role), not just an image.",
+        "Burst events are batched or summarised rather than producing one announcement per millisecond."
+      ],
+      "fail_examples": [
+        "Users join silently — only the avatar stack updates, with no announcement; a screen-reader user never knows when others arrive.",
+        "Presence list is a row of <img> with no list role and no aria-label; AT cannot describe it as a unit.",
+        "Each avatar's alt text is the user's initials ('AB') — screen-reader users hear 'AB, BC, CD' with no idea who is present.",
+        "Announcements use aria-live=\"assertive\" and interrupt the user every time anyone joins or leaves a busy review.",
+        "Five users joining within one second produces five separate announcements, blowing past the user's ability to keep up."
+      ],
+      "tags": [
+        "live-regions",
+        "realtime",
+        "roles"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
+    },
+    {
+      "id": "4.1.3-typing-indicator-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "dynamic_collaborative",
+      "title": "Remote typing indicators expose status programmatically and respect a user mute",
+      "description": "Typing indicators ('Alice is typing…') are visual-only by default in most tools — an animated three-dot ellipsis in the thread. For screen-reader users this is invisible context; they may post a comment seconds before Alice's reply lands, producing an awkward overlap. Under WCAG 4.1.3 typing indicators are status messages: they should be exposed programmatically. But because typing indicators can be high-frequency and noisy, they MUST be combined with a user-controlled mute. Without a mute, exposing every keystroke as a status update would itself become a denial-of-service.",
+      "how_to_test": [
+        "Open a thread with a second user, have them start typing, and confirm a polite live-region announcement names the typing user (e.g. 'Alice is typing').",
+        "Have the second user stop typing and confirm the indicator clears (no stale 'typing' state).",
+        "Have multiple users type simultaneously and confirm announcements are batched ('Alice and Bob are typing') rather than fired per keystroke.",
+        "Open settings and confirm a per-channel mute for typing indicators exists, separate from presence and annotation mutes.",
+        "Enable the mute and confirm typing indicators are no longer announced (visually they may remain or also be hidden, by the user's choice).",
+        "Confirm the typing indicator's visual animation is not the SOLE channel — screen-reader users have a parity announcement (subject to mute)."
+      ],
+      "pass_criteria": [
+        "Typing indicators are exposed via a polite live region naming the typing user(s).",
+        "Stale 'typing' state clears when typing stops.",
+        "Simultaneous typers are batched into a single announcement rather than producing parallel announcements.",
+        "A user-controlled mute for typing indicators exists, separate from other realtime channels.",
+        "Typing is not signalled only by a visual ellipsis animation."
+      ],
+      "fail_examples": [
+        "Typing indicator is a CSS animation of three dots with no programmatic exposure — screen-reader users have no idea anyone is typing.",
+        "Every keystroke fires a live-region update; the screen reader gets stuck reading 'Alice is typing, Alice is typing, Alice is typing' as she types one word.",
+        "No mute is offered; the only escape from constant typing announcements is to disable the screen reader.",
+        "Indicator uses aria-live=\"assertive\" and interrupts the user's dictation each time anyone starts typing.",
+        "Indicator stays stuck on 'Alice is typing' after Alice has navigated away — stale state never clears."
+      ],
+      "tags": [
+        "live-regions",
+        "realtime",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
+    },
+    {
+      "id": "4.1.3-conflict-resolution-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "dynamic_collaborative",
+      "title": "Concurrent edit conflicts and resolution paths announce via an assertive live region",
+      "description": "When two users edit the same comment or annotation simultaneously, a conflict arises: the local user's draft is about to be overwritten or merged with a remote edit. Unlike the routine status events that should be polite, a conflict requires the user's attention before they continue — typing into a field that is mid-conflict will lose data. WCAG 4.1.3 status messages allow assertive priority for genuinely urgent updates; conflict resolution is the canonical example. The announcement must name the conflict, name the conflicting party, and clearly state the available resolution paths (keep mine, keep theirs, merge, view diff).",
+      "how_to_test": [
+        "Simulate a concurrent edit on the same comment (two users editing the same comment in two browser windows).",
+        "Confirm an assertive live region (aria-live=\"assertive\" or role=\"alert\") announces the conflict — naming the conflicting user and the available resolution paths.",
+        "Confirm the conflict-resolution UI is keyboard-accessible and that resolution paths can be selected without a mouse.",
+        "Confirm that focus is NOT stolen unless the user's text would otherwise be silently overwritten — assertive announcement only, focus retention preferred.",
+        "Trigger the conflict and try to continue typing; confirm the tool blocks the input from being silently lost (e.g. preserves the local draft in a fork).",
+        "After resolution, confirm a polite follow-up announcement names the outcome ('Conflict resolved — your edit kept')."
+      ],
+      "pass_criteria": [
+        "Edit conflicts are announced via aria-live=\"assertive\" or role=\"alert\".",
+        "The announcement names the conflicting user and the available resolution paths.",
+        "Resolution UI is fully keyboard-accessible.",
+        "The local user's in-progress text is preserved through the conflict — never silently overwritten.",
+        "A polite follow-up announcement confirms the outcome."
+      ],
+      "fail_examples": [
+        "Remote edit silently overwrites the local user's in-progress text — the user keeps typing into a field whose underlying value just changed under them.",
+        "Conflict is shown visually as a yellow banner with no live-region exposure; screen-reader users never know a conflict happened.",
+        "Conflict resolution UI is a mouse-only dropdown — keyboard users cannot pick 'keep mine' / 'keep theirs'.",
+        "Live region uses polite priority for conflicts, so the user keeps typing for several seconds before the announcement plays.",
+        "After resolution the live region is never cleared, leaving stale conflict text that gets re-read on every page interaction."
+      ],
+      "tags": [
+        "live-regions",
+        "realtime",
+        "forms"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
+    },
+    {
+      "id": "2.4.3-focus-survives-remote-update",
+      "wcag_criterion": "2.4.3",
+      "wcag_title": "Focus Order",
+      "level": "A",
+      "category": "dynamic_collaborative",
+      "title": "Incoming remote updates do not move the local user's keyboard focus",
+      "description": "In a collaborative tool, remote events constantly mutate the DOM: a teammate adds a comment, a new version is dropped, presence changes. Each of these can cause a careless re-render to dump the user's focus — the textarea they were typing in unmounts, focus reverts to <body>, and the next Tab moves from the top of the page rather than from where they were. Under WCAG 2.4.3, focus order must be preserved through these mutations. Remote updates must be applied in ways that retain the local user's focus on the element they were interacting with, either via stable keys / refs, focus restoration after re-render, or insertion strategies that do not unmount the focused element.",
+      "how_to_test": [
+        "Focus a deeply-nested control (a reply textarea in thread #14) and have a teammate add a new top-level comment; confirm focus stays on the textarea.",
+        "Focus the comment composer mid-typing and have a teammate upload a new version; confirm focus stays on the composer.",
+        "Focus a workflow button and have a teammate change presence (join, leave); confirm focus stays on the workflow button.",
+        "Tab around the page after each remote event and confirm the next Tab goes to the next logical control — not back to the top of the document.",
+        "Inspect React / Vue / Svelte keys on dynamically rendered lists and confirm they are stable identifiers so React does not unmount the focused element on every remote update.",
+        "Test specifically the case where the focused element's parent re-orders — focus must follow the element, not its DOM position."
+      ],
+      "pass_criteria": [
+        "Remote updates never reset focus to <body>.",
+        "The currently focused element survives re-renders triggered by remote events.",
+        "Dynamic lists use stable keys / refs so the focused element is not unmounted on every update.",
+        "After remote events, the next Tab from the focused element goes to the next logical control.",
+        "Where unmount is unavoidable (focused element's container is removed by a remote action), focus is explicitly restored to a sensible neighbour."
+      ],
+      "fail_examples": [
+        "Typing in a reply textarea when a teammate posts a new comment; the thread list re-keys, the textarea unmounts and remounts, focus drops to <body>, and the next keystroke goes nowhere.",
+        "A teammate joins the room; the presence-list update triggers a global app re-render and focus is lost from wherever the local user was.",
+        "Remote version drop causes the entire artifact canvas to remount, dropping focus from any control inside it.",
+        "Focused button is conditionally hidden by a remote update (e.g. the user's role changes); focus is not restored to any neighbour and the page becomes hard to keyboard-navigate.",
+        "Dynamic comment list uses array index as a key, so insertion of a new top-level comment renumbers every key and React unmounts every comment — including the one being edited."
+      ],
+      "tags": [
+        "focus",
+        "realtime",
+        "keyboard"
+      ],
+      "references": [
+        {
+          "label": "WCAG 2.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order"
+        }
+      ]
+    },
+    {
+      "id": "3.2.2-remote-version-no-auto-switch",
+      "wcag_criterion": "3.2.2",
+      "wcag_title": "On Input",
+      "level": "A",
+      "category": "dynamic_collaborative",
+      "title": "Remote version uploads do not auto-switch the local user's view; a non-modal banner offers to switch",
+      "description": "When a teammate uploads a new version of an artifact, a naive implementation might auto-switch every viewer to the new version. Under WCAG 3.2.2 a change of context must not happen as a side effect of a remote action — the local user did not request the switch, and the auto-switch is exactly the kind of unexpected context change the criterion forbids. The correct pattern is a non-modal banner ('Bob uploaded v3 — switch to view it') that lets the local user choose when to switch. This preserves their current focus, their scroll position, and any in-progress comment.",
+      "how_to_test": [
+        "Open an artifact at v2 and have a teammate upload v3; confirm the local view does NOT switch automatically.",
+        "Confirm a non-modal banner / toast appears offering to switch, with a clear action button.",
+        "Confirm the banner does not steal focus.",
+        "Click the switch action and confirm the local view moves to v3.",
+        "Dismiss the banner and confirm the local user stays on v2 with no further interruption.",
+        "Confirm that any in-progress comment / draft is preserved when the user later chooses to switch (or when they dismiss the banner).",
+        "Verify the banner is announced via a polite live region so screen-reader users know a new version is available."
+      ],
+      "pass_criteria": [
+        "Remote version uploads never auto-switch the local user's view.",
+        "A non-modal banner offers the switch with a clear, keyboard-accessible action.",
+        "The banner does not steal focus.",
+        "The banner is announced via a polite live region.",
+        "Dismissing the banner does not lose the option entirely — the user can still find the new version via the version picker.",
+        "In-progress drafts survive the switch (or are preserved if the user dismisses)."
+      ],
+      "fail_examples": [
+        "Teammate uploads v3; the local view auto-switches mid-comment-composition, dumping focus and losing the in-progress comment.",
+        "Auto-switch happens with a brief flash and no announcement; screen-reader users do not realise the artifact changed under them.",
+        "Switch is offered via a modal that steals focus and must be dismissed.",
+        "Banner appears but its 'Switch' action is mouse-only; keyboard users cannot reach it.",
+        "Banner is not announced via a live region; AT users miss the offer entirely.",
+        "Dismissing the banner clears the new-version-available state entirely; the user has to refresh the page to find v3."
+      ],
+      "tags": [
+        "versioning",
+        "realtime",
+        "workflow-state"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-input"
+        }
+      ]
+    },
+    {
+      "id": "1.4.13-presence-tooltip-dismissable",
+      "wcag_criterion": "1.4.13",
+      "wcag_title": "Content on Hover or Focus",
+      "level": "AA",
+      "category": "dynamic_collaborative",
+      "title": "Presence avatar tooltips persist while hovered and are dismissable with Escape",
+      "description": "Presence avatars in a collaborative tool typically reveal a tooltip on hover or focus showing the user's full name and role. WCAG 1.4.13 requires that such tooltips (a) be dismissable without moving pointer / focus (Escape must dismiss), (b) be hoverable (the user can move the pointer into the tooltip itself without it disappearing — e.g. to read text or click a link inside), and (c) be persistent (the tooltip remains visible until the trigger or tooltip itself loses hover/focus, the user dismisses it, or the information becomes invalid).",
+      "how_to_test": [
+        "Hover a presence avatar to show its tooltip; press Escape and confirm the tooltip dismisses without moving the pointer.",
+        "Hover the avatar to show the tooltip, then move the pointer slowly into the tooltip body; confirm the tooltip stays visible (does not close mid-traverse).",
+        "Tab to a presence avatar so it receives keyboard focus and confirm the tooltip appears on focus, not only on mouse hover.",
+        "Press Escape with keyboard focus on the avatar and confirm the tooltip dismisses while focus remains on the avatar.",
+        "Leave the tooltip visible and confirm it persists indefinitely — it does not time out after 2 seconds and disappear without user action.",
+        "Confirm the tooltip content is exposed to AT (via aria-describedby on the trigger or by being inside the same accessible-name boundary)."
+      ],
+      "pass_criteria": [
+        "Tooltips on presence avatars appear on both hover and keyboard focus.",
+        "Escape dismisses the tooltip without moving focus or pointer.",
+        "The pointer can move into the tooltip body without dismissing it (hoverable).",
+        "The tooltip persists until trigger / tooltip loses hover/focus, user dismisses, or content is invalidated.",
+        "Tooltip content is exposed to assistive tech."
+      ],
+      "fail_examples": [
+        "Tooltip closes the instant the pointer leaves the avatar — the user cannot move the pointer into the tooltip to read it.",
+        "No keyboard equivalent: tooltip only shows on mouse hover, never on focus.",
+        "Tooltip cannot be dismissed without moving the mouse — Escape does nothing.",
+        "Tooltip auto-dismisses after a short timeout (e.g. 1.5 seconds) regardless of whether the user has finished reading.",
+        "Tooltip content is rendered in a detached portal with no aria-describedby on the trigger; screen-reader users never see the tooltip text."
+      ],
+      "tags": [
+        "realtime",
+        "focus"
+      ],
+      "references": [
+        {
+          "label": "WCAG 1.4.13 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus"
+        }
+      ]
+    },
+    {
+      "id": "2.4.3-role-aware-focus-order",
+      "wcag_criterion": "2.4.3",
+      "wcag_title": "Focus Order",
+      "level": "A",
+      "category": "dynamic_collaborative",
+      "title": "Mid-session role changes update workflow-toolbar focus order predictably without dropping current focus",
+      "description": "Roles can change mid-session — a viewer is promoted to approver, an external guest is granted comment-only access, a reviewer is removed from the artifact entirely. When this happens, the workflow toolbar gains or loses controls (Approve, Request changes, Archive, etc.) and the tab order must update predictably. Under WCAG 2.4.3 the focus order must remain logical AND the current focus must not be dropped: if the user has focus on the comment composer when their role changes, focus must stay on the composer. New controls should slot into the natural tab sequence; removed controls should leave a sensible neighbour as the next stop.",
+      "how_to_test": [
+        "Focus the comment composer and have an admin (in another window) promote the local user from viewer to approver; confirm focus stays on the composer.",
+        "Tab forward through the workflow toolbar and confirm the new 'Approve' control appears in its logical position (e.g. before 'Archive', after 'Request changes').",
+        "Have an admin revoke approver rights mid-session and confirm focus is preserved (or, if focus was on the just-removed Approve button, focus moves to a sensible neighbour rather than to <body>).",
+        "Verify role-aware controls maintain stable tab order keys so insertion / removal doesn't trigger wholesale unmounting of unrelated controls.",
+        "Announce the role change itself via a polite live region (a side benefit, but it gives users context for the new controls).",
+        "Test the case where the new role removes ALL workflow toolbar controls — confirm focus moves to a sensible landmark, not to <body>."
+      ],
+      "pass_criteria": [
+        "Mid-session role changes do not drop the user's current focus unless the focused control itself is removed.",
+        "If the focused control is removed, focus moves to a sensible nearby control or landmark.",
+        "New controls slot into the tab order in a logical position — not appended at the very end as an afterthought.",
+        "Removed controls leave the remaining tab sequence coherent.",
+        "Role change is itself announced so the user can understand why their toolbar suddenly grew or shrank."
+      ],
+      "fail_examples": [
+        "User is promoted to approver mid-typing; the toolbar re-renders, focus drops to <body>, and the next Tab moves from the top of the page.",
+        "New 'Approve' button is appended at the very end of the tab order — after every link in the footer — instead of slotting into the workflow toolbar group.",
+        "User is demoted from approver mid-focus on the Approve button; the button is removed, focus drops to <body>, and the keyboard user has to retrace their steps.",
+        "Role change is silent; the toolbar shape changes but the user gets no announcement explaining why.",
+        "Role-aware controls use array-index keys, so any role change unmounts the entire toolbar and drops focus."
+      ],
+      "tags": [
+        "focus",
+        "roles",
+        "workflow-state"
+      ],
+      "references": [
+        {
+          "label": "WCAG 2.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order"
+        }
+      ]
+    },
+    {
+      "id": "4.1.3-realtime-error-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "dynamic_collaborative",
+      "title": "Real-time connection loss, reconnection, and unsaved-comment buffering announce via live regions",
+      "description": "Real-time collaboration depends on a persistent connection (websocket, long-poll, presence channel). When the connection drops, the user is no longer seeing teammate edits and their own comments may not be reaching the server. Under WCAG 4.1.3 these state changes are status messages: connection loss, reconnect attempts, successful reconnect, and the state of any unsaved-comment buffer must all be announced via live regions. The pattern: an assertive announcement on first disconnect (because the user is about to type into the void), polite announcements for each subsequent state change, and a clear status indicator that screen-reader users can poll on demand.",
+      "how_to_test": [
+        "Disconnect the network (e.g. browser DevTools 'Offline') and confirm a live region announces the disconnect within a reasonable interval (a few seconds).",
+        "Confirm the announcement explains what disconnect means for the user — e.g. 'Connection lost — comments will be sent when reconnected'.",
+        "Confirm any in-progress comments are buffered locally (not silently dropped) and that the buffer state is visible / announced.",
+        "Reconnect and confirm a polite announcement confirms recovery and that buffered comments are being sent.",
+        "Confirm reconnect attempts (during longer outages) are announced at a non-spammy interval — not every single retry, but enough to let the user know the tool is trying.",
+        "Confirm a persistent status indicator in the UI is exposed to AT (e.g. an aria-live polite region holding the current connection state, queryable by JAWS / NVDA on demand)."
+      ],
+      "pass_criteria": [
+        "Connection loss is announced via an assertive live region or role=\"alert\" with a clear explanation.",
+        "Unsaved-comment buffering is visible and exposed to AT — the user can confirm nothing is being lost.",
+        "Reconnect attempts are announced at a reasonable interval (not on every retry).",
+        "Successful reconnection is announced with confirmation that buffered comments are being flushed.",
+        "A persistent connection-status indicator is exposed to AT for on-demand checking.",
+        "Comments composed while offline are preserved, not silently dropped."
+      ],
+      "fail_examples": [
+        "Connection drops silently; the user keeps typing for minutes before realising nothing has been sent.",
+        "Disconnect is shown only via a small grey icon in the corner — no announcement and no AT exposure.",
+        "Reconnect attempts produce a live-region announcement every retry (e.g. every 2 seconds), DoS-ing the screen reader.",
+        "Buffered comments are silently dropped on disconnect; the user's typed text is lost.",
+        "Reconnection happens silently; the user does not know that pending comments were flushed and is unsure whether to retype.",
+        "Connection-status indicator is a visual-only badge with no AT-readable text."
+      ],
+      "tags": [
+        "live-regions",
+        "realtime"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
     }
   ]
 }
