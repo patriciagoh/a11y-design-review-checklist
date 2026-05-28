@@ -23,13 +23,13 @@ npm install a11y-design-review-checklist
 Or as a git submodule:
 
 ```bash
-git submodule add https://github.com/<github-username>/a11y-design-review-checklist vendor/a11y-design-review-checklist
+git submodule add https://github.com/patriciagoh/a11y-design-review-checklist vendor/a11y-design-review-checklist
 ```
 
 Or fetch the raw JSON:
 
 ```bash
-curl -L https://raw.githubusercontent.com/<github-username>/a11y-design-review-checklist/main/checklist.json
+curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.json
 ```
 
 ## Consume the JSON

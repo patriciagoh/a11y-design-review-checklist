@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/<github-username>/a11y-design-review-checklist/checklist.schema.json",
+  "$id": "https://github.com/patriciagoh/a11y-design-review-checklist/checklist.schema.json",
   "title": "a11y-design-review-checklist",
   "type": "object",
   "additionalProperties": false,
