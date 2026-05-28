@@ -3,7 +3,7 @@
 > Generated from `checklist.json`. Do not edit by hand.
 > Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
 
-Total items: 35
+Total items: 36
 
 ## Perceivable
 
@@ -1064,3 +1064,37 @@ Live remote cursors that dart across the artifact, 'Patricia is typing…' pulsi
 
 **References:**
 - [WCAG 2.2.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide)
+
+### Presence pulses, save flashes, notification badges, and live cursors never flash more than three times per second and avoid large-area flashes entirely
+
+- **ID:** `2.3.1-realtime-flash-threshold`
+- **WCAG 2.3.1** Three Flashes or Below Threshold (Level A)
+- **Tags:** `realtime`, `motion`
+
+Real-time collaboration UI is full of attention-grabbing flashes: a green pulse when a comment saves, a red badge that strobes when an @mention lands, presence avatars that flash on join/leave, and the cursor halo that pings to draw attention to a teammate's pointer. Any of these can trigger photosensitive seizures if they flash more than three times in any one-second window, especially when the flashing area is large (more than ~25% of the viewport) or contains saturated red. WCAG 2.3.1 requires that no content flashes more than three times in any one-second period, and large-area flashes should be avoided altogether for collaboration indicators — a single fade-in or one-shot animation is fine, a strobing pulse is not.
+
+**How to test:**
+- Trigger each real-time indicator deliberately and record video at 60fps (browser-based screen recorder or DevTools performance recording): comment save flash, @mention badge update, presence avatar join/leave, live cursor 'ping' attention animation, and any 'reconnected' or 'new version available' banner pulse.
+- Count discrete flashes per second from the recording for each indicator and confirm none exceeds three flashes in any one-second window.
+- Measure the flashing area as a percentage of viewport: indicators larger than ~25% of viewport (full-screen banners, full-canvas overlays) must not flash at all — a single fade-in is allowed; a repeating pulse is not.
+- Inspect CSS keyframes / JS animation drivers for any infinite-iteration animations on collaboration indicators and confirm none produce >3 flashes per second.
+- If saturated red (#FF0000-range) is used in any flash, confirm the flash count stays well below the threshold and consider switching the color, since saturated red flashes are the highest-risk trigger.
+- Verify prefers-reduced-motion suppresses the animation entirely on these indicators, defaulting to a static state change.
+
+**Pass criteria:**
+- No real-time collaboration indicator (save flash, @mention badge, presence join/leave, live cursor ping, reconnection banner) flashes more than three times in any one-second window.
+- Large-area indicators (>25% of viewport) do not flash repeatedly — they may fade in or animate once but not strobe.
+- Saturated-red flashes are avoided entirely on collaboration indicators, or kept far below the flash threshold and small in area.
+- prefers-reduced-motion suppresses these animations and degrades them to a static state change.
+- Designer / engineer documentation calls out the three-flash limit as a hard constraint for any new real-time indicator.
+
+**Fail examples:**
+- Comment save flash uses a green-to-white pulse that runs five times in 800ms; a photosensitive reviewer triggers a migraine on every comment submit.
+- @mention badge strobes red (#FF2D2D) at 5Hz when a new mention arrives and continues until the user clicks it — strobe rate exceeds the threshold and uses high-risk saturated red.
+- Presence avatar bounce-pulses six times rapidly when a teammate joins; with eight teammates joining within a minute the presence row flashes 48 times.
+- Live cursor 'ping' attention animation (a teammate clicks 'point at this') triggers a full-canvas red ripple that flashes four times across roughly half the viewport — large-area, multi-flash, high-risk.
+- Reconnection banner spans the full top of the viewport and flashes yellow three to four times per second until the connection restores; on a flaky network this strobes continuously.
+- prefers-reduced-motion is ignored on collaboration indicators, so users who set the OS preference still get full-frequency flashes.
+
+**References:**
+- [WCAG 2.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold)
