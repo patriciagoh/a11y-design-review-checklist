@@ -28,3 +28,24 @@ test('generates checklist.md from checklist.json', () => {
   assert.match(md, /1\.1\.1/);
   assert.match(md, /Placeholder/);
 });
+
+test('--check exits 0 when checklist.md is in sync', () => {
+  const dir = tempProject();
+  runIn(dir);
+  const result = runIn(dir, ['--check']);
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('--check exits 1 when checklist.md is stale', () => {
+  const dir = tempProject();
+  runIn(dir);
+  writeFileSync(path.join(dir, 'checklist.md'), '# stale content\n');
+  const result = runIn(dir, ['--check']);
+  assert.equal(result.status, 1);
+});
+
+test('--check exits 1 when checklist.md is missing', () => {
+  const dir = tempProject();
+  const result = runIn(dir, ['--check']);
+  assert.equal(result.status, 1);
+});
