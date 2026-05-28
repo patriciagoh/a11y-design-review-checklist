@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/<github-username>/a11y-design-review-checklist/checklist.schema.json",
+  "title": "a11y-design-review-checklist",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "wcag_version", "conformance_level", "released_at", "items"],
+  "properties": {
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "wcag_version": { "const": "2.2" },
+    "conformance_level": { "enum": ["A", "AA"] },
+    "released_at": { "type": "string", "format": "date-time" },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/item" }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "required": ["id", "wcag_criterion", "wcag_title", "level", "category", "title", "description", "how_to_test", "pass_criteria", "fail_examples", "tags"],
+      "properties": {
+        "id": { "type": "string" },
+        "wcag_criterion": { "type": "string" },
+        "wcag_title": { "type": "string" },
+        "level": { "type": "string" },
+        "category": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "how_to_test": { "type": "array", "items": { "type": "string" } },
+        "pass_criteria": { "type": "array", "items": { "type": "string" } },
+        "fail_examples": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
