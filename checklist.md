@@ -3,7 +3,7 @@
 > Generated from `checklist.json`. Do not edit by hand.
 > Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
 
-Total items: 48
+Total items: 58
 
 ## Perceivable
 
@@ -1460,3 +1460,300 @@ Annotation pins commonly carry three distinct visual states: hover (mouse hover 
 
 **References:**
 - [WCAG 2.4.7 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible)
+
+### Multi-touch zoom and pan gestures on the canvas have single-pointer alternatives
+
+- **ID:** `2.5.1-multi-finger-zoom-alternative`
+- **WCAG 2.5.1** Pointer Gestures (Level A)
+- **Tags:** `zoom-pan`
+
+Design-review canvases lean heavily on multi-touch gestures — pinch to zoom, two-finger swipe to pan, three-finger tap to fit — because that's how Figma, Sketch, and InVision trained users to navigate. But anyone using a single switch, a head-pointer, a mouth-stick, or a stylus on a small touch surface cannot perform a coordinated two-finger pinch. Every gesture that controls zoom or pan must have an equivalent single-pointer path: visible zoom-in/zoom-out buttons, +/− keyboard shortcuts, or scroll-with-modifier — so the canvas is fully navigable without ever needing two fingers at once.
+
+**How to test:**
+- Open a review with the artifact canvas and identify every multi-touch gesture the tool advertises (pinch-zoom, two-finger pan, three-finger fit, rotate).
+- Disable multi-touch input (use a mouse, a single-finger touch, or a switch device) and try to reach each zoom level and pan position using only single-pointer controls.
+- Confirm visible on-canvas controls exist for zoom-in, zoom-out, fit-to-screen, and 100% — and that pan is achievable via scrollbars, drag with a single pointer, or arrow-key navigation.
+- Verify with a keyboard alone that +/−/0 (or equivalent) reach the same zoom states the pinch gesture reaches.
+- Check that no canvas operation is gated behind a path-based gesture (e.g. drawing a freehand selection) without a click-sequence alternative.
+
+**Pass criteria:**
+- Every multi-touch gesture for zoom, pan, fit, and rotate has a single-pointer equivalent that is visible on the canvas or reachable via keyboard.
+- Zoom-in, zoom-out, fit-to-screen, and 100% are all reachable without performing a pinch or multi-finger gesture.
+- Pan is achievable with one pointer (single-finger drag, scrollbar, or arrow keys) — not only via two-finger swipe.
+- No canvas function is exclusively bound to a multipoint or path-based gesture.
+
+**Fail examples:**
+- Canvas only zooms via pinch — there are no visible +/− buttons and no keyboard shortcut, so a single-pointer user is stuck at 100%.
+- Pan requires a two-finger swipe on touch and middle-click-drag on desktop; a user with a single-button switch device has no way to pan.
+- Three-finger tap is the only way to fit-to-screen; users who cannot coordinate three fingers cannot recover from a zoomed-in state.
+- Rotate-artifact is bound only to a two-finger twist gesture with no menu item or keyboard shortcut.
+
+**References:**
+- [WCAG 2.5.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures)
+
+### Region and rectangle annotations can be placed without a continuous drag gesture
+
+- **ID:** `2.5.1-region-annotation-single-pointer`
+- **WCAG 2.5.1** Pointer Gestures (Level A)
+- **Tags:** `annotations`
+
+Region annotations — the rectangles reviewers draw around 'this whole section of the header' — are typically placed via a drag from one corner to the opposite corner. That drag is a path-based gesture: a user who cannot hold-and-move (single-switch users, users with tremor, head-pointer users) cannot complete it. The tool must offer a single-pointer alternative: click to set the first corner, click again to set the opposite corner, or place a default-sized region first and then resize via discrete handle clicks.
+
+**How to test:**
+- Select the region/rectangle annotation tool and attempt to place an annotation using only discrete clicks (no drag).
+- Confirm the tool offers a click-to-anchor / click-to-set-opposite-corner flow, OR it places a default-sized region on first click and exposes resize handles that can each be clicked to a new position without a continuous drag.
+- Try the same flow on touch with a single tap-tap sequence and on keyboard with arrow keys to position the corners.
+- Verify that no region-annotation creation path requires a held-down pointer moving along a continuous path.
+
+**Pass criteria:**
+- Region annotations can be placed via a discrete click-click sequence (anchor corner, then opposite corner) or by placing a default region and resizing via handle clicks or keyboard arrows.
+- No region-annotation creation flow requires a continuous drag from one point to another.
+- The single-pointer alternative is documented in the tool's keyboard / accessibility shortcuts list or is discoverable in the annotation toolbar.
+
+**Fail examples:**
+- Region annotation can ONLY be created by mousedown-drag-mouseup; releasing the pointer mid-drag cancels the annotation and there is no click-click alternative.
+- Touch users must hold and drag with one finger across the canvas with no tap-tap-to-place fallback.
+- Resize handles on a placed region require drag — they cannot be moved via arrow keys or click-to-target.
+- The tooltip on the region tool reads 'click and drag to create' with no alternative offered to users who cannot drag.
+
+**References:**
+- [WCAG 2.5.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures)
+
+### Annotation placement can be aborted before commit by moving off-target or pressing Escape
+
+- **ID:** `2.5.2-annotation-place-cancellable`
+- **WCAG 2.5.2** Pointer Cancellation (Level A)
+- **Tags:** `annotations`
+
+When a reviewer starts placing an annotation and realizes mid-gesture that they're about to drop a pin in the wrong place — wrong frame, wrong artifact, wrong region — they need to be able to back out without creating noise the whole team has to clean up. The down-event must not commit the annotation. Either the up-event fires the creation only when released on a valid target, or pressing Escape during placement cancels cleanly, leaving no orphan pin and no toast notification fired to collaborators.
+
+**How to test:**
+- Select the pin tool, press down on a target on the canvas, then drag the pointer off the canvas before releasing — confirm no annotation is created.
+- Repeat with the region tool: start a region, then press Escape mid-placement — confirm the in-progress region disappears and no pin/region is committed.
+- On touch, start a placement gesture and lift the finger outside the canvas bounds — confirm no annotation is committed.
+- Verify no real-time event ('Patricia placed annotation 47') is broadcast to collaborators during an aborted placement.
+- Confirm the down-event alone never commits — only the completed up-event on a valid target finalizes the annotation.
+
+**Pass criteria:**
+- Pressing down to start an annotation does not commit it; only releasing on a valid target finalizes the annotation.
+- Moving the pointer off the canvas (or off the valid drop target) before release aborts the placement with no side effects.
+- Pressing Escape during placement cancels the in-progress annotation, removes any ghost preview, and broadcasts no real-time event.
+- No collaborator notification, server-side write, or undo-history entry is created for an aborted placement.
+
+**Fail examples:**
+- Pin commits on pointerdown — releasing outside the canvas or pressing Escape still leaves a pin at the click location.
+- Region annotation commits on the first click of a click-click sequence with no way to abort before the second click.
+- Aborted pin placement still broadcasts a 'Patricia is placing an annotation' presence event that flashes on every collaborator's screen.
+- Escape during placement clears the visual preview but the annotation still saves to the server and appears after a refresh.
+
+**References:**
+- [WCAG 2.5.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/pointer-cancellation)
+
+### Pin accessible names start with the visible number or label so voice control can target them
+
+- **ID:** `2.5.3-pin-accessible-name-matches`
+- **WCAG 2.5.3** Label in Name (Level A)
+- **Tags:** `annotations`, `name-role-value`
+
+Annotation pins typically show a visible number ('3', '12') or short label so reviewers can reference them in conversation ('see pin 3'). Voice-control users (Dragon, Voice Control on macOS/iOS) say what they see — 'click pin three' — and the underlying accessible name must start with that visible label for the voice command to match. If the visible label is '3' but the accessible name is 'Annotation by Patricia on header, unresolved, 2 replies', the voice command fails and the user cannot activate the pin by speaking what they see.
+
+**How to test:**
+- Inspect several pins with visible numeric or text labels and read their accessible names (DevTools accessibility tree, or screen-reader announcement).
+- Confirm each accessible name begins with the visible label string — e.g. visible '3' → accessible name 'Pin 3, by Patricia on header logo, unresolved'.
+- Use Voice Control (macOS) or Dragon to say 'click pin three' (or whatever the visible label reads) and confirm the correct pin activates.
+- Repeat for pins with non-numeric visible labels (e.g. initials, status icons with text).
+
+**Pass criteria:**
+- Every pin's accessible name begins with the visible text label exactly as a sighted user reads it.
+- Voice-control commands that say the visible label ('click pin three') successfully activate the matching pin.
+- Additional context (author, target, status) appears after the visible label in the accessible name, not before it.
+- The visible label text is not paraphrased, translated, or replaced in the accessible name (e.g. '3' is not rewritten as 'third').
+
+**Fail examples:**
+- Pin shows '3' visibly but accessible name is 'Annotation by Patricia, header logo, 2 replies, unresolved' — voice command 'click pin three' does not match.
+- Pin label visible as 'PG' (initials) but accessible name reads 'Patricia Goh annotation on header' — voice 'click P G' fails.
+- Visible label '12' is rewritten in the accessible name as 'annotation twelve' — voice 'click twelve' does not match.
+- Pin accessible name is just the raw ID ('annotation_a8f3b2') and the visible number is rendered via a background-image so it is not in the accessible name at all.
+
+**References:**
+- [WCAG 2.5.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/label-in-name)
+
+### Workflow action buttons expose accessible names beginning with their visible label
+
+- **ID:** `2.5.3-workflow-button-name-matches`
+- **WCAG 2.5.3** Label in Name (Level A)
+- **Tags:** `workflow-state`, `name-role-value`
+
+The Approve, Request Changes, Reject, and Submit buttons drive the review workflow — these are the highest-stakes controls in the entire UI. Voice-control users must be able to invoke them by saying what they see ('click Approve', 'click Request Changes'). If the visible label is 'Approve' but the accessible name is 'Submit approval decision for version 4 of homepage redesign', the voice command 'click Approve' fails and the user cannot drive the workflow without keyboard or pointer.
+
+**How to test:**
+- List every workflow-state control in the review tool (Approve, Request Changes, Reject, Submit, Reopen, Resolve, Archive).
+- For each, inspect the accessible name in DevTools or via screen reader and confirm it begins with the visible button text.
+- Use Voice Control or Dragon to say 'click <visible label>' for each button and confirm the correct action fires.
+- Verify that buttons with icon + text (e.g. checkmark + 'Approve') do not prepend the icon role into the accessible name ('check mark, Approve…').
+- If a workflow button shows different visible text per role (e.g. 'Approve' for approvers, 'Acknowledge' for viewers), confirm each variant's accessible name matches its visible label.
+
+**Pass criteria:**
+- Every workflow action button has an accessible name that begins with the visible label text.
+- Voice-control commands using the visible label activate the matching workflow button.
+- Additional context (artifact name, version, role) appears after the visible label, not before it.
+- Icon-decorations are not announced ahead of the visible text in the accessible name.
+
+**Fail examples:**
+- Visible button reads 'Approve' but accessible name is 'Submit final approval for version 4' — 'click Approve' fails in Voice Control.
+- Request Changes button has aria-label='Send change request to design team' — voice command 'click Request Changes' does not match.
+- Approve button uses an icon font with aria-label='check, Approve homepage v4' — the leading 'check' breaks voice 'click Approve'.
+- Resolve thread button visible as 'Resolve' has accessible name 'Mark thread as resolved and archive' — voice 'click Resolve' does not fire.
+
+**References:**
+- [WCAG 2.5.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/label-in-name)
+
+### Device motion never the only path to pan, rotate, or undo on the artifact
+
+- **ID:** `2.5.4-no-motion-actuated-pan`
+- **WCAG 2.5.4** Motion Actuation (Level A)
+- **Tags:** `motion`, `zoom-pan`
+
+Mobile and tablet design-review apps sometimes bind device-motion gestures to canvas operations — tilt the tablet to pan the artifact, shake to undo an annotation. These are inaccessible to users who hold their device in a mount, who have tremor, who cannot reliably move their device through space, or who have disabled motion in OS settings. Every motion-actuated operation must have an equivalent UI control (button, menu item, keyboard shortcut), and users must be able to disable the motion binding entirely.
+
+**How to test:**
+- On a tablet or phone build, list every device-motion gesture (tilt-to-pan, shake-to-undo, rotate-device-to-rotate-canvas).
+- For each, confirm an equivalent on-screen control exists — pan buttons, an Undo button or menu item, a rotate control in the toolbar.
+- Open settings and verify a 'disable motion gestures' toggle exists; enable it and confirm motion no longer triggers canvas operations.
+- Place the device flat on a table (no motion possible) and confirm full canvas functionality remains via on-screen controls.
+- Verify the OS-level 'reduce motion' preference also suppresses motion-actuated behaviors in the app.
+
+**Pass criteria:**
+- No canvas operation (pan, rotate, zoom, undo, redo) is exclusively triggered by device motion.
+- Every motion-actuated gesture has an equivalent on-screen control reachable by touch and keyboard.
+- Users can disable motion actuation entirely in app settings, and the app also respects the OS reduce-motion preference.
+- The app remains fully functional when the device is held stationary in a mount.
+
+**Fail examples:**
+- Shake-to-undo is the only path to undo the last annotation on tablet — there is no on-screen Undo button.
+- Tilt-to-pan is enabled by default with no setting to disable it; users with tremor pan unintentionally and cannot opt out.
+- Rotate the device 90° to rotate the artifact is the only rotate control — users who use the tablet in a fixed mount cannot rotate.
+- Motion actuation respects no OS or in-app preference and fires continuously when the device is moved at all.
+
+**References:**
+- [WCAG 2.5.4 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/motion-actuation)
+
+### Drag-to-place and drag-to-reorder annotations have non-drag alternatives
+
+- **ID:** `2.5.7-annotation-drag-alternative`
+- **WCAG 2.5.7** Dragging Movements (Level AA)
+- **Tags:** `annotations`
+
+WCAG 2.2 adds 2.5.7 Dragging Movements: any operation that uses a drag must have a non-drag alternative. In a design-review tool, drags are everywhere — drag a pin to reposition it, drag a region's handle to resize, drag-and-drop comments in a sidebar to reorder, drag an annotation onto a different layer. Each must have a non-drag path: click-then-click to reposition, arrow keys to nudge, a 'move to' menu, a 'reorder' affordance with up/down buttons. Users with tremor, with single-pointer setups, on switch devices, or with limited dexterity cannot reliably drag.
+
+**How to test:**
+- Catalog every drag interaction in the annotation system: drag-to-place, drag-to-reposition pin, drag-to-resize region, drag-to-reorder in sidebar, drag-to-reassign-layer.
+- For each, attempt the same outcome without dragging — keyboard arrows to nudge a focused pin, a 'Reposition' menu that takes click-target, up/down buttons in the sidebar list, a 'Move to layer…' menu.
+- Test with a single-finger tap only on touch and with keyboard only on desktop — every annotation operation must complete.
+- Verify the non-drag alternative is discoverable: it appears in a context menu, toolbar, or documented keyboard shortcut — not hidden behind dev-only flags.
+- Confirm precision: the non-drag alternative supports the same range and granularity as the drag (e.g. 1px nudge with arrows, 10px with Shift+arrow).
+
+**Pass criteria:**
+- Every drag interaction on annotations has a non-drag alternative (click-sequence, keyboard, or menu-based).
+- Non-drag alternatives are discoverable via context menu, toolbar, or keyboard-shortcut help.
+- Non-drag alternatives support equivalent precision and range to the drag (fine and coarse movement).
+- Keyboard alternatives include both nudge (arrow) and jump (Shift/PageUp/PageDown) modes where the drag supports both.
+
+**Fail examples:**
+- Annotation pins can only be moved by drag — focusing a pin and pressing arrow keys does nothing and there is no 'Move to…' menu.
+- Sidebar comment reorder is drag-and-drop only; there are no up/down buttons and no keyboard reorder shortcut.
+- Region handles support drag-to-resize but no keyboard or click-target resize; users who can't drag cannot adjust region size after creation.
+- A 'Reposition' menu item exists but only opens a coordinate text input with no live preview — precision is worse than drag and there's no equivalent nudge mode.
+
+**References:**
+- [WCAG 2.5.7 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements)
+
+### Version-compare slider supports click-to-position and text-input alternatives to dragging
+
+- **ID:** `2.5.7-version-drag-compare-alternative`
+- **WCAG 2.5.7** Dragging Movements (Level AA)
+- **Tags:** `versioning`
+
+WCAG 2.2's 2.5.7 also covers the version-compare slider — that 'before / after' divider you drag across the artifact to reveal version A under version B. Users who can't drag cannot operate it as designed. The slider must accept click-anywhere-on-track to jump the divider to that position, support keyboard left/right and Home/End, and offer a text input or stepper for the exact percentage. Drag is the affordance for precision; non-drag alternatives must match its expressiveness.
+
+**How to test:**
+- Open the version-compare view between two versions of the artifact and locate the swipe / slider divider.
+- Try clicking once anywhere on the track (not on the handle) and confirm the divider jumps to the clicked position.
+- Focus the divider with keyboard and use Left/Right arrows to nudge, Home/End to jump to 0% and 100%; confirm both work.
+- Look for a numeric input or percentage stepper that lets the user set an exact position (e.g. 37%); confirm it updates the divider.
+- Verify on touch that a single tap on the track repositions the divider without requiring a swipe gesture.
+
+**Pass criteria:**
+- The version-compare divider can be repositioned by single click or tap anywhere on the track, not only by dragging the handle.
+- Keyboard arrows nudge the divider; Home/End jump to extremes; the divider has a clear focus indicator.
+- A numeric input or stepper supports exact-percentage positioning, matching the drag's precision.
+- Touch users can tap-to-position without performing a swipe.
+
+**Fail examples:**
+- Version-compare slider only responds to drag on the handle — clicking elsewhere on the track does nothing.
+- Slider divider is keyboard-focusable but arrow keys do not move it; only mouse drag works.
+- There is no text or stepper input for an exact position — users who can't drag cannot reach 50% precisely.
+- On touch, a tap on the track is ignored; only a horizontal swipe gesture moves the divider.
+
+**References:**
+- [WCAG 2.5.7 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements)
+
+### Annotation pin hit targets are at least 24x24 CSS pixels or meet the spacing exception
+
+- **ID:** `2.5.8-annotation-pin-target-size`
+- **WCAG 2.5.8** Target Size (Minimum) (Level AA)
+- **Tags:** `target-size`, `annotations`
+
+WCAG 2.2 adds 2.5.8 Target Size (Minimum) at AA: pointer targets must be at least 24x24 CSS pixels, or have enough spacing around them that a 24x24 circle around the target center does not intersect any other target. Annotation pins are notoriously small — 16x16 dots, 20x20 numbered circles — because designers want them visually unobtrusive. But on a dense canvas with adjacent pins they become impossible to hit with a trackpad on a tablet or with a tremor-affected finger. Pins must either grow to 24x24 (the hit target, not just the visual dot), or sit far enough apart that the 24x24 spacing exception is satisfied.
+
+**How to test:**
+- Measure several annotation pins on the canvas at default zoom (100%) — both the visible dot/circle and the pointer hit-target via DevTools (inspect bounding box).
+- Confirm the pointer hit target is at least 24x24 CSS pixels, OR confirm that the distance between any two pin centers is large enough that a 24-pixel diameter circle around each center does not touch the next pin's hit box.
+- Place a cluster of pins close together (a dense thread region) and verify hit-targets still satisfy size or spacing.
+- Test on a touch device: try tapping each pin in a cluster and confirm you can reliably hit a single pin without zooming the canvas.
+- If pins shrink at lower zoom levels, verify they still meet the 24-pixel rule (or scale up the hit target while keeping the visible pin small).
+
+**Pass criteria:**
+- Every annotation pin's pointer target is at least 24x24 CSS pixels, OR the spacing exception is satisfied (24-pixel circle around the target center does not intersect any other target).
+- Hit targets stay at least 24x24 across the default and lower zoom ranges; visible pin appearance may be smaller, but the hit area meets the threshold.
+- In dense pin clusters, spacing or size is sufficient that users can reliably target an individual pin without pixel-precise pointing.
+- Decorative pin shrinking (e.g. when zoomed out) does not shrink the hit-target below 24x24.
+
+**Fail examples:**
+- Pins render as 16x16 dots with hit targets equal to the visual size; users with tremor consistently miss them on a trackpad.
+- Pin visual is 24x24 but the actual <button> hit-target is set to 18x18 via padding-box CSS — measured hit area is below the threshold.
+- Cluster of 5 pins at 18x18 each, spaced 4 pixels apart — neither the size nor the spacing exception is met.
+- At 50% zoom the pin hit area shrinks to 12x12, well below 24x24, even though the on-canvas pin is still rendered as a 24-pixel SVG.
+
+**References:**
+- [WCAG 2.5.8 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum)
+
+### Reply, resolve, edit, delete, and reaction targets on threads are at least 24x24 CSS pixels
+
+- **ID:** `2.5.8-thread-action-target-size`
+- **WCAG 2.5.8** Target Size (Minimum) (Level AA)
+- **Tags:** `target-size`, `threads`
+
+Thread comment cards bristle with small action buttons — reply, resolve, edit, delete, the emoji reaction picker, the overflow menu kebab. These are typically icon-only 16x16 or 20x20 buttons squeezed into a dense card layout. Under WCAG 2.2's 2.5.8 (AA, new in 2.2), each must hit at least 24x24 CSS pixels or satisfy the spacing exception. A reviewer with limited dexterity, on a tablet with a finger, or on a small viewport must be able to resolve a thread or delete their own comment without mis-tapping its neighbor.
+
+**How to test:**
+- Open a thread with multiple comments and identify every interactive control on a comment card: reply, resolve, edit, delete, react, overflow menu.
+- Inspect each in DevTools and confirm the pointer hit target is at least 24x24 CSS pixels, OR adjacent controls have enough whitespace that the 24-pixel spacing exception applies.
+- Test on a touch device: try to resolve a thread, then delete a comment, then add a reaction — confirm each can be tapped without hitting an adjacent control.
+- Inspect emoji reaction targets specifically (often 16x16 each in a row); confirm each emoji button meets size or spacing.
+- Verify the overflow / kebab menu target itself meets 24x24, not just the items inside the menu.
+
+**Pass criteria:**
+- Every interactive target on a thread comment card (reply, resolve, edit, delete, react, overflow) is at least 24x24 CSS pixels, or satisfies the 24-pixel spacing exception.
+- Emoji reaction buttons individually meet 24x24 or have enough spacing between them that the exception applies.
+- Touch users can hit any single action on a comment card without inadvertently triggering an adjacent action.
+- Hit targets are not reduced below 24x24 at responsive breakpoints or on dense layouts.
+
+**Fail examples:**
+- Comment card kebab menu is 16x16 with 2-pixel padding to the adjacent reply button — neither size nor spacing exception is met.
+- Emoji reaction row shows 8 emojis at 18x18 each, packed tight — touch users routinely tap the wrong emoji.
+- Resolve and delete sit side-by-side at 20x20 with 1-pixel gap; a misfired tap deletes a comment when the user meant to resolve.
+- At narrow viewport the comment-card action bar collapses target sizes to 16x16 to fit horizontally instead of stacking vertically.
+
+**References:**
+- [WCAG 2.5.8 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum)
