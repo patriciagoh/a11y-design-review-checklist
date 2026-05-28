@@ -3,7 +3,7 @@
 > Generated from `checklist.json`. Do not edit by hand.
 > Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
 
-Total items: 58
+Total items: 60
 
 ## Perceivable
 
@@ -1757,3 +1757,66 @@ Thread comment cards bristle with small action buttons — reply, resolve, edit,
 
 **References:**
 - [WCAG 2.5.8 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum)
+
+## Understandable
+
+### The review tool declares the page's primary human language on the <html> element
+
+- **ID:** `3.1.1-document-language`
+- **WCAG 3.1.1** Language of Page (Level A)
+- **Tags:** `language`
+
+Screen readers, browser translation engines, and language-aware spellcheck all key off the page's lang attribute. A design-review tool without a lang declaration on <html> leaves a screen reader guessing — JAWS may read English content with a French voice, VoiceOver may mispronounce reviewer names and UI strings, and Google Translate may translate-into the very language the page already uses. The primary language of the review tool's UI shell must be declared on <html lang="..."> so assistive tech and language tools render the right voice, prosody, and hyphenation from the moment the page loads.
+
+**How to test:**
+- View source on the review tool's main artifact page and confirm <html> has a lang attribute set to a valid BCP 47 language tag (e.g. lang="en", lang="en-US", lang="ja").
+- Confirm the declared language matches the actual primary language of the UI chrome — not a stale default like lang="en" on a tool whose UI has been localized to Japanese.
+- Load the tool with VoiceOver / NVDA and confirm the chosen voice matches the declared language (an English voice for an English UI, not a fallback robotic voice).
+- If the tool supports UI locale switching, confirm the lang attribute updates when the user changes locale — not pinned to the user's first-session value.
+- Run axe DevTools and confirm the 'html-has-lang' and 'html-lang-valid' rules pass.
+
+**Pass criteria:**
+- <html> carries a valid lang attribute with a BCP 47 language tag.
+- The declared lang matches the primary language of the UI chrome currently being rendered.
+- Switching UI locale updates the lang attribute to the new locale.
+- axe DevTools reports no violations on 'html-has-lang' or 'html-lang-valid'.
+
+**Fail examples:**
+- Main review page renders <html> with no lang attribute; VoiceOver falls back to the system default voice and mispronounces every reviewer name.
+- UI is fully localized into Japanese but <html lang="en"> persists because the locale switcher only swaps strings, not the document language.
+- lang="english" — not a valid BCP 47 tag; assistive tech treats it as unknown.
+- <html lang=""> (empty string) shipped on a production build, silently failing axe and breaking screen-reader pronunciation.
+
+**References:**
+- [WCAG 3.1.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/language-of-page)
+
+### Comments authored in a language different from the page declare that language on the comment element
+
+- **ID:** `3.1.2-comment-language-tagging`
+- **WCAG 3.1.2** Language of Parts (Level AA)
+- **Tags:** `language`, `threads`
+
+Cross-team design reviews routinely mix languages — a reviewer in Tokyo replies in Japanese to a thread on an English-defaulting tool, a contractor in São Paulo drops a Portuguese clarification into an otherwise-English review. If the page-level lang is 'en' and the Japanese reply has no lang attribute of its own, a screen reader pronounces the Japanese characters with an English voice and produces unintelligible output. The comment renderer must either detect or let the author declare the comment's language and emit a corresponding lang attribute on the comment element — and must never assert a language it cannot verify.
+
+**How to test:**
+- On a tool whose page-level lang is 'en', post a reply containing Japanese (or any non-English script) and inspect the rendered comment element.
+- Confirm the comment element (or the text node wrapping its body) carries a lang attribute matching the comment's actual language (e.g. lang="ja").
+- Read the comment with VoiceOver / NVDA and confirm the voice switches to the appropriate language pronunciation, not the page default.
+- If the tool does not auto-detect comment language, confirm the composer offers an explicit language picker — and that picking a language updates the lang attribute on the posted comment.
+- Verify the tool does not assert an incorrect lang (e.g. defaulting every comment to lang="en" regardless of content), which is worse than declaring nothing.
+- Confirm @mentions, code blocks, and quoted prior comments preserve the lang attribute of the original author, not the current reader's locale.
+
+**Pass criteria:**
+- Comments containing content in a language different from the page declare that language via a lang attribute on the comment element (or an inner wrapper around the differing text).
+- If language tagging is not implemented, the tool does not assert an incorrect lang — it inherits the page lang and the authoring flow does not falsely claim otherwise.
+- Screen readers switch pronunciation when reading a comment in a tagged non-default language.
+- Quoted text and @mentions preserve the original author's language tag when relevant.
+
+**Fail examples:**
+- Page is lang="en"; a Japanese reply renders inside <div class="comment-body"> with no lang attribute, so VoiceOver reads kana with an English voice and produces gibberish.
+- Comment composer auto-tags every reply with lang="en" regardless of the typed content; a Portuguese comment is asserted to be English and mispronounced confidently.
+- Tool offers a 'comment language' picker but the value is stored only in metadata and never emitted as an attribute on the rendered comment element.
+- Quoted prior comment in Japanese loses its original lang attribute when re-rendered inside an English-language reply, so the quote is read with an English voice.
+
+**References:**
+- [WCAG 3.1.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts)

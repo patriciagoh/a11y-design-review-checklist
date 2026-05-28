@@ -29,9 +29,15 @@
         "Alt text field exists but is optional with no warning, and the published review uses an empty alt attribute on a critical artifact.",
         "Alt text is stored but only shown in a tooltip on hover, never wired to the artifact's accessible name."
       ],
-      "tags": ["name-role-value", "media"],
+      "tags": [
+        "name-role-value",
+        "media"
+      ],
       "references": [
-        { "label": "WCAG 1.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content" }
+        {
+          "label": "WCAG 1.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content"
+        }
       ]
     },
     {
@@ -59,9 +65,15 @@
         "Region annotations announce only 'button' because the icon is a background-image with no text alternative.",
         "Marker accessible name is the raw annotation ID ('annotation_a8f3b2') instead of author, target, and status."
       ],
-      "tags": ["annotations", "name-role-value"],
+      "tags": [
+        "annotations",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 1.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content" }
+        {
+          "label": "WCAG 1.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content"
+        }
       ]
     },
     {
@@ -89,9 +101,15 @@
         "Transcript exists but is collapsed under an unlabeled chevron <button> with no accessible name, so screen readers skip past it.",
         "A 45-second silent walkthrough of color changes is captioned only as 'video.mp4 — 0:45'."
       ],
-      "tags": ["media", "threads"],
+      "tags": [
+        "media",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 1.2.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-only-and-video-only-prerecorded" }
+        {
+          "label": "WCAG 1.2.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-only-and-video-only-prerecorded"
+        }
       ]
     },
     {
@@ -121,9 +139,15 @@
         "CC button is an unlabeled icon <button> with no accessible name; screen reader announces only 'button'.",
         "Captions are baked into the video as 12px white text on a light-grey UI screenshot, with no way to enlarge or restyle them."
       ],
-      "tags": ["media", "threads"],
+      "tags": [
+        "media",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 1.2.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-prerecorded" }
+        {
+          "label": "WCAG 1.2.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-prerecorded"
+        }
       ]
     },
     {
@@ -154,9 +178,15 @@
         "Captions appear 20+ seconds behind the narration, so reviewers lose the connection between the presenter's words and what is being pointed at.",
         "The captions toggle is an unlabeled icon button in the session toolbar; keyboard users tab past it with no announcement of its purpose."
       ],
-      "tags": ["media", "realtime"],
+      "tags": [
+        "media",
+        "realtime"
+      ],
       "references": [
-        { "label": "WCAG 1.2.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-live" }
+        {
+          "label": "WCAG 1.2.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-live"
+        }
       ]
     },
     {
@@ -184,9 +214,15 @@
         "The anchored region is implied only by which part of the artifact the pin visually overlaps; toggling the pins off in DevTools makes the relationship disappear entirely.",
         "Pin uses a title=\"header logo\" attribute that screen readers do not consistently announce, with no aria-describedby fallback."
       ],
-      "tags": ["annotations", "name-role-value"],
+      "tags": [
+        "annotations",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 1.3.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships" }
+        {
+          "label": "WCAG 1.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships"
+        }
       ]
     },
     {
@@ -215,9 +251,15 @@
         "Reply container uses role=\"group\" instead of list semantics, so screen readers do not announce item count or position.",
         "Each reply is a separate <ul> containing one <li>, producing fifteen one-item lists in a fifteen-reply thread."
       ],
-      "tags": ["threads", "name-role-value"],
+      "tags": [
+        "threads",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 1.3.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships" }
+        {
+          "label": "WCAG 1.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships"
+        }
       ]
     },
     {
@@ -247,9 +289,15 @@
         "Timestamp is rendered as '2h ago' with no programmatic datetime attribute, so screen readers cannot disambiguate which '2h ago' is which after a refresh.",
         "Current version is marked only with a green dot and the word 'current' in CSS ::before content — invisible to assistive tech."
       ],
-      "tags": ["versioning", "name-role-value"],
+      "tags": [
+        "versioning",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 1.3.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships" }
+        {
+          "label": "WCAG 1.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships"
+        }
       ]
     },
     {
@@ -279,9 +327,15 @@
         "State transitions ('approved by Patricia') update the chip color silently with no aria-live announcement, so the reviewer who just requested changes never hears that an approval landed.",
         "Icon font is the only signal — a checkmark glyph means 'approved' — and screen readers announce only 'image' or the unicode codepoint."
       ],
-      "tags": ["workflow-state", "name-role-value"],
+      "tags": [
+        "workflow-state",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 1.3.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships" }
+        {
+          "label": "WCAG 1.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships"
+        }
       ]
     },
     {
@@ -311,9 +365,15 @@
         "Tab order through reply action buttons (reply / resolve / edit) jumps across the thread in source order rather than visible order, landing on the wrong reply's button.",
         "Sorting newest-first only flips CSS order; screen-reader users still hear oldest-first regardless of the visible sort."
       ],
-      "tags": ["threads", "keyboard"],
+      "tags": [
+        "threads",
+        "keyboard"
+      ],
       "references": [
-        { "label": "WCAG 1.3.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence" }
+        {
+          "label": "WCAG 1.3.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence"
+        }
       ]
     },
     {
@@ -343,9 +403,14 @@
         "Onboarding overlay highlights a control with an arrow and the caption 'Tap here' — no text label, just visual position.",
         "Help article instructs 'click the green checkmark to approve' — color and shape, no mention of an Approve button."
       ],
-      "tags": ["annotations"],
+      "tags": [
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 1.3.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/sensory-characteristics" }
+        {
+          "label": "WCAG 1.3.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/sensory-characteristics"
+        }
       ]
     },
     {
@@ -375,9 +440,14 @@
         "CSS @media (orientation: portrait) hides the toolbar entirely, so reviewers cannot post a reply in portrait.",
         "Tablet reviewer mounted in portrait on a wheelchair tray cannot complete a review because the approve button is below a viewport that does not scroll."
       ],
-      "tags": ["navigation"],
+      "tags": [
+        "navigation"
+      ],
       "references": [
-        { "label": "WCAG 1.3.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/orientation" }
+        {
+          "label": "WCAG 1.3.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/orientation"
+        }
       ]
     },
     {
@@ -407,9 +477,14 @@
         "Name field uses autocomplete=\"username\" instead of \"name\", causing browsers to offer the wrong saved value.",
         "Form labels are correct but autocomplete tokens are omitted, so translation-and-autofill assistive tools cannot recognize the field purpose."
       ],
-      "tags": ["forms"],
+      "tags": [
+        "forms"
+      ],
       "references": [
-        { "label": "WCAG 1.3.5 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose" }
+        {
+          "label": "WCAG 1.3.5 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose"
+        }
       ]
     },
     {
@@ -439,9 +514,15 @@
         "Text label exists but is rendered in the same hue as the chip background (white text on #FFD166 amber chip) and disappears in forced-colors mode.",
         "Dashboard list view shows state only as a colored left border on each row, with no label column."
       ],
-      "tags": ["workflow-state", "contrast"],
+      "tags": [
+        "workflow-state",
+        "contrast"
+      ],
       "references": [
-        { "label": "WCAG 1.4.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color" }
+        {
+          "label": "WCAG 1.4.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color"
+        }
       ]
     },
     {
@@ -471,9 +552,15 @@
         "Changed regions are signaled only by a yellow tint that washes out in forced-colors mode and disappears entirely.",
         "Added and removed regions both use a solid outline of slightly different hues with no hatch or icon — distinguishable only by hue."
       ],
-      "tags": ["versioning", "contrast"],
+      "tags": [
+        "versioning",
+        "contrast"
+      ],
       "references": [
-        { "label": "WCAG 1.4.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color" }
+        {
+          "label": "WCAG 1.4.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color"
+        }
       ]
     },
     {
@@ -503,9 +590,15 @@
         "Resolved annotations are dimmed to 40% opacity with no change in icon or label; a low-vision reviewer cannot tell dim-because-resolved from dim-because-poor-contrast.",
         "Filter chip 'Open' is a red dot and 'Resolved' is a green dot with no text labels on the chips themselves."
       ],
-      "tags": ["annotations", "contrast"],
+      "tags": [
+        "annotations",
+        "contrast"
+      ],
       "references": [
-        { "label": "WCAG 1.4.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color" }
+        {
+          "label": "WCAG 1.4.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color"
+        }
       ]
     },
     {
@@ -535,9 +628,15 @@
         "Pin meets contrast at 100% zoom but a halo dropped at 200% zoom drops it to 2.8:1 against a mid-gray gradient.",
         "Pin only gains a contrasting outline ring on hover; resting state on a busy background is unreadable until the user finds the pin to hover it."
       ],
-      "tags": ["contrast", "annotations"],
+      "tags": [
+        "contrast",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 1.4.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" }
+        {
+          "label": "WCAG 1.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum"
+        }
       ]
     },
     {
@@ -567,9 +666,15 @@
         "Link color is #6FA8DC light blue on a white comment surface at 2.6:1; visited links drop further to 2.1:1.",
         "@mention pill renders white text on #B4D8F8 light blue at 1.9:1, illegible to low-vision reviewers."
       ],
-      "tags": ["contrast", "threads"],
+      "tags": [
+        "contrast",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 1.4.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" }
+        {
+          "label": "WCAG 1.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum"
+        }
       ]
     },
     {
@@ -599,9 +704,15 @@
         "'Editing' status pill is #B5EAD7 mint with white text at 1.6:1.",
         "Initials look fine in light mode but in dark mode the avatar gains a dark overlay that drops white initials to 3.2:1 against the resulting muddy fill."
       ],
-      "tags": ["contrast", "realtime"],
+      "tags": [
+        "contrast",
+        "realtime"
+      ],
       "references": [
-        { "label": "WCAG 1.4.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" }
+        {
+          "label": "WCAG 1.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum"
+        }
       ]
     },
     {
@@ -631,9 +742,14 @@
         "Version sidebar disappears entirely at 200% with no menu fallback, leaving reviewers unable to switch versions.",
         "Top toolbar text labels overlap at 200% because the toolbar uses a fixed-pixel grid that cannot wrap."
       ],
-      "tags": ["zoom-pan"],
+      "tags": [
+        "zoom-pan"
+      ],
       "references": [
-        { "label": "WCAG 1.4.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text" }
+        {
+          "label": "WCAG 1.4.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text"
+        }
       ]
     },
     {
@@ -664,9 +780,14 @@
         "Avatar column is fixed at 64px wide, leaving 256px for the comment body, and long words break out of the comment surface causing page-level horizontal scroll.",
         "@mention pills wrap to a second line at 320px but their tap target is clipped to the original first-line position, becoming unreachable."
       ],
-      "tags": ["threads"],
+      "tags": [
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 1.4.10 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/reflow" }
+        {
+          "label": "WCAG 1.4.10 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/reflow"
+        }
       ]
     },
     {
@@ -696,9 +817,15 @@
         "Changed-region outline is a yellow dotted line at 2.2:1 against a beige screenshot.",
         "Dark theme inverts the outline to #2E5C2E dark green on a #1A1A1A panel at 2.1:1."
       ],
-      "tags": ["contrast", "versioning"],
+      "tags": [
+        "contrast",
+        "versioning"
+      ],
       "references": [
-        { "label": "WCAG 1.4.11 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast" }
+        {
+          "label": "WCAG 1.4.11 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast"
+        }
       ]
     },
     {
@@ -728,9 +855,16 @@
         "Focus ring uses a thin 1px #B3B3B3 mid-gray that measures 1.4:1 against both pin and artifact in worst-case regions.",
         "In forced-colors mode the outline disappears entirely because it was rendered via box-shadow rather than outline / border."
       ],
-      "tags": ["contrast", "annotations", "focus"],
+      "tags": [
+        "contrast",
+        "annotations",
+        "focus"
+      ],
       "references": [
-        { "label": "WCAG 1.4.11 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast" }
+        {
+          "label": "WCAG 1.4.11 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast"
+        }
       ]
     },
     {
@@ -760,9 +894,14 @@
         "@mention pill is positioned absolutely relative to a fixed-height card; letter-spacing increases push the pill over the comment text.",
         "Action button row sits on a fixed bottom anchor; increased paragraph spacing makes the body text scroll under the buttons, hiding the last sentence behind the action bar."
       ],
-      "tags": ["threads"],
+      "tags": [
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 1.4.12 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing" }
+        {
+          "label": "WCAG 1.4.12 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing"
+        }
       ]
     },
     {
@@ -795,9 +934,15 @@
         "Keyboard focus on a mention chip opens the popover but Escape closes the entire thread panel instead of just the popover.",
         "Quick-info popover auto-dismisses after 2 seconds regardless of hover or focus state, cutting off slow readers mid-sentence."
       ],
-      "tags": ["threads", "focus"],
+      "tags": [
+        "threads",
+        "focus"
+      ],
       "references": [
-        { "label": "WCAG 1.4.13 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus" }
+        {
+          "label": "WCAG 1.4.13 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus"
+        }
       ]
     },
     {
@@ -828,9 +973,15 @@
         "Zoom shortcuts exist but are not documented anywhere in the product, so keyboard users have no way to discover them.",
         "Canvas accepts focus but has no visible focus indicator, so keyboard users cannot tell whether arrow keys will pan or scroll the page."
       ],
-      "tags": ["keyboard", "zoom-pan"],
+      "tags": [
+        "keyboard",
+        "zoom-pan"
+      ],
       "references": [
-        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+        {
+          "label": "WCAG 2.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard"
+        }
       ]
     },
     {
@@ -861,9 +1012,15 @@
         "Placement cursor appears visually but has no accessible name and emits no announcement; a screen-reader user cannot tell whether the mode is active.",
         "Pressing Enter commits the pin but focus stays on the toolbar button instead of moving into the comment composer, requiring the user to Tab through the entire chrome to reach the textarea."
       ],
-      "tags": ["keyboard", "annotations"],
+      "tags": [
+        "keyboard",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+        {
+          "label": "WCAG 2.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard"
+        }
       ]
     },
     {
@@ -894,9 +1051,15 @@
         "Reply button has tabindex='-1' so it never receives focus; keyboard users can read replies but never post one.",
         "Delete fires immediately on Enter with no confirmation, deleting a comment by accident when the user meant to activate Reply on the adjacent button."
       ],
-      "tags": ["keyboard", "threads"],
+      "tags": [
+        "keyboard",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+        {
+          "label": "WCAG 2.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard"
+        }
       ]
     },
     {
@@ -927,9 +1090,15 @@
         "Pressing Enter on the focused Approve button does nothing because the handler is bound to click only, not to keydown.",
         "Modal traps focus correctly but Escape does not close it, so a user who tabbed in by mistake cannot back out."
       ],
-      "tags": ["keyboard", "workflow-state"],
+      "tags": [
+        "keyboard",
+        "workflow-state"
+      ],
       "references": [
-        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+        {
+          "label": "WCAG 2.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard"
+        }
       ]
     },
     {
@@ -960,9 +1129,16 @@
         "Placement mode entry is announced but the Escape behavior is not, so screen-reader users have no way to learn how to leave.",
         "Escape closes the entire review panel instead of just the placement mode, destroying the user's context."
       ],
-      "tags": ["keyboard", "focus", "annotations"],
+      "tags": [
+        "keyboard",
+        "focus",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.1.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap" }
+        {
+          "label": "WCAG 2.1.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap"
+        }
       ]
     },
     {
@@ -993,9 +1169,16 @@
         "Modal traps focus correctly but there is no Escape, no close button, and no other exit — the only way out is to click outside the modal, which keyboard users cannot do.",
         "Focus returns to the toolbar's 'Add annotation' button instead of the pin that opened the modal, destroying the user's spatial context."
       ],
-      "tags": ["keyboard", "focus", "threads"],
+      "tags": [
+        "keyboard",
+        "focus",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 2.1.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap" }
+        {
+          "label": "WCAG 2.1.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap"
+        }
       ]
     },
     {
@@ -1026,9 +1209,14 @@
         "Shortcuts are scoped to the canvas but the scoping check is broken on a custom contenteditable comment composer, so single-character shortcuts still fire there.",
         "Disable-shortcuts setting exists but is buried in an admin-only panel and is not exposed in the user's own preferences."
       ],
-      "tags": ["keyboard"],
+      "tags": [
+        "keyboard"
+      ],
       "references": [
-        { "label": "WCAG 2.1.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts" }
+        {
+          "label": "WCAG 2.1.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts"
+        }
       ]
     },
     {
@@ -1059,9 +1247,14 @@
         "Extend-session button restores the session but resets the comment composer to empty, discarding the in-progress draft.",
         "Session expires mid-edit on a thread reply; the user signs back in and the composer is empty with no draft recovery banner."
       ],
-      "tags": ["workflow-state"],
+      "tags": [
+        "workflow-state"
+      ],
       "references": [
-        { "label": "WCAG 2.2.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable" }
+        {
+          "label": "WCAG 2.2.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable"
+        }
       ]
     },
     {
@@ -1091,9 +1284,14 @@
         "After 2 minutes of inactivity, the artifact canvas is blurred and overlaid with 'Still there?' — blocking the very content the user was trying to read slowly.",
         "Presence system kicks idle viewers to the dashboard after 5 minutes; cognitively disabled reviewer loses scroll position, draft, and context."
       ],
-      "tags": ["realtime"],
+      "tags": [
+        "realtime"
+      ],
       "references": [
-        { "label": "WCAG 2.2.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable" }
+        {
+          "label": "WCAG 2.2.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable"
+        }
       ]
     },
     {
@@ -1125,9 +1323,15 @@
         "A 'reduce motion' toggle exists in settings but does not affect live cursors or typing indicators — it only dims static UI transitions.",
         "prefers-reduced-motion is ignored entirely; users who set the OS preference still see full cursor and presence animation by default."
       ],
-      "tags": ["realtime", "motion"],
+      "tags": [
+        "realtime",
+        "motion"
+      ],
       "references": [
-        { "label": "WCAG 2.2.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide" }
+        {
+          "label": "WCAG 2.2.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide"
+        }
       ]
     },
     {
@@ -1161,9 +1365,15 @@
         "Reconnection banner spans the full top of the viewport and flashes yellow three to four times per second until the connection restores; on a flaky network this strobes continuously.",
         "prefers-reduced-motion is ignored on collaboration indicators, so users who set the OS preference still get full-frequency flashes."
       ],
-      "tags": ["realtime", "motion"],
+      "tags": [
+        "realtime",
+        "motion"
+      ],
       "references": [
-        { "label": "WCAG 2.3.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold" }
+        {
+          "label": "WCAG 2.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold"
+        }
       ]
     },
     {
@@ -1193,9 +1403,16 @@
         "Activating the skip link scrolls the thread panel into view but leaves focus on the link, so the next Tab still goes back into the canvas tab order.",
         "Thread panel is a plain <div> with no landmark role and no skip target; screen-reader landmark navigation skips past it entirely."
       ],
-      "tags": ["keyboard", "navigation", "threads"],
+      "tags": [
+        "keyboard",
+        "navigation",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 2.4.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks" }
+        {
+          "label": "WCAG 2.4.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks"
+        }
       ]
     },
     {
@@ -1225,9 +1442,16 @@
         "Version sidebar is a <div class='versions'> with no role; screen-reader landmark navigation passes over it with no announcement.",
         "Skip link scrolls the sidebar into view but leaves focus on the skip link, so the next Tab returns to the canvas."
       ],
-      "tags": ["keyboard", "navigation", "versioning"],
+      "tags": [
+        "keyboard",
+        "navigation",
+        "versioning"
+      ],
       "references": [
-        { "label": "WCAG 2.4.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks" }
+        {
+          "label": "WCAG 2.4.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks"
+        }
       ]
     },
     {
@@ -1257,9 +1481,15 @@
         "Title is the raw artifact UUID ('Review · a8f3b2c1-…') with no human-readable name.",
         "Title is set once at initial load and never updates; a screen-reader user switching versions has no audible confirmation that the page now represents a different version."
       ],
-      "tags": ["navigation", "versioning"],
+      "tags": [
+        "navigation",
+        "versioning"
+      ],
       "references": [
-        { "label": "WCAG 2.4.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/page-titled" }
+        {
+          "label": "WCAG 2.4.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/page-titled"
+        }
       ]
     },
     {
@@ -1289,9 +1519,17 @@
         "When a new pin is added at the top of the artifact, it is appended at the end of the DOM and visited last in tab order despite being visually first.",
         "Tab order matches creation order in one direction (Tab) but reverse-creation order with Shift+Tab — neither matches visual position."
       ],
-      "tags": ["keyboard", "focus", "threads", "annotations"],
+      "tags": [
+        "keyboard",
+        "focus",
+        "threads",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.4.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order" }
+        {
+          "label": "WCAG 2.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order"
+        }
       ]
     },
     {
@@ -1321,9 +1559,16 @@
         "Toolbar reorders so the user's most-recently-clicked action is first; keyboard users tab through a different sequence each session.",
         "Approve and Reject swap positions between desktop and tablet layouts, so a reviewer using both devices loses their tab-stop memory."
       ],
-      "tags": ["keyboard", "focus", "workflow-state"],
+      "tags": [
+        "keyboard",
+        "focus",
+        "workflow-state"
+      ],
       "references": [
-        { "label": "WCAG 2.4.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order" }
+        {
+          "label": "WCAG 2.4.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order"
+        }
       ]
     },
     {
@@ -1353,9 +1598,15 @@
         "Mention is conveyed only by the user's avatar color and an @ glyph; the linked element has no text and no aria-label.",
         "Mention chips in the comment body show display names, but in notification previews they collapse to '@user' with no name — accessible name varies by surface."
       ],
-      "tags": ["threads", "name-role-value"],
+      "tags": [
+        "threads",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 2.4.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context" }
+        {
+          "label": "WCAG 2.4.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context"
+        }
       ]
     },
     {
@@ -1385,9 +1636,15 @@
         "Visible link text is 'see here' with no version label; aria-label is also 'see here' or empty.",
         "Activity-log entries link to versions with no author or date in the accessible name — only 'Reverted to v2' — so a user cannot tell which v2 across history is meant."
       ],
-      "tags": ["versioning", "name-role-value"],
+      "tags": [
+        "versioning",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 2.4.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context" }
+        {
+          "label": "WCAG 2.4.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context"
+        }
       ]
     },
     {
@@ -1418,9 +1675,15 @@
         "Search and filter controls exist but only filter the dashboard list of artifacts, not annotations within a single review.",
         "Annotation list is reachable but lacks keyboard activation — entries respond to mouse click only, blocking keyboard and switch users."
       ],
-      "tags": ["navigation", "annotations"],
+      "tags": [
+        "navigation",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.4.5 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways" }
+        {
+          "label": "WCAG 2.4.5 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways"
+        }
       ]
     },
     {
@@ -1450,9 +1713,15 @@
         "Heading is the timestamp ('May 12 at 2:14pm') with no topic; multiple threads from the same minute have indistinguishable headings.",
         "First-comment summary exists in the body but the visible heading is the raw author display ('@patricia') with no topic — every thread by Patricia has the same heading."
       ],
-      "tags": ["threads", "name-role-value"],
+      "tags": [
+        "threads",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 2.4.6 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/headings-and-labels" }
+        {
+          "label": "WCAG 2.4.6 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/headings-and-labels"
+        }
       ]
     },
     {
@@ -1482,9 +1751,15 @@
         "Focus indicator is a subtle drop-shadow only; on a busy gradient artifact background the shadow is invisible.",
         "Pin focus relies entirely on the browser's default outline:auto which the tool then overrides with outline:none — focus is invisible."
       ],
-      "tags": ["focus", "annotations"],
+      "tags": [
+        "focus",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.4.7 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible" }
+        {
+          "label": "WCAG 2.4.7 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible"
+        }
       ]
     },
     {
@@ -1514,9 +1789,15 @@
         "Focus indicator is a 1px light-gray border that disappears against the tool's light-gray chrome surround.",
         "Canvas focus indicator looks identical to the hover state of a pin inside the canvas, confusing users about whether canvas or a pin has focus."
       ],
-      "tags": ["focus", "zoom-pan"],
+      "tags": [
+        "focus",
+        "zoom-pan"
+      ],
       "references": [
-        { "label": "WCAG 2.4.7 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible" }
+        {
+          "label": "WCAG 2.4.7 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible"
+        }
       ]
     },
     {
@@ -1547,9 +1828,15 @@
         "Version-compare side panel slides in from the right and covers any pin focused near the right edge of the canvas; the focus ring is fully obscured until the panel is dismissed.",
         "A 'new comment' real-time notification toast appears at the top-right corner and covers the focus ring on any pin focused in that region."
       ],
-      "tags": ["focus", "annotations"],
+      "tags": [
+        "focus",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.4.11 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum" }
+        {
+          "label": "WCAG 2.4.11 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum"
+        }
       ]
     },
     {
@@ -1579,9 +1866,14 @@
         "Three-finger tap is the only way to fit-to-screen; users who cannot coordinate three fingers cannot recover from a zoomed-in state.",
         "Rotate-artifact is bound only to a two-finger twist gesture with no menu item or keyboard shortcut."
       ],
-      "tags": ["zoom-pan"],
+      "tags": [
+        "zoom-pan"
+      ],
       "references": [
-        { "label": "WCAG 2.5.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures" }
+        {
+          "label": "WCAG 2.5.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures"
+        }
       ]
     },
     {
@@ -1609,9 +1901,14 @@
         "Resize handles on a placed region require drag — they cannot be moved via arrow keys or click-to-target.",
         "The tooltip on the region tool reads 'click and drag to create' with no alternative offered to users who cannot drag."
       ],
-      "tags": ["annotations"],
+      "tags": [
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.5.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures" }
+        {
+          "label": "WCAG 2.5.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures"
+        }
       ]
     },
     {
@@ -1641,9 +1938,14 @@
         "Aborted pin placement still broadcasts a 'Patricia is placing an annotation' presence event that flashes on every collaborator's screen.",
         "Escape during placement clears the visual preview but the annotation still saves to the server and appears after a refresh."
       ],
-      "tags": ["annotations"],
+      "tags": [
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.5.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-cancellation" }
+        {
+          "label": "WCAG 2.5.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-cancellation"
+        }
       ]
     },
     {
@@ -1672,9 +1974,15 @@
         "Visible label '12' is rewritten in the accessible name as 'annotation twelve' — voice 'click twelve' does not match.",
         "Pin accessible name is just the raw ID ('annotation_a8f3b2') and the visible number is rendered via a background-image so it is not in the accessible name at all."
       ],
-      "tags": ["annotations", "name-role-value"],
+      "tags": [
+        "annotations",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 2.5.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name" }
+        {
+          "label": "WCAG 2.5.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name"
+        }
       ]
     },
     {
@@ -1704,9 +2012,15 @@
         "Approve button uses an icon font with aria-label='check, Approve homepage v4' — the leading 'check' breaks voice 'click Approve'.",
         "Resolve thread button visible as 'Resolve' has accessible name 'Mark thread as resolved and archive' — voice 'click Resolve' does not fire."
       ],
-      "tags": ["workflow-state", "name-role-value"],
+      "tags": [
+        "workflow-state",
+        "name-role-value"
+      ],
       "references": [
-        { "label": "WCAG 2.5.3 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name" }
+        {
+          "label": "WCAG 2.5.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name"
+        }
       ]
     },
     {
@@ -1736,9 +2050,15 @@
         "Rotate the device 90° to rotate the artifact is the only rotate control — users who use the tablet in a fixed mount cannot rotate.",
         "Motion actuation respects no OS or in-app preference and fires continuously when the device is moved at all."
       ],
-      "tags": ["motion", "zoom-pan"],
+      "tags": [
+        "motion",
+        "zoom-pan"
+      ],
       "references": [
-        { "label": "WCAG 2.5.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/motion-actuation" }
+        {
+          "label": "WCAG 2.5.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/motion-actuation"
+        }
       ]
     },
     {
@@ -1768,9 +2088,14 @@
         "Region handles support drag-to-resize but no keyboard or click-target resize; users who can't drag cannot adjust region size after creation.",
         "A 'Reposition' menu item exists but only opens a coordinate text input with no live preview — precision is worse than drag and there's no equivalent nudge mode."
       ],
-      "tags": ["annotations"],
+      "tags": [
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.5.7 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements" }
+        {
+          "label": "WCAG 2.5.7 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements"
+        }
       ]
     },
     {
@@ -1800,9 +2125,14 @@
         "There is no text or stepper input for an exact position — users who can't drag cannot reach 50% precisely.",
         "On touch, a tap on the track is ignored; only a horizontal swipe gesture moves the divider."
       ],
-      "tags": ["versioning"],
+      "tags": [
+        "versioning"
+      ],
       "references": [
-        { "label": "WCAG 2.5.7 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements" }
+        {
+          "label": "WCAG 2.5.7 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements"
+        }
       ]
     },
     {
@@ -1832,9 +2162,15 @@
         "Cluster of 5 pins at 18x18 each, spaced 4 pixels apart — neither the size nor the spacing exception is met.",
         "At 50% zoom the pin hit area shrinks to 12x12, well below 24x24, even though the on-canvas pin is still rendered as a 24-pixel SVG."
       ],
-      "tags": ["target-size", "annotations"],
+      "tags": [
+        "target-size",
+        "annotations"
+      ],
       "references": [
-        { "label": "WCAG 2.5.8 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum" }
+        {
+          "label": "WCAG 2.5.8 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum"
+        }
       ]
     },
     {
@@ -1864,9 +2200,91 @@
         "Resolve and delete sit side-by-side at 20x20 with 1-pixel gap; a misfired tap deletes a comment when the user meant to resolve.",
         "At narrow viewport the comment-card action bar collapses target sizes to 16x16 to fit horizontally instead of stacking vertically."
       ],
-      "tags": ["target-size", "threads"],
+      "tags": [
+        "target-size",
+        "threads"
+      ],
       "references": [
-        { "label": "WCAG 2.5.8 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum" }
+        {
+          "label": "WCAG 2.5.8 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum"
+        }
+      ]
+    },
+    {
+      "id": "3.1.1-document-language",
+      "wcag_criterion": "3.1.1",
+      "wcag_title": "Language of Page",
+      "level": "A",
+      "category": "understandable",
+      "title": "The review tool declares the page's primary human language on the <html> element",
+      "description": "Screen readers, browser translation engines, and language-aware spellcheck all key off the page's lang attribute. A design-review tool without a lang declaration on <html> leaves a screen reader guessing — JAWS may read English content with a French voice, VoiceOver may mispronounce reviewer names and UI strings, and Google Translate may translate-into the very language the page already uses. The primary language of the review tool's UI shell must be declared on <html lang=\"...\"> so assistive tech and language tools render the right voice, prosody, and hyphenation from the moment the page loads.",
+      "how_to_test": [
+        "View source on the review tool's main artifact page and confirm <html> has a lang attribute set to a valid BCP 47 language tag (e.g. lang=\"en\", lang=\"en-US\", lang=\"ja\").",
+        "Confirm the declared language matches the actual primary language of the UI chrome — not a stale default like lang=\"en\" on a tool whose UI has been localized to Japanese.",
+        "Load the tool with VoiceOver / NVDA and confirm the chosen voice matches the declared language (an English voice for an English UI, not a fallback robotic voice).",
+        "If the tool supports UI locale switching, confirm the lang attribute updates when the user changes locale — not pinned to the user's first-session value.",
+        "Run axe DevTools and confirm the 'html-has-lang' and 'html-lang-valid' rules pass."
+      ],
+      "pass_criteria": [
+        "<html> carries a valid lang attribute with a BCP 47 language tag.",
+        "The declared lang matches the primary language of the UI chrome currently being rendered.",
+        "Switching UI locale updates the lang attribute to the new locale.",
+        "axe DevTools reports no violations on 'html-has-lang' or 'html-lang-valid'."
+      ],
+      "fail_examples": [
+        "Main review page renders <html> with no lang attribute; VoiceOver falls back to the system default voice and mispronounces every reviewer name.",
+        "UI is fully localized into Japanese but <html lang=\"en\"> persists because the locale switcher only swaps strings, not the document language.",
+        "lang=\"english\" — not a valid BCP 47 tag; assistive tech treats it as unknown.",
+        "<html lang=\"\"> (empty string) shipped on a production build, silently failing axe and breaking screen-reader pronunciation."
+      ],
+      "tags": [
+        "language"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-page"
+        }
+      ]
+    },
+    {
+      "id": "3.1.2-comment-language-tagging",
+      "wcag_criterion": "3.1.2",
+      "wcag_title": "Language of Parts",
+      "level": "AA",
+      "category": "understandable",
+      "title": "Comments authored in a language different from the page declare that language on the comment element",
+      "description": "Cross-team design reviews routinely mix languages — a reviewer in Tokyo replies in Japanese to a thread on an English-defaulting tool, a contractor in São Paulo drops a Portuguese clarification into an otherwise-English review. If the page-level lang is 'en' and the Japanese reply has no lang attribute of its own, a screen reader pronounces the Japanese characters with an English voice and produces unintelligible output. The comment renderer must either detect or let the author declare the comment's language and emit a corresponding lang attribute on the comment element — and must never assert a language it cannot verify.",
+      "how_to_test": [
+        "On a tool whose page-level lang is 'en', post a reply containing Japanese (or any non-English script) and inspect the rendered comment element.",
+        "Confirm the comment element (or the text node wrapping its body) carries a lang attribute matching the comment's actual language (e.g. lang=\"ja\").",
+        "Read the comment with VoiceOver / NVDA and confirm the voice switches to the appropriate language pronunciation, not the page default.",
+        "If the tool does not auto-detect comment language, confirm the composer offers an explicit language picker — and that picking a language updates the lang attribute on the posted comment.",
+        "Verify the tool does not assert an incorrect lang (e.g. defaulting every comment to lang=\"en\" regardless of content), which is worse than declaring nothing.",
+        "Confirm @mentions, code blocks, and quoted prior comments preserve the lang attribute of the original author, not the current reader's locale."
+      ],
+      "pass_criteria": [
+        "Comments containing content in a language different from the page declare that language via a lang attribute on the comment element (or an inner wrapper around the differing text).",
+        "If language tagging is not implemented, the tool does not assert an incorrect lang — it inherits the page lang and the authoring flow does not falsely claim otherwise.",
+        "Screen readers switch pronunciation when reading a comment in a tagged non-default language.",
+        "Quoted text and @mentions preserve the original author's language tag when relevant."
+      ],
+      "fail_examples": [
+        "Page is lang=\"en\"; a Japanese reply renders inside <div class=\"comment-body\"> with no lang attribute, so VoiceOver reads kana with an English voice and produces gibberish.",
+        "Comment composer auto-tags every reply with lang=\"en\" regardless of the typed content; a Portuguese comment is asserted to be English and mispronounced confidently.",
+        "Tool offers a 'comment language' picker but the value is stored only in metadata and never emitted as an attribute on the rendered comment element.",
+        "Quoted prior comment in Japanese loses its original lang attribute when re-rendered inside an English-language reply, so the quote is read with an English voice."
+      ],
+      "tags": [
+        "language",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.1.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts"
+        }
       ]
     }
   ]
