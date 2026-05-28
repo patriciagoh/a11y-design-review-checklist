@@ -1030,6 +1030,105 @@
       "references": [
         { "label": "WCAG 2.1.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts" }
       ]
+    },
+    {
+      "id": "2.2.1-session-timeout-warning",
+      "wcag_criterion": "2.2.1",
+      "wcag_title": "Timing Adjustable",
+      "level": "A",
+      "category": "operable",
+      "title": "Authenticated review sessions warn before timeout and let the reviewer extend without losing an in-progress comment draft",
+      "description": "Design-review sessions are long: a reviewer can spend twenty minutes drafting a careful comment that explains a missed edge case, only to have an idle-timeout kick them out mid-paragraph and discard the draft. Users with cognitive disabilities, motor disabilities, or anyone who reads slowly are disproportionately punished by silent timeouts. WCAG 2.2.1 requires that any time limit either be adjustable, extendable, or removable. The acceptable pattern: warn the user before the session expires, give them at least 20 seconds (preferably more) to extend, and guarantee that in-progress drafts in the comment composer survive a session refresh.",
+      "how_to_test": [
+        "Sign into the review tool, open a thread, and begin typing a multi-paragraph comment in the composer without submitting it.",
+        "Let the session sit idle until it approaches its configured timeout (or shorten the timeout in a staging environment to make the test tractable).",
+        "Confirm a visible, focusable warning dialog appears at least 20 seconds before the session would terminate, announcing the remaining time and offering an 'Extend session' action.",
+        "Verify the warning is announced to a screen reader via role='alertdialog' or a live region, not only visually rendered.",
+        "Activate 'Extend session' with the keyboard and confirm the session continues and the in-progress draft is intact, character-for-character.",
+        "If the user ignores the warning and the session does expire, confirm the draft is preserved (in local storage or a server-side draft record) and restored on the next sign-in, not silently discarded."
+      ],
+      "pass_criteria": [
+        "Idle session timeouts surface a warning dialog at least 20 seconds before termination, with a clear 'Extend session' action.",
+        "The warning is exposed to assistive technology (role='alertdialog' or a live region) and is keyboard reachable.",
+        "Extending the session does not destroy in-progress comment drafts, version-compare selections, or other unsaved review state.",
+        "If a session does expire, in-progress drafts are recoverable on next sign-in rather than silently discarded."
+      ],
+      "fail_examples": [
+        "Idle timeout fires after 30 minutes with no warning at all; reviewer returns to find their 400-word draft replaced by a sign-in screen and the draft is gone.",
+        "A warning toast appears 5 seconds before timeout in a bottom corner with no role='alertdialog' and no keyboard focus — screen-reader and keyboard users miss it entirely.",
+        "Extend-session button restores the session but resets the comment composer to empty, discarding the in-progress draft.",
+        "Session expires mid-edit on a thread reply; the user signs back in and the composer is empty with no draft recovery banner."
+      ],
+      "tags": ["workflow-state"],
+      "references": [
+        { "label": "WCAG 2.2.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable" }
+      ]
+    },
+    {
+      "id": "2.2.1-realtime-presence-not-time-limited",
+      "wcag_criterion": "2.2.1",
+      "wcag_title": "Timing Adjustable",
+      "level": "A",
+      "category": "operable",
+      "title": "Presence indicators and live cursors do not impose an action time limit that kicks idle viewers out of the review",
+      "description": "Real-time presence systems sometimes piggyback an 'idle' concept onto active viewing — 'you have been idle 30 seconds, leaving the review session' or 'inactive viewers are removed from the live cursor list after 60 seconds'. For a reviewer who reads slowly, uses a screen reader and needs time to absorb a long thread, or simply pauses to think, this is a time limit on the act of viewing. WCAG 2.2.1 does not permit imposing such limits on a non-real-time activity like reading a design and its comments. Presence and cursor systems may dim or fade an idle indicator visually, but must not eject the viewer from the session, hide content, or block their ability to continue reviewing.",
+      "how_to_test": [
+        "Open a review as a viewer (not the host) and remain on the page without interacting for 1 minute, 5 minutes, and 15 minutes.",
+        "Confirm no banner, modal, or toast appears warning that the viewer will be removed due to inactivity, and confirm the user is not actually removed from the session.",
+        "Confirm that thread content, annotations, and the artifact remain visible and interactable throughout — nothing is hidden or blurred due to idleness.",
+        "If the presence system dims the user's own avatar in the presence row after inactivity, confirm that is a purely visual cue and does not block any action.",
+        "Verify settings or documentation explicitly state that viewing is not subject to an idle timeout, distinct from session authentication timeout."
+      ],
+      "pass_criteria": [
+        "Idle viewers are never removed from a live review session due to inactivity alone.",
+        "Content (artifact, threads, annotations) remains fully visible and interactable regardless of how long the viewer has been idle.",
+        "Any 'idle' presence cue is purely cosmetic (dimmed avatar, faded cursor) and does not block actions or hide content.",
+        "Viewing-idle behavior is distinct from authentication-session timeout and is documented as not imposing an action time limit."
+      ],
+      "fail_examples": [
+        "A modal appears after 60 seconds of inactivity reading: 'You've been idle. Click to stay in the session' — clicking is required or the user is ejected and the thread closes.",
+        "Live cursors and presence avatars vanish after 30 seconds of no mouse movement, and a banner reads 'Rejoin to view live updates' — a screen-reader user reading a long thread is silently demoted to a stale snapshot.",
+        "After 2 minutes of inactivity, the artifact canvas is blurred and overlaid with 'Still there?' — blocking the very content the user was trying to read slowly.",
+        "Presence system kicks idle viewers to the dashboard after 5 minutes; cognitively disabled reviewer loses scroll position, draft, and context."
+      ],
+      "tags": ["realtime"],
+      "references": [
+        { "label": "WCAG 2.2.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable" }
+      ]
+    },
+    {
+      "id": "2.2.2-realtime-cursor-pause",
+      "wcag_criterion": "2.2.2",
+      "wcag_title": "Pause, Stop, Hide",
+      "level": "A",
+      "category": "operable",
+      "title": "Remote cursors, typing indicators, and presence animations can be paused or hidden by the viewer",
+      "description": "Live remote cursors that dart across the artifact, 'Patricia is typing…' pulsing dots on every open thread, and presence avatars that bounce when a teammate joins are constant moving content that a viewer did not start and cannot stop. For users with vestibular disorders, attention disabilities, or anyone trying to focus on a single piece of feedback, this motion is disabling. WCAG 2.2.2 requires that any moving, blinking, or auto-updating content that starts automatically, lasts more than 5 seconds, and is presented alongside other content can be paused, stopped, or hidden by the user — without losing access to the underlying review.",
+      "how_to_test": [
+        "Open a review with at least two other live participants moving cursors, typing in threads, and joining/leaving so presence animations are actively running.",
+        "Locate a user-facing setting (in tool preferences or a session toolbar control) to pause or hide remote cursors, typing indicators, and presence animations.",
+        "Toggle each control and confirm: remote cursors stop rendering (or freeze in place), typing indicators stop their pulsing animation, and presence-row join/leave animations are suppressed.",
+        "Confirm the underlying information remains available in a static form — e.g. a static presence list, a static 'Patricia is replying' text label — rather than being removed entirely.",
+        "Confirm the setting persists across sessions and is reachable by keyboard with an accessible name.",
+        "Verify that respecting prefers-reduced-motion auto-applies the pause/hide defaults for users who have set that OS preference."
+      ],
+      "pass_criteria": [
+        "The user can pause or hide remote cursors, typing indicators, and presence animations from within the review tool.",
+        "Pausing or hiding does not destroy the underlying information — a static representation remains available.",
+        "The preference persists across sessions and is keyboard reachable with an accessible name.",
+        "prefers-reduced-motion is respected and auto-applies the reduced-motion defaults without requiring per-user opt-in."
+      ],
+      "fail_examples": [
+        "Remote cursors stream across the canvas with no way to disable them; a reviewer with vestibular sensitivity gets motion-sick after 30 seconds and has to close the tab.",
+        "Typing indicators pulse perpetually on every open thread (5+ at once) with no global pause control; an attention-impaired reviewer cannot focus on reading.",
+        "Presence-row avatars bounce and slide when teammates join; the only way to stop the motion is to log out of the session entirely, losing access to the review.",
+        "A 'reduce motion' toggle exists in settings but does not affect live cursors or typing indicators — it only dims static UI transitions.",
+        "prefers-reduced-motion is ignored entirely; users who set the OS preference still see full cursor and presence animation by default."
+      ],
+      "tags": ["realtime", "motion"],
+      "references": [
+        { "label": "WCAG 2.2.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide" }
+      ]
     }
   ]
 }
