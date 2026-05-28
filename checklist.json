@@ -799,6 +799,237 @@
       "references": [
         { "label": "WCAG 1.4.13 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus" }
       ]
+    },
+    {
+      "id": "2.1.1-zoom-pan-keyboard",
+      "wcag_criterion": "2.1.1",
+      "wcag_title": "Keyboard",
+      "level": "A",
+      "category": "operable",
+      "title": "Artifact zoom and pan are fully operable from the keyboard alone",
+      "description": "Zooming into a button hit-state, panning to the corner of an artboard, and resetting back to fit-to-screen are core review actions — they are how a reviewer inspects whether the spec is right. Tools commonly ship zoom and pan as pointer-only gestures (scroll-wheel zoom, click-drag pan, pinch on trackpad), leaving keyboard-only and switch-control users locked out of every part of the artifact that is not visible in the default viewport. Zoom in, zoom out, fit-to-screen, and pan in four directions must each have a discoverable keyboard equivalent — either standard shortcuts (+/−, 0 to reset, arrow keys to pan) or documented bindings surfaced in the keyboard-shortcuts help dialog.",
+      "how_to_test": [
+        "Open an artifact larger than the canvas viewport so panning and zooming are necessary to inspect every region.",
+        "Use only the keyboard to zoom in (try + and =), zoom out (try -), reset to fit-to-screen (try 0), and pan in all four directions (try arrow keys after focusing the canvas).",
+        "Confirm each action produces the same outcome as its pointer equivalent — and that the canvas exposes a discoverable focus state so the user knows the keyboard is targeting it.",
+        "Open the tool's keyboard-shortcuts help dialog and confirm zoom/pan bindings are documented, including any non-standard keys.",
+        "Test with a screen reader running to confirm announcements (e.g. 'zoom 150%') update via a live region as the level changes."
+      ],
+      "pass_criteria": [
+        "Zoom in, zoom out, reset zoom, and pan in four directions are each achievable using the keyboard alone.",
+        "The artifact canvas exposes a focused state so the user can tell the keyboard input is targeting it.",
+        "Keyboard bindings for zoom and pan are documented in an in-product shortcuts dialog or help page.",
+        "Zoom level changes are announced (live region or focusable status) so non-sighted users know the current state."
+      ],
+      "fail_examples": [
+        "Zoom is bound only to Ctrl+scroll-wheel and pinch gestures; keyboard users have no way to zoom past the default 100%.",
+        "Pan is implemented exclusively as click-and-drag on the canvas; arrow keys do nothing when the canvas has focus.",
+        "Pressing + zooms in but there is no zoom-out keybinding, only the on-screen '−' button — which is unreachable by Tab because the canvas viewport intercepts focus.",
+        "Zoom shortcuts exist but are not documented anywhere in the product, so keyboard users have no way to discover them.",
+        "Canvas accepts focus but has no visible focus indicator, so keyboard users cannot tell whether arrow keys will pan or scroll the page."
+      ],
+      "tags": ["keyboard", "zoom-pan"],
+      "references": [
+        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+      ]
+    },
+    {
+      "id": "2.1.1-annotation-placement-keyboard",
+      "wcag_criterion": "2.1.1",
+      "wcag_title": "Keyboard",
+      "level": "A",
+      "category": "operable",
+      "title": "Users can place a new annotation pin on the artifact using the keyboard alone",
+      "description": "Creating a new annotation is the foundational action in a design-review tool — without it, a user can read threads but cannot contribute. Tools overwhelmingly implement annotation placement as a pointer-only flow (click the canvas at the desired location), making the most important contributive action of the product inaccessible to keyboard-only and switch-control users. A keyboard path must exist: a discoverable command to enter placement mode (e.g. an 'Add annotation' button or shortcut), arrow keys to move a visible placement cursor across the canvas, and Enter to commit the placement and open the comment composer.",
+      "how_to_test": [
+        "Focus the canvas using the keyboard and locate the 'Add annotation' control (a toolbar button or a documented shortcut such as 'a').",
+        "Activate it with Enter or Space and confirm a visible placement cursor appears on the canvas with an accessible name announcing the mode ('Annotation placement mode active, use arrow keys to position').",
+        "Use arrow keys (with optional Shift for larger steps) to move the placement cursor and confirm its position updates visibly and is announced — typically via a live region reporting coordinates or the underlying region name.",
+        "Press Enter and confirm the pin is committed at the cursor location and the comment composer opens with focus inside the textarea.",
+        "Press Escape during placement and confirm placement mode exits without creating a pin and focus returns to the originating control."
+      ],
+      "pass_criteria": [
+        "An 'Add annotation' control is keyboard reachable and entering placement mode does not require a mouse click on the canvas.",
+        "A visible placement cursor renders on the canvas with an accessible name announcing the active mode.",
+        "Arrow keys move the placement cursor in granular increments and the position is announced or programmatically observable.",
+        "Enter commits the pin and moves focus to the comment composer; Escape cancels and restores focus to the originating control."
+      ],
+      "fail_examples": [
+        "Placement is bound only to canvas-click; keyboard users can read every existing annotation but cannot create one.",
+        "'Add annotation' button is reachable by Tab but activating it immediately requires a canvas mouse-click to set position, with no keyboard cursor.",
+        "Arrow keys scroll the page rather than moving the placement cursor, because the canvas does not capture key events while in placement mode.",
+        "Placement cursor appears visually but has no accessible name and emits no announcement; a screen-reader user cannot tell whether the mode is active.",
+        "Pressing Enter commits the pin but focus stays on the toolbar button instead of moving into the comment composer, requiring the user to Tab through the entire chrome to reach the textarea."
+      ],
+      "tags": ["keyboard", "annotations"],
+      "references": [
+        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+      ]
+    },
+    {
+      "id": "2.1.1-thread-keyboard-actions",
+      "wcag_criterion": "2.1.1",
+      "wcag_title": "Keyboard",
+      "level": "A",
+      "category": "operable",
+      "title": "Every thread action — reply, resolve, edit, delete, mention — is operable from the keyboard alone",
+      "description": "A thread is interactive content: reviewers reply, resolve, edit their own comments, delete mistaken posts, and insert @mentions to pull collaborators in. If any of these actions is gated behind a hover-only menu, a right-click context menu without a keyboard equivalent, or a typeahead that requires pointer selection, keyboard-only users are reduced to read-only participants — they can see the conversation but cannot take part. Every action must reach via Tab, activate via Enter or Space, and the mention typeahead must support arrow keys + Enter to select a candidate.",
+      "how_to_test": [
+        "Open a thread containing a comment the current user authored and one authored by someone else.",
+        "Tab through the thread and confirm Reply, Resolve, Edit (on own comment), Delete (on own comment), and a React/Emoji action are each reachable with a visible focus indicator and an accessible name.",
+        "Activate Reply with Enter; confirm focus moves into the reply textarea. In the textarea, type '@' and a partial name, and confirm the mention typeahead opens.",
+        "Use arrow keys to move through the typeahead candidates and Enter to select one; confirm a mention chip is inserted at the cursor.",
+        "Confirm Resolve toggles state, that Edit places the cursor in an editable comment body, and that Delete prompts a keyboard-accessible confirmation rather than firing silently."
+      ],
+      "pass_criteria": [
+        "Reply, Resolve, Edit, Delete, and Mention-insertion are each reachable and activatable using only the keyboard.",
+        "Each action exposes a visible focus indicator and an accessible name.",
+        "The @mention typeahead supports arrow keys to move through candidates and Enter to select.",
+        "Destructive actions (Delete) trigger a keyboard-operable confirmation, not a silent removal."
+      ],
+      "fail_examples": [
+        "Edit and Delete only appear in a hover-only kebab menu that never opens on keyboard focus; keyboard users can never edit or delete their own comments.",
+        "Resolve action is implemented as a right-click context-menu item with no keyboard equivalent in the thread toolbar.",
+        "Typing '@' opens the mention typeahead visually but arrow keys move the textarea caret instead of the typeahead selection, and Enter inserts a newline instead of selecting a candidate.",
+        "Reply button has tabindex='-1' so it never receives focus; keyboard users can read replies but never post one.",
+        "Delete fires immediately on Enter with no confirmation, deleting a comment by accident when the user meant to activate Reply on the adjacent button."
+      ],
+      "tags": ["keyboard", "threads"],
+      "references": [
+        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+      ]
+    },
+    {
+      "id": "2.1.1-workflow-transition-keyboard",
+      "wcag_criterion": "2.1.1",
+      "wcag_title": "Keyboard",
+      "level": "A",
+      "category": "operable",
+      "title": "Workflow state transitions (Submit for review, Approve, Request changes) are operable from the keyboard alone",
+      "description": "Workflow transitions are the highest-stakes actions in the tool — approving an artifact, sending it back for changes, or moving it from draft to review changes downstream behavior across the whole team. These actions are commonly clustered in a workflow toolbar with custom-styled buttons or split-button menus that look right but bypass native button semantics. Every workflow transition must be reachable by Tab, activatable by Enter or Space, and any confirmation modal that gates a destructive transition must itself be keyboard operable (focus moves to the modal, Escape cancels, Enter confirms the primary action).",
+      "how_to_test": [
+        "Load an artifact in 'In review' state where the current user has permission to approve or request changes.",
+        "Tab to the workflow toolbar and confirm Submit for review (where applicable), Approve, and Request changes are each reachable with a visible focus indicator.",
+        "Activate each transition with Enter and confirm the action fires — including the case where the control is a split-button (primary + caret) where both the primary action and the dropdown are keyboard reachable.",
+        "If the transition opens a confirmation modal ('Are you sure you want to request changes?'), confirm focus moves into the modal, Escape cancels, and Enter confirms the primary action.",
+        "Confirm the resulting state change is announced via a live region or by moving focus to a confirmation message — not signaled only by a silent chip-color change."
+      ],
+      "pass_criteria": [
+        "Submit for review, Approve, and Request changes are reachable by Tab and activatable by Enter or Space.",
+        "Split-button workflow controls expose both the primary action and the dropdown menu to keyboard users.",
+        "Confirmation modals gating destructive transitions move focus into the modal, support Escape to cancel, and Enter to confirm.",
+        "State transitions are announced to assistive technology, not signaled only by a silent visual change."
+      ],
+      "fail_examples": [
+        "Approve button is rendered as a styled <div onClick=...> with no tabindex; keyboard users cannot reach the highest-stakes action in the product.",
+        "Request changes opens a confirmation modal but focus stays on the trigger button behind the modal, so keyboard users cannot reach the Confirm button without manually tabbing through the entire underlying page first.",
+        "Workflow split-button exposes the primary Approve but the caret dropdown (which contains 'Approve with comment' and 'Approve and notify team') is pointer-only.",
+        "Pressing Enter on the focused Approve button does nothing because the handler is bound to click only, not to keydown.",
+        "Modal traps focus correctly but Escape does not close it, so a user who tabbed in by mistake cannot back out."
+      ],
+      "tags": ["keyboard", "workflow-state"],
+      "references": [
+        { "label": "WCAG 2.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard" }
+      ]
+    },
+    {
+      "id": "2.1.2-annotation-mode-no-trap",
+      "wcag_criterion": "2.1.2",
+      "wcag_title": "No Keyboard Trap",
+      "level": "A",
+      "category": "operable",
+      "title": "Annotation placement mode does not trap keyboard focus — Escape exits and restores prior focus",
+      "description": "Annotation placement is a modal-ish state: arrow keys are repurposed to move a placement cursor, Enter commits the pin, and ordinary Tab behavior is often suppressed so focus does not wander off the canvas mid-placement. That repurposing is fine, but it must include a documented escape route. Users who enter placement mode by accident, change their mind, or cannot complete the placement (because the target is off-screen, or because they activated the mode while intending to do something else) need a way out. Escape must exit placement mode without committing a pin and must restore focus to the control that opened the mode.",
+      "how_to_test": [
+        "Activate 'Add annotation' from the toolbar so placement mode begins and a placement cursor appears on the canvas.",
+        "Press Escape and confirm placement mode exits, no pin is created, and focus returns to the 'Add annotation' toolbar button that opened the mode.",
+        "Re-enter placement mode and try alternate exits: pressing Tab should not be silently swallowed forever — at minimum, Tab inside placement mode should either advance to a documented next stop or be explicitly intercepted with a visible indicator that Escape is the exit.",
+        "Confirm a screen reader announces the placement-mode entry and the Escape behavior (e.g. 'Placement mode active, press Escape to cancel').",
+        "Open the keyboard-shortcuts help and confirm Escape-to-exit is documented for placement mode."
+      ],
+      "pass_criteria": [
+        "Escape exits annotation placement mode without committing a pin.",
+        "Focus is restored to the control that opened placement mode (typically the 'Add annotation' button).",
+        "Placement mode is documented in the keyboard-shortcuts help, including the Escape exit.",
+        "The mode entry and exit are announced to assistive technology, not signaled only by visual cursor changes."
+      ],
+      "fail_examples": [
+        "Pressing Escape inside placement mode does nothing; the user must press Enter to commit an unwanted pin, then delete it.",
+        "Escape exits placement mode but focus is dumped onto document.body, forcing the keyboard user to Tab from the top of the page back to where they were.",
+        "Tab is silently swallowed during placement mode with no visible indicator and no documented exit; switch-control users assume the tool has frozen.",
+        "Placement mode entry is announced but the Escape behavior is not, so screen-reader users have no way to learn how to leave.",
+        "Escape closes the entire review panel instead of just the placement mode, destroying the user's context."
+      ],
+      "tags": ["keyboard", "focus", "annotations"],
+      "references": [
+        { "label": "WCAG 2.1.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap" }
+      ]
+    },
+    {
+      "id": "2.1.2-modal-thread-no-trap",
+      "wcag_criterion": "2.1.2",
+      "wcag_title": "No Keyboard Trap",
+      "level": "A",
+      "category": "operable",
+      "title": "Expanded thread modals do not trap focus — Escape closes them and restores focus to the originating marker",
+      "description": "Some review tools open the full thread for an annotation in a modal overlay — typically when the side panel would be too narrow or when the user clicks a pin directly on the canvas. The modal correctly traps focus while open (keeping Tab inside its replies, action buttons, and composer), but the failure mode is forgetting an exit: Escape does nothing, the close button is pointer-only, or focus on close lands somewhere arbitrary instead of returning to the pin that opened the modal. Keyboard users are then either stuck inside the modal or dropped at the top of the document, losing their place in the review.",
+      "how_to_test": [
+        "Tab to an annotation pin on the canvas and press Enter to open its expanded thread modal.",
+        "Confirm focus moves into the modal (typically to the first reply or to the composer), that the modal traps focus while open (Tab cycles through the modal's controls and back), and that the rest of the page is inert.",
+        "Press Escape and confirm the modal closes immediately and focus returns to the pin that opened it — not to document.body, the toolbar, or a different pin.",
+        "Confirm a visible close (X) button exists, is keyboard reachable inside the modal, has an accessible name ('Close thread'), and produces the same focus-restoration behavior when activated.",
+        "Verify the modal renders with role='dialog' (or 'alertdialog' for destructive flows), an aria-labelledby pointing to the thread's title, and aria-modal='true' so screen readers treat it correctly."
+      ],
+      "pass_criteria": [
+        "Escape closes the expanded thread modal immediately, without committing any in-progress draft or destroying unsaved input silently.",
+        "Focus on close returns to the annotation pin that opened the modal.",
+        "A keyboard-reachable close button exists inside the modal with an accessible name.",
+        "The modal uses role='dialog' (or 'alertdialog'), aria-modal='true', and an aria-labelledby that points to a meaningful thread title."
+      ],
+      "fail_examples": [
+        "Escape inside the thread modal does nothing; keyboard users must Tab to the close X — which is also missing an accessible name.",
+        "Modal closes on Escape but focus lands on document.body, forcing the user to Tab from the very top of the page back to the pin.",
+        "Close X is rendered as a <div> with a click handler and no role='button', so screen readers do not announce it and keyboard users cannot reach it.",
+        "Modal traps focus correctly but there is no Escape, no close button, and no other exit — the only way out is to click outside the modal, which keyboard users cannot do.",
+        "Focus returns to the toolbar's 'Add annotation' button instead of the pin that opened the modal, destroying the user's spatial context."
+      ],
+      "tags": ["keyboard", "focus", "threads"],
+      "references": [
+        { "label": "WCAG 2.1.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap" }
+      ]
+    },
+    {
+      "id": "2.1.4-shortcut-collisions",
+      "wcag_criterion": "2.1.4",
+      "wcag_title": "Character Key Shortcuts",
+      "level": "A",
+      "category": "operable",
+      "title": "Single-character shortcuts can be disabled, remapped, or are scoped to the canvas so they do not fire while typing in comments",
+      "description": "Design-review tools love single-character shortcuts: 'c' to comment, 'r' to reply, 'a' to add annotation, 'e' to edit, 'g' for go-to-version. Power users love them; speech-input users and users who occasionally bump a key on a stuck keyboard hate them, because typing the letter 'c' inside a comment textarea can trigger a global 'create comment' action that loses their draft. WCAG 2.1.4 requires single-character shortcuts to be disable-able, remappable, or active only when the relevant component has focus. The acceptable design-review pattern is to scope shortcuts to the canvas: 'c' fires the action only when the canvas has focus, never while a text input or contenteditable is focused.",
+      "how_to_test": [
+        "Open the tool's keyboard-shortcuts help and list every single-character shortcut (typically a/c/r/e/g/n/v and similar).",
+        "Confirm at least one of the following is true: the user can disable single-character shortcuts globally in settings, remap each shortcut to a multi-key combination, or the shortcuts are scoped to fire only when the canvas (not a textarea or contenteditable) has focus.",
+        "Focus a comment composer textarea and type each single-character shortcut letter; confirm the typed letters appear in the textarea and the global action does NOT fire.",
+        "Focus an @mention typeahead and confirm typing letters filters the typeahead rather than triggering a global shortcut.",
+        "Verify shortcut scoping is documented in the help so users with speech-input or motor disabilities can predict behavior."
+      ],
+      "pass_criteria": [
+        "Single-character shortcuts either can be disabled globally, can be remapped, or are scoped to fire only when the canvas (and not a text input, textarea, or contenteditable) has focus.",
+        "Typing within a comment composer, an @mention typeahead, or any other text input never fires a global single-character shortcut.",
+        "Shortcut scoping or disable/remap controls are documented in the keyboard-shortcuts help.",
+        "Speech-input users (Dragon, Voice Control) can complete a review without accidentally firing shortcuts via dictated text."
+      ],
+      "fail_examples": [
+        "Typing 'r' inside a reply composer at the start of the word 'really' fires the global Reply action, opening a new reply on a different thread and losing the in-progress draft.",
+        "A speech-input user dictating 'create a new annotation here' triggers the 'c' (create), 'a' (add annotation), and 'n' (next) shortcuts mid-sentence.",
+        "Shortcuts are global with no scoping, no setting to disable, and no remap UI; the help page lists eleven single-character shortcuts and offers no way to turn them off.",
+        "Shortcuts are scoped to the canvas but the scoping check is broken on a custom contenteditable comment composer, so single-character shortcuts still fire there.",
+        "Disable-shortcuts setting exists but is buried in an admin-only panel and is not exposed in the user's own preferences."
+      ],
+      "tags": ["keyboard"],
+      "references": [
+        { "label": "WCAG 2.1.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts" }
+      ]
     }
   ]
 }
