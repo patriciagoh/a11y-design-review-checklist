@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "wcag_version": "2.2",
+  "conformance_level": "AA",
+  "released_at": "2026-05-28T00:00:00Z",
+  "items": [
+    {
+      "id": "1.1.1-placeholder",
+      "wcag_criterion": "1.1.1",
+      "wcag_title": "Non-text Content",
+      "level": "A",
+      "category": "perceivable",
+      "title": "Placeholder",
+      "description": "Placeholder description.",
+      "how_to_test": ["Test step."],
+      "pass_criteria": ["Pass criterion."],
+      "fail_examples": ["Fail example."],
+      "tags": ["made-up-tag"]
+    }
+  ]
+}

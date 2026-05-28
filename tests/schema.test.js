@@ -46,3 +46,18 @@ test('rejects item with invalid category', () => {
   const ok = validate(load('bad-category.json'));
   assert.equal(ok, false);
 });
+
+test('rejects item with unknown tag', () => {
+  const ok = validate(load('unknown-tag.json'));
+  assert.equal(ok, false);
+});
+
+test('rejects item with empty tags array', () => {
+  const ok = validate(load('empty-tags.json'));
+  assert.equal(ok, false);
+});
+
+test('rejects item with duplicate tags', () => {
+  const ok = validate(load('duplicate-tags.json'));
+  assert.equal(ok, false);
+});
