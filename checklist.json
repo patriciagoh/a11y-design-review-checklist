@@ -2518,6 +2518,285 @@
           "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-input"
         }
       ]
+    },
+    {
+      "id": "3.3.1-comment-validation-error-identified",
+      "wcag_criterion": "3.3.1",
+      "wcag_title": "Error Identification",
+      "level": "A",
+      "category": "understandable",
+      "title": "Comment submission errors name the field and the specific issue in text, not just a red outline",
+      "description": "When a reviewer's comment submission fails — over the length cap, flagged by a profanity filter, missing a required @mention to assign an action, attaching an unsupported file type — the error must be identified in text that names both the field and the specific issue. A red border around the textarea with no accompanying text leaves screen-reader users with no idea why the Submit button bounced their reply. The error must be programmatically associated with the failing input (aria-describedby) and rendered as readable text adjacent to it, so a screen reader announces 'Comment is over the 2000-character limit' rather than silently inheriting an invalid state.",
+      "how_to_test": [
+        "Submit a comment that exceeds the length cap and confirm the error text names both the field ('Comment') and the issue ('over 2000 characters').",
+        "Submit a reply missing a required @mention (in tools that require it for action assignment) and confirm the error names the missing requirement, not just 'Invalid'.",
+        "Trigger the profanity / content-policy filter (in tools that have one) and confirm the rejection is explained in text, not via a generic toast.",
+        "Attach an unsupported file type to a comment and verify the error names the field, the disallowed type, and what is allowed.",
+        "Inspect each failing input in DevTools and confirm the error text is wired via aria-describedby (or aria-errormessage) so the screen reader announces it on focus.",
+        "Repeat with a screen reader (VoiceOver / NVDA) and confirm the error is announced — not just visually red."
+      ],
+      "pass_criteria": [
+        "Every submission error names the failing field and the specific issue in human-readable text.",
+        "Error text is programmatically associated with the failing input via aria-describedby or aria-errormessage.",
+        "Failing inputs expose aria-invalid=\"true\" so assistive tech knows the field is in an error state.",
+        "Color is never the sole indicator — a red border without text fails this criterion.",
+        "Screen readers announce the error when the input receives focus."
+      ],
+      "fail_examples": [
+        "Comment textarea gets a red 1px border on over-length submission with no accompanying text; the screen-reader user has no clue why Submit did nothing.",
+        "A generic 'Could not post comment' toast appears for every error reason — the user cannot tell whether the failure was a length issue, a network issue, or a policy issue.",
+        "Profanity filter blocks the comment silently and clears the textarea — the typed content is lost and no error is shown.",
+        "Error text is rendered visually next to the textarea but not wired via aria-describedby, so screen-reader users navigating to the field hear only 'edit, comment' with no error context."
+      ],
+      "tags": [
+        "forms"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification"
+        }
+      ]
+    },
+    {
+      "id": "3.3.1-workflow-transition-error",
+      "wcag_criterion": "3.3.1",
+      "wcag_title": "Error Identification",
+      "level": "A",
+      "category": "understandable",
+      "title": "Failed workflow transitions explain which specific thread(s) or condition(s) block the change",
+      "description": "When a reviewer tries to move an artifact from 'In review' to 'Approved' but the transition is blocked — unresolved blocking threads, missing required approvers, a stale version — the failure message must identify which specific thread(s) or condition(s) block the change, not just 'Cannot approve.' A generic refusal leaves the user hunting through dozens of threads to find the blocker. The error should name each blocking thread by its topic or anchor and, where possible, link to it, so the reviewer can resolve the actual obstacle.",
+      "how_to_test": [
+        "Attempt to approve an artifact that has at least one unresolved thread marked 'blocking' and confirm the error names that specific thread (by topic, anchor, or pin number) and links to it.",
+        "Attempt to approve when a required approver has not yet signed off and confirm the error names the missing approver(s) by role or name.",
+        "Attempt to transition to a state that requires a fresh version (e.g. 'Requires changes' → 'Approved' without a re-upload) and confirm the error explains the version requirement.",
+        "Verify that when multiple conditions block the transition, all blockers are listed — not just the first encountered.",
+        "Confirm the error is announced via a live region or programmatically associated with the workflow control so assistive-tech users hear the full reason."
+      ],
+      "pass_criteria": [
+        "Workflow-transition errors name each specific blocker (thread, missing approver, version requirement) rather than a generic 'Cannot approve.'",
+        "Blocking threads are identified by topic, anchor, or pin number — and ideally linked.",
+        "When multiple conditions block, all are surfaced together.",
+        "The error is exposed programmatically to assistive tech (live region announcement or aria-describedby on the workflow button).",
+        "Disabled workflow buttons that fail this way still expose their reason via aria-describedby or an accessible tooltip."
+      ],
+      "fail_examples": [
+        "Clicking 'Approve' shows a toast 'Cannot approve right now' with no explanation — the reviewer has to manually audit every thread to find the blocker.",
+        "The Approve button is disabled with no exposed reason; sighted users see a faint tooltip on hover, keyboard / screen-reader users get nothing.",
+        "The error lists 'Unresolved threads: 3' as a count but does not name the threads, so the reviewer scrolls through 47 comments looking for the blockers.",
+        "Only the first blocker is reported; the reviewer fixes it, retries, hits a second blocker, fixes it, retries, hits a third — a frustrating game of whack-a-mole."
+      ],
+      "tags": [
+        "workflow-state",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification"
+        }
+      ]
+    },
+    {
+      "id": "3.3.2-comment-field-label",
+      "wcag_criterion": "3.3.2",
+      "wcag_title": "Labels or Instructions",
+      "level": "A",
+      "category": "understandable",
+      "title": "Comment composers carry visible labels and reply targets clarify which thread or comment is being addressed",
+      "description": "Comment composers in review tools are often visually minimal — a placeholder that disappears on focus, no label, no indication of which thread the reply belongs to. WCAG 3.3.2 requires labels or instructions when content needs user input. For threaded reply UIs, the label must also clarify the reply target: a reply 4 levels deep on a long thread needs to make clear (programmatically and visibly) which comment it answers, so a screen-reader user composing from the keyboard knows they are replying to Alice's comment about contrast and not Bob's later remark about copy.",
+      "how_to_test": [
+        "Open the top-level comment composer and confirm a visible label is present (or a persistent placeholder PLUS an aria-label / aria-labelledby providing the accessible name).",
+        "Open a reply composer 3+ levels deep on a long thread and confirm the accessible name (and ideally visible text) names the comment being replied to — e.g. 'Reply to Alice: contrast on the CTA looks low'.",
+        "Inspect with DevTools: every comment input has a non-empty accessible name and is not relying solely on a placeholder that vanishes on focus.",
+        "Open the @mention picker and confirm the search input itself has an accessible name ('Search people to mention'), not just an icon.",
+        "Test with a screen reader: navigate by form field and confirm each composer announces both its label AND its reply context."
+      ],
+      "pass_criteria": [
+        "Every comment composer has a visible label or a programmatically-associated accessible name.",
+        "Placeholders are not the sole label (they disappear on focus and are not announced by all AT consistently).",
+        "Reply composers identify the comment / thread being replied to in their accessible name.",
+        "Mention pickers, attachment inputs, and other secondary inputs inside the composer all have accessible names.",
+        "Required-field indicators (e.g. when a mention is required for action assignment) are exposed via aria-required and named in the label."
+      ],
+      "fail_examples": [
+        "Comment textarea has only a placeholder 'Write a comment…' with no <label> and no aria-label; focus puts the cursor in a field with no announced name.",
+        "Reply composer deep in a thread is announced as just 'edit' with no indication of which comment is being replied to.",
+        "@mention picker is a bare icon button labelled only by an @ glyph; screen readers announce 'button, at sign'.",
+        "Composer is a contenteditable <div> with no role or accessible name — screen readers ignore it entirely.",
+        "Required action-assignment field is enforced via JS only; aria-required is missing and the label does not mention the requirement."
+      ],
+      "tags": [
+        "forms",
+        "threads",
+        "name-role-value"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions"
+        }
+      ]
+    },
+    {
+      "id": "3.3.3-comment-error-suggestion",
+      "wcag_criterion": "3.3.3",
+      "wcag_title": "Error Suggestion",
+      "level": "AA",
+      "category": "understandable",
+      "title": "Submission errors on comments offer concrete fixes (trim to N characters, use @ to mention, switch file format)",
+      "description": "Beyond identifying that an error occurred (3.3.1), WCAG 3.3.3 requires that when a fix is known, the system suggests it. For comment composers this means: an over-length error states the current count and the limit ('2147 / 2000 — trim by 147 characters'); a missing-mention error suggests typing '@' to open the picker; an unsupported attachment lists supported formats; a profanity rejection explains the policy and suggests rephrasing. The suggestion must be concrete and actionable, not a vague 'Please try again.'",
+      "how_to_test": [
+        "Submit an over-length comment and confirm the error shows both the current count and the limit, plus suggests trimming.",
+        "Submit a comment missing a required @mention and confirm the suggestion names the action ('type @ to mention a teammate').",
+        "Attach an unsupported file type and confirm the error lists the supported types.",
+        "Trigger the content-policy / profanity filter (where present) and confirm the message explains the policy and invites rephrasing rather than rejecting opaquely.",
+        "Verify each suggestion is rendered in text (not only icons) and is programmatically associated with the failing input via aria-describedby."
+      ],
+      "pass_criteria": [
+        "Every fixable submission error includes a concrete, actionable suggestion in text.",
+        "Counts, limits, and supported values are stated explicitly where relevant.",
+        "Suggestions are wired to the input via aria-describedby so screen readers announce them on focus.",
+        "If a suggestion cannot be given safely (e.g. opaque server-side rejection), the system says so honestly rather than offering generic noise.",
+        "Suggestions do not steal focus or disrupt the user's typing — they appear inline near the input."
+      ],
+      "fail_examples": [
+        "Over-length error reads 'Comment too long' with no count and no limit; the user has no idea how much to trim.",
+        "Required-mention error reads 'Missing required field' with no hint about how to add a mention.",
+        "Unsupported attachment is rejected with 'File rejected' and no list of supported formats.",
+        "Profanity filter triggers a generic 'Cannot post' modal — the user cannot tell whether to rephrase, retry, or contact support.",
+        "Suggestions are shown as small grey helper text that is not wired via aria-describedby; screen-reader users never hear them."
+      ],
+      "tags": [
+        "forms"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion"
+        }
+      ]
+    },
+    {
+      "id": "3.3.4-irreversible-approval-confirm",
+      "wcag_criterion": "3.3.4",
+      "wcag_title": "Error Prevention (Legal, Financial, Data)",
+      "level": "AA",
+      "category": "understandable",
+      "title": "Irreversible workflow actions require explicit confirmation and clearly state consequences",
+      "description": "Final approval that locks an artifact, archiving a review that removes it from active dashboards, deleting a thread that has replies (destroying the conversation history) — these are irreversible or hard-to-reverse data actions and fall under WCAG 3.3.4's requirement for reviewable, confirmable, or reversible flows. The UI must require an explicit confirmation step (not a single-click destructive action), state the consequences in the confirmation text ('this will lock the artifact and notify all reviewers; new comments will be disabled'), and ideally support a grace-period undo.",
+      "how_to_test": [
+        "Trigger final approval and confirm a clear, explicit confirmation step is required (not a single-click 'Approve' that immediately locks).",
+        "Read the confirmation text and confirm it names the consequences — lock, notification, downstream side effects.",
+        "Trigger 'archive review' and confirm the same: explicit confirmation, stated consequences.",
+        "Trigger 'delete thread with N replies' and confirm the confirmation states that N replies will also be destroyed.",
+        "Where possible, confirm a post-action undo / grace-period exists (e.g. 'Approval finalised — undo within 10 seconds').",
+        "Confirm the confirmation dialog is keyboard-accessible, focus-trapped, dismissable with Escape, and announced via role=dialog with an accessible name."
+      ],
+      "pass_criteria": [
+        "Irreversible or hard-to-reverse actions require an explicit confirmation step — never a single accidental click.",
+        "Confirmation text names the specific consequences (lock, notification, deletion of replies, etc.).",
+        "The default focus in the confirmation dialog is on the safer choice (Cancel), or at minimum the destructive action is not auto-focused.",
+        "Where feasible, a post-action undo / grace period is offered.",
+        "Confirmation dialogs are properly accessible (role=dialog, focus trap, Escape to dismiss, accessible name)."
+      ],
+      "fail_examples": [
+        "Clicking 'Approve' on the toolbar immediately locks the artifact with no confirmation; an accidental click finalises a review with no recourse.",
+        "Confirmation dialog reads only 'Approve this review?' with no mention that the artifact will be locked, reviewers notified, and comments disabled.",
+        "Deleting a thread with 14 replies pops a confirmation that says only 'Delete?' — the user does not realise all 14 replies will be destroyed.",
+        "Confirmation dialog auto-focuses the destructive 'Approve' button so a stray Enter keypress confirms without the user reading the text.",
+        "No undo / grace period is offered; an approval click made at the wrong moment cannot be reversed."
+      ],
+      "tags": [
+        "workflow-state"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data"
+        }
+      ]
+    },
+    {
+      "id": "3.3.7-redundant-entry-reviewer-info",
+      "wcag_criterion": "3.3.7",
+      "wcag_title": "Redundant Entry",
+      "level": "A",
+      "category": "understandable",
+      "title": "External reviewer name/email is not re-requested within the same session (WCAG 2.2 new)",
+      "description": "WCAG 2.2 added 3.3.7 Redundant Entry as a Level A criterion: information the user has already entered in a process must not be requested again in the same process, unless re-entry is essential (e.g. password confirmation). External / guest reviewers commonly enter their name and email on a magic-link gate to start commenting; the tool must not re-prompt them when they navigate back, revisit the link, or switch artifacts inside the same review. Either auto-populate, persist via the magic-link token, or expose a clear 'already identified as <name>' indicator with an explicit edit affordance.",
+      "how_to_test": [
+        "Open a guest-review link in an incognito session, enter name and email, and post a comment.",
+        "Navigate to another artifact within the same review (or refresh) and confirm the tool does not re-prompt for name and email.",
+        "Close the tab and reopen the same magic link within its valid lifetime; confirm the identity persists (or is auto-populated) rather than being re-requested.",
+        "Repeat across multiple comment / reply submissions within the session — the identity must not be re-asked between actions.",
+        "Confirm an explicit 'Editing as <name>' indicator and an explicit affordance to change identity (in case the link was shared incorrectly)."
+      ],
+      "pass_criteria": [
+        "Once a guest reviewer has provided name / email in a session, the tool does not request the same information again within that session.",
+        "Magic-link tokens persist identity across reloads and tabs for the link's lifetime, unless re-auth is essential.",
+        "Fields that are auto-populated remain editable so the user can correct an entry.",
+        "An explicit 'identified as <name>' affordance is visible so the user knows which identity the tool is using.",
+        "Where re-entry IS essential (e.g. confirming an email change), the tool says so explicitly."
+      ],
+      "fail_examples": [
+        "Every page navigation re-prompts the guest reviewer for name and email; switching between artifacts in the same review pops the identity gate again.",
+        "Refreshing the page wipes the entered identity and forces re-entry, even though the magic-link token is still valid.",
+        "Each reply submission opens a name / email modal; the user re-types their details for every comment.",
+        "Auto-populated fields are read-only with no edit affordance, so a guest who mistyped their email is stuck with the typo for the whole session.",
+        "No indicator shows the current identity, so the guest has no way to verify they are posting as the right person."
+      ],
+      "tags": [
+        "forms"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.7 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/redundant-entry"
+        }
+      ]
+    },
+    {
+      "id": "3.3.8-accessible-auth-no-cognitive-test",
+      "wcag_criterion": "3.3.8",
+      "wcag_title": "Accessible Authentication (Minimum)",
+      "level": "AA",
+      "category": "understandable",
+      "title": "Reviewer authentication does not require cognitive function tests; supports paste, password managers, and magic links (WCAG 2.2 new)",
+      "description": "WCAG 2.2 added 3.3.8 Accessible Authentication (Minimum) as Level AA: authentication must not require a cognitive function test (memorising a code, transcribing an audio CAPTCHA, solving a puzzle, identifying objects in images) unless an alternative is provided. For review tools this most often means the guest-reviewer auth flow: one-time codes must be pasteable (not blocked from clipboard), password managers must work (no fields that block autofill via autocomplete=off without justification), magic-link auth must be supported as a path of least cognitive load, and any CAPTCHA must offer a non-cognitive alternative.",
+      "how_to_test": [
+        "Trigger the guest-reviewer auth flow and confirm a magic-link option is available (no required password / code memorisation).",
+        "If a one-time code is required, confirm the code field accepts paste — try pasting from clipboard and confirm no JS or input restriction blocks it.",
+        "Verify password fields (where used) work with browser password managers and 1Password / Bitwarden / etc. — no autocomplete=off without a documented exception, no JS that interferes with autofill.",
+        "If a CAPTCHA gates auth, confirm it offers a non-cognitive alternative (e.g. invisible verification, biometric, or a known-device skip).",
+        "Confirm audio CAPTCHAs (where present) are not the sole alternative — transcribing audio IS a cognitive function test.",
+        "Test the full guest-review auth flow with a screen reader and keyboard only; confirm there is at least one path that does not require solving a puzzle, transcribing, or memorising."
+      ],
+      "pass_criteria": [
+        "Authentication offers at least one path that does not require a cognitive function test (memorising, transcribing, solving puzzles).",
+        "One-time codes are pasteable from clipboard.",
+        "Password fields support password managers — no autocomplete=off without documented exception, no JS interference with autofill.",
+        "Magic-link auth is offered as a primary or alternative path.",
+        "Any CAPTCHA provides a non-cognitive alternative.",
+        "The accessible auth path is reachable in the standard flow — not hidden behind 'contact support'."
+      ],
+      "fail_examples": [
+        "Guest auth requires solving a 'click all the traffic lights' image CAPTCHA with no alternative.",
+        "One-time code input blocks paste via onpaste=preventDefault, forcing users to type the code character by character.",
+        "Password field sets autocomplete=off, blocking password-manager autofill without justification.",
+        "Auth flow requires the user to memorise a 6-digit code shown on screen then re-enter it on a subsequent page — a textbook cognitive function test.",
+        "The only CAPTCHA alternative is an audio transcription, which is itself a cognitive function test for many users.",
+        "Magic-link is offered only via a 'contact support to enable' workflow, not as a standard option in the auth UI."
+      ],
+      "tags": [
+        "forms"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.3.8 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum"
+        }
+      ]
     }
   ]
 }
