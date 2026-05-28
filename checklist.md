@@ -3,7 +3,7 @@
 > Generated from `checklist.json`. Do not edit by hand.
 > Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
 
-Total items: 5
+Total items: 13
 
 ## Perceivable
 
@@ -151,3 +151,240 @@ When a design-review tool supports a live 'walkthrough' or presentation mode —
 
 **References:**
 - [WCAG 1.2.4 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/captions-live)
+
+### Annotation pins programmatically associate with the region of the artifact they anchor to
+
+- **ID:** `1.3.1-annotation-spatial-relationship-programmatic`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Tags:** `annotations`, `name-role-value`
+
+An annotation pin's meaning depends entirely on what part of the artifact it points at. Sighted reviewers get that relationship for free — the pin sits visually on top of the button, the header, the broken state. A screen-reader user reading a comment in isolation has no idea which region it refers to unless the relationship is exposed in the DOM. The pin (or its associated thread card) must use aria-describedby, aria-labelledby, or an equivalent programmatic association pointing at the anchored region — not rely on x/y positioning alone.
+
+**How to test:**
+- Open a review with several annotations anchored to distinct regions (header logo, primary CTA, error state in a form).
+- Inspect the pin element and the thread card in DevTools: confirm there is an aria-describedby, aria-labelledby, aria-controls, or equivalent attribute that resolves to an element identifying the anchored region by name (e.g. 'header logo region').
+- Navigate with a screen reader to a thread card without first focusing the pin, and confirm the announcement still conveys which artifact region the thread refers to.
+- Confirm the relationship survives when the pin is off-screen or the user opens the thread from the sidebar list (not by clicking the pin on canvas).
+
+**Pass criteria:**
+- Every annotation pin has a programmatic association — via aria-describedby, aria-labelledby, or an analogous mechanism — to a labeled element representing the anchored region.
+- The thread card opened from the sidebar conveys the anchored region's name to assistive technology without requiring the user to first focus the on-canvas pin.
+- The association uses semantic attributes, not visual positioning (absolute top/left coordinates) as the only signal of relationship.
+
+**Fail examples:**
+- Pin is an absolutely-positioned <div> at top:240px left:512px with no aria attribute tying it to any labeled region; screen-reader user hears 'Annotation 3, Patricia, looks broken' with no spatial context.
+- Thread card sidebar entry reads 'Annotation on (240, 512)' — exposing raw pixel coordinates as the only relationship hint.
+- The anchored region is implied only by which part of the artifact the pin visually overlaps; toggling the pins off in DevTools makes the relationship disappear entirely.
+- Pin uses a title="header logo" attribute that screen readers do not consistently announce, with no aria-describedby fallback.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
+### Annotation threads use list semantics so replies are conveyed as a structured conversation
+
+- **ID:** `1.3.1-thread-structure-semantics`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Tags:** `threads`, `name-role-value`
+
+A thread is a conversation — a parent comment followed by ordered replies, sometimes with nested sub-replies. Sighted users see that structure through indentation and connecting lines. Screen-reader users need the same structure exposed via list semantics: <ul>/<ol> or role=list, with each reply as an <li>/role=listitem, and nested replies as nested lists. Without it, a screen reader reads twelve unrelated text blocks and the user cannot tell whether a comment is a top-level reply, a reply-to-a-reply, or part of a different thread entirely.
+
+**How to test:**
+- Open a thread with at least one parent comment, two top-level replies, and one nested reply (a reply to one of those replies).
+- Inspect the DOM: the thread container should be a <ul>, <ol>, or role=list, with each reply as a direct list item child.
+- Confirm the nested reply is inside a list nested within its parent reply's <li>, not flattened into the same top-level list.
+- Navigate the thread with a screen reader and verify it announces list membership ('list with 3 items', 'item 2 of 3') and conveys nesting when entering sub-replies.
+- Confirm replies are not implemented as a series of sibling <div> elements with no semantic grouping.
+
+**Pass criteria:**
+- Thread reply collections use list semantics (<ul>/<ol> or role=list) with each reply as a list item.
+- Nested replies are nested lists inside their parent reply's list item — not flattened into a single top-level list.
+- Screen readers announce list membership and item position when navigating through replies.
+
+**Fail examples:**
+- Thread renders as a stack of <div class="reply"> elements with no list role; screen reader reads them as isolated text blocks with no membership context.
+- All replies — including replies-to-replies — are flat <li> elements in a single <ul>, so nesting is conveyed only by left-margin indentation.
+- Reply container uses role="group" instead of list semantics, so screen readers do not announce item count or position.
+- Each reply is a separate <ul> containing one <li>, producing fifteen one-item lists in a fifteen-reply thread.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
+### Version history exposes versions as a structured list with author and timestamp as programmatic fields
+
+- **ID:** `1.3.1-version-list-semantics`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Tags:** `versioning`, `name-role-value`
+
+The version history panel is how reviewers find 'the version Patricia approved last Tuesday' or 'the one before the navigation rework'. Sighted users skim a column of cards with version number, author avatar, and timestamp. Screen-reader users need that same structure exposed semantically: a list of versions, each as a grouped item with version label, author, and timestamp as programmatically associated fields — not three loose strings in a styled <div> that announces as 'V3 Patricia 2:14pm' with no relationship between the values.
+
+**How to test:**
+- Open the version history panel for an artifact with at least four versions authored by two different users on different days.
+- Inspect the DOM: the version list should use <ul>/<ol> or role=list, and each version entry should be a list item containing semantically labeled fields (e.g. <dl> with version/author/date terms, or aria-label combining all three).
+- Navigate with a screen reader and confirm each version announces as a single grouped item with version number, author, and timestamp in a coherent order — not as three orphan strings.
+- Confirm the relationship between author and version is programmatic, not just visual proximity: removing CSS should not destroy the meaning.
+- Verify the 'current' or 'latest' version is exposed (aria-current="true" or equivalent), not signaled only by a colored dot.
+
+**Pass criteria:**
+- Version history uses list semantics with each version as a list item.
+- Each entry exposes version identifier, author, and timestamp as programmatically associated fields (via aria-label, <dl>, or labeled child elements).
+- The current or active version is identified programmatically (aria-current or an equivalent attribute).
+- Screen-reader announcement conveys all three pieces of information together as belonging to one version.
+
+**Fail examples:**
+- Version panel is a stack of <div class="version-row"> elements with no list role; screen reader reads 'V4 Patricia May 27' as three loose strings with no grouping.
+- Author name is rendered only as an <img alt="Patricia"> avatar with no text equivalent in the version row's accessible name.
+- Timestamp is rendered as '2h ago' with no programmatic datetime attribute, so screen readers cannot disambiguate which '2h ago' is which after a refresh.
+- Current version is marked only with a green dot and the word 'current' in CSS ::before content — invisible to assistive tech.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
+### Artifact workflow state (draft, in review, approved, requires changes) is exposed programmatically, not by color or icon alone
+
+- **ID:** `1.3.1-workflow-state-programmatic`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Tags:** `workflow-state`, `name-role-value`
+
+Workflow state — is this design a draft, in review, approved, or sent back for changes — drives almost every reviewer decision: whether to comment, whether to approve, whether to ship. Designers commonly signal state with a colored chip ('blue = in review, green = approved, red = requires changes') and an icon. A blind reviewer or a colorblind reviewer needs the state exposed as text via aria-label, a labeled status region, or aria-current — not communicated only by a color or icon they cannot perceive.
+
+**How to test:**
+- Load artifacts in each available workflow state (draft, in review, approved, requires changes) and inspect the state indicator in DevTools.
+- Confirm each state is exposed as text — either a visible label, an aria-label on the chip, or a labeled status region (role="status" or aria-live region for state changes).
+- Navigate to the artifact header with a screen reader and confirm the current workflow state is announced as part of the artifact's context, without relying on the icon or chip color.
+- Disable CSS in DevTools (or use a high-contrast / forced-colors mode) and verify the workflow state remains identifiable.
+- Confirm color is not the sole signal — even with color stripped, the user must be able to tell draft from approved.
+
+**Pass criteria:**
+- Workflow state is exposed as text content or an accessible name on the state indicator (chip, badge, or header region).
+- State changes are announced to assistive technology via a live region or a focusable confirmation, not silently re-colored.
+- The current state is identifiable without relying on color or icon shape alone — text or accessible name carries the meaning.
+- Forced-colors / high-contrast modes preserve a way to identify state.
+
+**Fail examples:**
+- State chip is a colored circle (blue/green/red) with no text label and no aria-label; screen-reader user hears nothing about the state.
+- Workflow state is conveyed only by the chip's background color, with the text label hidden visually and not exposed to assistive tech.
+- State transitions ('approved by Patricia') update the chip color silently with no aria-live announcement, so the reviewer who just requested changes never hears that an approval landed.
+- Icon font is the only signal — a checkmark glyph means 'approved' — and screen readers announce only 'image' or the unicode codepoint.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
+### DOM reading order through annotation threads matches the visible reply order, including nested replies
+
+- **ID:** `1.3.2-thread-reading-order`
+- **WCAG 1.3.2** Meaningful Sequence (Level A)
+- **Tags:** `threads`, `keyboard`
+
+Threaded conversations only make sense in order — reply two answers reply one, reply three reacts to reply two, and a nested reply hangs off whichever parent it answers. Sighted reviewers follow the order top-to-bottom, indented for nesting. If the DOM order doesn't match (replies rendered in reverse-chronological order with CSS, or absolutely-positioned out of source order, or with nested replies hoisted to the bottom), screen-reader and keyboard users encounter the conversation as a scrambled transcript and cannot reconstruct who said what to whom.
+
+**How to test:**
+- Open a thread with at least five replies including one nested reply, and observe the visible top-to-bottom order.
+- Disable CSS in DevTools (or view the page source) and confirm the DOM order of reply elements matches the visible order — including the nested reply appearing in source after its parent.
+- Tab through the thread with a keyboard and confirm focus moves through replies in the same order as the visible sequence.
+- Navigate the thread with a screen reader using arrow keys / browse mode and confirm replies are announced in the same order a sighted user reads them.
+- If the UI offers a 'newest first' sort, confirm that toggling sort updates the DOM order — not just CSS flex-direction or order property.
+
+**Pass criteria:**
+- DOM source order of reply elements matches the visible top-to-bottom reading order under default styling.
+- Nested replies appear in source immediately after their parent reply, not relocated via CSS to a different visual position.
+- Sort changes (oldest/newest) reorder the DOM, not just the visual rendering via flex-direction:reverse or CSS order.
+- Keyboard tab order and screen-reader browse order both follow the visible sequence.
+
+**Fail examples:**
+- Thread visually shows replies oldest-first but the DOM is newest-first with CSS flex-direction:column-reverse; screen-reader user reads the conversation backwards.
+- Nested replies are rendered in a separate container at the bottom of the thread and visually positioned under their parent with absolute positioning — DOM order separates parent from child.
+- Tab order through reply action buttons (reply / resolve / edit) jumps across the thread in source order rather than visible order, landing on the wrong reply's button.
+- Sorting newest-first only flips CSS order; screen-reader users still hear oldest-first regardless of the visible sort.
+
+**References:**
+- [WCAG 1.3.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence)
+
+### Instructions for creating and managing annotations do not rely on shape, color, or position alone
+
+- **ID:** `1.3.3-annotation-instructions-not-sensory`
+- **WCAG 1.3.3** Sensory Characteristics (Level A)
+- **Tags:** `annotations`
+
+Onboarding tooltips, empty-state hints, and help text in a review tool routinely point at controls using sensory cues alone — 'click the red pin icon on the right' or 'use the circle button at the top to add an annotation'. A blind reviewer cannot see red, a colorblind reviewer may not distinguish the color, and a screen-reader user on a small viewport may not perceive 'on the right'. Instructions must identify controls by their text label or accessible name as the primary reference — sensory cues can supplement, never replace.
+
+**How to test:**
+- Open the tool's first-run onboarding, empty-state hints, help panel, and any inline tooltips that explain how to create or manage annotations.
+- Confirm each instruction names the target control by its visible text label or accessible name (e.g. 'use the Add annotation button') rather than by shape, color, or position alone.
+- Confirm that when sensory descriptors do appear, they are supplements ('use the Add annotation button in the top toolbar') and not the only identifier.
+- Audit any in-product tutorials, modal walkthroughs, and 'Did you know?' tips for phrasings like 'the red button', 'the icon on the right', 'the round control'.
+- Verify localized strings preserve the text-label reference, not just the color or position language.
+
+**Pass criteria:**
+- Instructions identify controls by their visible text label or accessible name as the primary identifier.
+- Sensory descriptors (color, shape, position) only ever supplement the text-label reference.
+- No instruction relies exclusively on color ('the red icon'), shape ('the round button'), or position ('on the right') to identify a control.
+- Localized variants of instructions preserve the same text-label-first pattern.
+
+**Fail examples:**
+- Empty-state hint reads 'Click the red pin icon on the right to add your first annotation' — no button name, only color and position.
+- Tooltip says 'Use the circular button to reply' with no reference to the button's accessible name (Reply).
+- Onboarding overlay highlights a control with an arrow and the caption 'Tap here' — no text label, just visual position.
+- Help article instructs 'click the green checkmark to approve' — color and shape, no mention of an Approve button.
+
+**References:**
+- [WCAG 1.3.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/sensory-characteristics)
+
+### The review tool functions in both portrait and landscape; thread and canvas panels reflow rather than locking orientation
+
+- **ID:** `1.3.4-tool-orientation-flexibility`
+- **WCAG 1.3.4** Orientation (Level AA)
+- **Tags:** `navigation`
+
+Reviewers on tablets, mounted displays, or devices fixed to a wheelchair often cannot rotate their screen. A design-review tool that forces landscape — common because designers want a wide canvas — locks out anyone whose device is held or mounted in portrait. The canvas, the thread panel, the version sidebar, and the toolbar must all reflow to the current orientation. Locking orientation is acceptable only where it is genuinely essential (a presentation mode mirroring a specific aspect ratio), and even then an unlock option should exist.
+
+**How to test:**
+- Open the review tool on a tablet (or in a mobile emulator) and rotate the device between portrait and landscape.
+- Confirm the canvas, thread panel, version history, and toolbar all remain usable in both orientations — no 'please rotate your device' overlay, no clipped controls, no horizontal scroll required to reach core actions.
+- Verify thread panels collapse, stack, or reflow appropriately in portrait rather than disappearing or being pushed off-screen.
+- Confirm the user is not forced into a single orientation via meta viewport, CSS orientation media queries that hide content, or JS that blocks input until rotation.
+- If any mode (e.g. presentation) does lock orientation, confirm that lock is genuinely essential and that the user is informed and given a way out.
+
+**Pass criteria:**
+- All primary review functions (view artifact, read threads, post replies, change version, change workflow state) work in both portrait and landscape.
+- Layout reflows to fit the active orientation; no content is clipped, hidden, or made unreachable.
+- No 'rotate your device' blocker is shown unless the orientation is genuinely essential to the task.
+- Where orientation lock is essential, the user is given an explicit notice and an option to continue in a degraded mode.
+
+**Fail examples:**
+- Opening the review tool on an iPad in portrait shows a full-screen overlay 'Please rotate to landscape to continue' with no dismiss option.
+- In portrait, the thread sidebar occupies the full width and the artifact canvas is reduced to a 60px-tall strip with no scroll or zoom recovery.
+- CSS @media (orientation: portrait) hides the toolbar entirely, so reviewers cannot post a reply in portrait.
+- Tablet reviewer mounted in portrait on a wheelchair tray cannot complete a review because the approve button is below a viewport that does not scroll.
+
+**References:**
+- [WCAG 1.3.4 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/orientation)
+
+### External reviewer name and email fields declare appropriate autocomplete tokens
+
+- **ID:** `1.3.5-comment-input-autocomplete`
+- **WCAG 1.3.5** Identify Input Purpose (Level AA)
+- **Tags:** `forms`
+
+Design-review tools often invite external reviewers (clients, contractors, stakeholders) via a share link that asks for a name and email before posting a comment. These inputs collect the user's own identity information and must declare the WCAG-defined autocomplete tokens (autocomplete="name", autocomplete="email") so password managers, browser autofill, and assistive tech tools that translate or pre-fill fields can recognize their purpose. Missing or wrong tokens force users with motor or cognitive disabilities to re-type identity information on every external review.
+
+**How to test:**
+- Open an external reviewer entry flow (the gate that collects name and email before letting a guest post a comment).
+- Inspect each input in DevTools and confirm name uses autocomplete="name" (or the appropriate granular token like given-name/family-name) and email uses autocomplete="email".
+- Confirm autocomplete is not set to "off" or omitted entirely on identity fields.
+- Test in a browser with a saved profile and verify the browser offers to autofill the values.
+- If the form collects other recognized identity fields (organization, role title), confirm matching autocomplete tokens are used.
+
+**Pass criteria:**
+- Name input declares autocomplete="name" or the appropriate granular variant.
+- Email input declares autocomplete="email".
+- Autocomplete is not disabled (autocomplete="off") on identity-collection fields without a documented essential reason.
+- Browser autofill successfully prefills the fields from a saved profile.
+
+**Fail examples:**
+- Guest-review gate has <input name="email"> with no autocomplete attribute; browser autofill silently does nothing and motor-impaired users retype their email every visit.
+- Email field declares autocomplete="off" to force fresh entry, blocking autofill and password-manager assistance with no essential justification.
+- Name field uses autocomplete="username" instead of "name", causing browsers to offer the wrong saved value.
+- Form labels are correct but autocomplete tokens are omitted, so translation-and-autofill assistive tools cannot recognize the field purpose.
+
+**References:**
+- [WCAG 1.3.5 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose)
