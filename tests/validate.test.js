@@ -21,3 +21,9 @@ test('exits 1 on a schema-invalid file', () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr + result.stdout, /level/);
 });
+
+test('exits 1 when item ids are not unique', () => {
+  const result = run(['tests/fixtures/duplicate-ids.json']);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr + result.stdout, /duplicate.*id/i);
+});
