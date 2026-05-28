@@ -24,3 +24,25 @@ test('rejects a document missing required top-level fields', () => {
   const paths = (validate.errors ?? []).map(e => e.instancePath + ' ' + e.keyword);
   assert.ok(paths.some(p => p.includes('required')), 'expected a required-keyword error');
 });
+
+test('rejects item with invalid id format', () => {
+  const ok = validate(load('bad-id-format.json'));
+  assert.equal(ok, false);
+  assert.ok(validate.errors.some(e => e.instancePath.includes('/items/0/id')));
+});
+
+test('rejects item with invalid wcag_criterion format', () => {
+  const ok = validate(load('bad-criterion-format.json'));
+  assert.equal(ok, false);
+  assert.ok(validate.errors.some(e => e.instancePath.includes('wcag_criterion')));
+});
+
+test('rejects item with invalid level', () => {
+  const ok = validate(load('bad-level.json'));
+  assert.equal(ok, false);
+});
+
+test('rejects item with invalid category', () => {
+  const ok = validate(load('bad-category.json'));
+  assert.equal(ok, false);
+});
