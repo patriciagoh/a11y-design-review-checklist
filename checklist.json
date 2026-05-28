@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "wcag_version": "2.2",
   "conformance_level": "AA",
-  "released_at": "2026-05-28T00:00:00Z",
+  "released_at": "2026-05-28T12:00:00Z",
   "items": [
     {
       "id": "1.1.1-artifact-alt-text",

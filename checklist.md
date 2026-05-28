@@ -1,7 +1,7 @@
 # a11y-design-review-checklist
 
 > Generated from `checklist.json`. Do not edit by hand.
-> Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
+> Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T12:00:00Z
 
 Total items: 87
 
