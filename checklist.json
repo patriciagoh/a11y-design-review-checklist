@@ -2797,6 +2797,253 @@
           "url": "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum"
         }
       ]
+    },
+    {
+      "id": "4.1.2-pin-role-name-state",
+      "wcag_criterion": "4.1.2",
+      "wcag_title": "Name, Role, Value",
+      "level": "A",
+      "category": "robust",
+      "title": "Annotation pins expose role, accessible name, and state (selected, focused, resolved/unresolved) programmatically",
+      "description": "Annotation pins on a design artifact are interactive controls — they receive focus, can be activated, anchor a thread, and toggle between resolved and unresolved. WCAG 4.1.2 requires that for every UI component the role, accessible name, and current state are programmatically determinable. Pins built as bare <div> elements with click handlers fail this entirely: they have no role, no name, and no state exposed to assistive tech. The correct implementation is a focusable button (or a role=button element) with an accessible name describing what it annotates ('Pin 3, on the primary CTA button'), and ARIA states for selected (aria-pressed or aria-current), focused (native focus), and resolved/unresolved (aria-label includes the state, or an aria-describedby points to a status text).",
+      "how_to_test": [
+        "Inspect a pin element in DevTools and confirm it has role=button (or is a native <button>) and is focusable (tabindex=0 or native).",
+        "Confirm the accessible name describes what the pin annotates — e.g. 'Pin 3: comment on primary CTA, by Alice, 2 replies, unresolved'.",
+        "Toggle the pin between selected and unselected and confirm aria-pressed (or aria-current) updates.",
+        "Resolve the pin's thread and confirm the pin's accessible name or aria-describedby reflects the new 'resolved' state.",
+        "With a screen reader, navigate to each pin and confirm role, name, and state are all announced.",
+        "Run axe-core / Lighthouse and confirm no 'button-name', 'aria-valid-attr-value', or 'aria-allowed-attr' violations on pin elements."
+      ],
+      "pass_criteria": [
+        "Every pin has a programmatically-determinable role (button or role=button).",
+        "Every pin has a non-empty accessible name that identifies what it annotates and any relevant metadata (author, reply count).",
+        "Selected state is exposed via aria-pressed, aria-current, or aria-selected as appropriate.",
+        "Resolved / unresolved state is exposed in the accessible name or via aria-describedby pointing to status text.",
+        "Focus state is native (so assistive tech detects it) — not faked via a CSS class without keyboard focus.",
+        "axe-core reports no role/name/value violations on pin elements."
+      ],
+      "fail_examples": [
+        "Pins are <div onclick=…> elements with no role and no tabindex; screen readers ignore them entirely.",
+        "Pin accessible name is the literal pin number ('3') with no context — screen-reader user hears 'button, 3' and cannot tell what is annotated.",
+        "Selected pin is indicated only via a CSS class (e.g. .pin--selected) with no aria-pressed / aria-current; assistive tech cannot tell which pin is active.",
+        "Resolved pins are visually faded but the resolved state is nowhere in the accessible name or via aria-describedby; a screen-reader user cannot tell resolved from unresolved.",
+        "Pins use role=button but also include nested interactive children (avatar, count badge) that are themselves focusable, producing nested-button violations."
+      ],
+      "tags": [
+        "name-role-value",
+        "annotations"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value"
+        }
+      ]
+    },
+    {
+      "id": "4.1.2-thread-role-name",
+      "wcag_criterion": "4.1.2",
+      "wcag_title": "Name, Role, Value",
+      "level": "A",
+      "category": "robust",
+      "title": "Thread containers expose a region/article role, an accessible name, and resolved/open state programmatically",
+      "description": "Each thread in a review tool is a discoverable conversation — a screen-reader user navigating by landmark or by article must be able to find it, recognise what it is about, and know whether it is open or resolved. WCAG 4.1.2 requires role, name, and state for each thread container. The correct pattern: each thread is a role=article (or role=region) with an aria-label or aria-labelledby naming the thread (topic if user-set, otherwise an excerpt of the first comment) and an aria-describedby or aria-label suffix that includes the open/resolved state.",
+      "how_to_test": [
+        "Open a review with multiple threads and inspect each thread container in DevTools.",
+        "Confirm each thread has role=article (or role=region) and a non-empty accessible name from aria-label or aria-labelledby.",
+        "Confirm the accessible name names the thread by topic (if set) or by first-comment excerpt — not a meaningless ID.",
+        "Resolve a thread and confirm the accessible name (or an associated aria-describedby) updates to include the resolved state.",
+        "Navigate by region / article landmark in a screen reader and confirm each thread is discoverable and identifiable.",
+        "Confirm reopened threads correctly update their state in the accessible name."
+      ],
+      "pass_criteria": [
+        "Each thread is a role=article or role=region with a non-empty accessible name.",
+        "The accessible name identifies the thread by topic or first-comment excerpt — not by ID alone.",
+        "Open / resolved state is exposed in the name or via aria-describedby pointing to a status text.",
+        "When a thread is resolved or reopened, the accessible name updates accordingly.",
+        "Screen readers can find each thread via landmark / article navigation."
+      ],
+      "fail_examples": [
+        "Threads are bare <div> elements with no landmark role — screen-reader users cannot list or jump between them.",
+        "Thread accessible name is the literal thread ID ('Thread-abc123'); the user has no idea what the thread is about.",
+        "Resolved state is conveyed only by a visual checkmark and a faded color — never in the accessible name.",
+        "Each thread is wrapped in role=region but two threads share the same accessible name 'Comment thread', so screen-reader users cannot distinguish them.",
+        "Reopening a thread leaves the accessible name still saying 'resolved' because the value was hard-coded at render."
+      ],
+      "tags": [
+        "name-role-value",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value"
+        }
+      ]
+    },
+    {
+      "id": "4.1.2-workflow-button-role-state",
+      "wcag_criterion": "4.1.2",
+      "wcag_title": "Name, Role, Value",
+      "level": "A",
+      "category": "robust",
+      "title": "Workflow state buttons expose pressed/disabled state and the reason for disablement programmatically",
+      "description": "Workflow buttons (Approve, Request changes, Reject, Archive) commonly become disabled in certain states — e.g. Approve is disabled while blocking threads are unresolved. WCAG 4.1.2 requires that role, name, and value (state) be exposed programmatically. A button greyed out with no aria-disabled (or worse, hidden via disabled but with no exposed reason) leaves assistive-tech users unable to discover both that it is disabled and why. The pattern: use aria-disabled=\"true\" (not the disabled attribute, which removes the button from focus order entirely and prevents the user from reading the reason via aria-describedby) plus aria-describedby pointing to a visible reason text.",
+      "how_to_test": [
+        "Open an artifact with blocking unresolved threads and inspect the Approve button.",
+        "Confirm the disabled state is exposed via aria-disabled=\"true\" rather than the native disabled attribute (so the button remains focusable and screen-reader users can hear the reason).",
+        "Confirm an aria-describedby on the button points to a visible reason text — e.g. 'Cannot approve: 3 blocking threads unresolved'.",
+        "Toggle the button to a pressed state (e.g. Approve becomes 'Approved' with a pressed visual) and confirm aria-pressed updates.",
+        "Tab to the disabled button with a screen reader and confirm BOTH the role/name AND the disablement reason are announced.",
+        "Verify enabled buttons have no stale aria-disabled='false' attributes and no stale describedby pointing to outdated reasons."
+      ],
+      "pass_criteria": [
+        "Workflow buttons use aria-disabled=\"true\" rather than the native disabled attribute when the disablement carries a reason the user should hear.",
+        "Disabled workflow buttons expose their reason via aria-describedby pointing to visible reason text.",
+        "Pressed / toggled state is exposed via aria-pressed when applicable.",
+        "When the disablement clears, aria-disabled and the describedby reason are removed in sync.",
+        "Screen readers announce both the button name and the disablement reason on focus."
+      ],
+      "fail_examples": [
+        "Approve button uses the native disabled attribute; the button is removed from tab order and screen-reader users cannot focus it to hear why.",
+        "Disabled Approve button has no aria-describedby; sighted users see a tooltip on hover but keyboard / screen-reader users get nothing.",
+        "Approve button stays aria-pressed=\"true\" after the user clicks 'Request changes', producing a stale state.",
+        "Disabled reason text is rendered visually adjacent to the button but is not wired via aria-describedby — screen-reader users hear only 'Approve, dimmed' with no explanation.",
+        "Button uses both disabled AND aria-disabled='true', producing inconsistent behaviour across browsers / screen readers."
+      ],
+      "tags": [
+        "name-role-value",
+        "workflow-state"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value"
+        }
+      ]
+    },
+    {
+      "id": "4.1.3-workflow-state-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "robust",
+      "title": "Workflow state transitions announce via a live region without stealing focus",
+      "description": "When an artifact moves between workflow states (draft → in review → approved → requires changes), the transition is a status message under WCAG 4.1.3: it must be programmatically determinable to assistive tech without receiving focus and without requiring the user to navigate to find it. The pattern is a polite live region (aria-live=\"polite\" or role=\"status\") that announces 'Artifact moved to In Review' on transition. The announcement must not steal focus (the reviewer should not be yanked from their current task) and must not be assertive unless the transition is genuinely urgent.",
+      "how_to_test": [
+        "Trigger a workflow transition (e.g. submit for review) and confirm a polite live region announces the new state — without focus moving.",
+        "Confirm focus remains where the user was — typically on the workflow control or the next logical control.",
+        "Inspect the DOM and confirm the live region exists at page load (aria-live regions added dynamically often miss the first announcement).",
+        "Trigger several transitions in sequence and confirm each is announced (no rapid-fire skipping).",
+        "Confirm an assertive announcement is used only for genuinely urgent transitions (e.g. 'Approval failed: server error') — not for every state change.",
+        "Test with VoiceOver, NVDA, and JAWS to confirm the announcement is reliably picked up across the major screen readers."
+      ],
+      "pass_criteria": [
+        "Workflow state transitions are announced via a polite live region (aria-live=\"polite\" or role=\"status\").",
+        "Focus is not moved by the announcement.",
+        "The live region exists in the DOM at page load (not injected on demand).",
+        "Assertive announcements are reserved for genuine urgency.",
+        "Announcements are picked up by NVDA, JAWS, and VoiceOver."
+      ],
+      "fail_examples": [
+        "Workflow transition opens a 'State changed to In Review' modal that steals focus and must be dismissed.",
+        "State change is reflected visually in a header pill but never announced; screen-reader users have no way to know the transition happened.",
+        "All state changes (including routine ones) use aria-live=\"assertive\", interrupting the user every few seconds during a busy review session.",
+        "Live region is injected dynamically on the first transition; the first announcement is missed because the region had not yet existed when the screen reader scanned the page.",
+        "Multiple rapid transitions overwrite the live-region text faster than the screen reader can read it, so the user hears only the final state."
+      ],
+      "tags": [
+        "live-regions",
+        "workflow-state"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
+    },
+    {
+      "id": "4.1.3-thread-resolve-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "robust",
+      "title": "Resolving or reopening a thread announces via a live region",
+      "description": "Marking a thread resolved (or reopening a resolved thread) is a status message: the change is meaningful to anyone tracking the review's progress, particularly screen-reader users who cannot rely on visual cues like a strike-through or fade. WCAG 4.1.3 requires this be announced via a live region without stealing focus. The announcement should name the thread and the new state — 'Thread on primary CTA resolved by Alice' — so the user has enough context to know which thread changed.",
+      "how_to_test": [
+        "Open a thread and click 'Resolve'; confirm a polite live region announces 'Thread <topic> resolved' (or similar named announcement).",
+        "Reopen the thread and confirm a corresponding 'Thread <topic> reopened' announcement.",
+        "Confirm focus remains where it was — on the resolve button — and is not stolen.",
+        "Resolve a thread that has no topic and confirm the announcement falls back to a first-comment excerpt or a meaningful identifier.",
+        "Resolve multiple threads in rapid succession and confirm each announcement is preserved (or at minimum the live region uses an aria-relevant strategy that does not silently drop messages).",
+        "Verify resolve-by-others (remote action) also announces, so the local user is aware of the change."
+      ],
+      "pass_criteria": [
+        "Resolving or reopening a thread fires a polite live-region announcement that names the thread.",
+        "Focus is not stolen.",
+        "Remote resolve/reopen actions are also announced (so the local user knows the state change came from a teammate).",
+        "Announcements contain enough context to identify which thread was affected.",
+        "Rapid sequential resolves do not produce a confusing pile-up — the live region pattern handles bursts gracefully."
+      ],
+      "fail_examples": [
+        "Resolving a thread changes only a visual checkmark and a faded background; nothing is announced and screen-reader users never know the resolution happened.",
+        "Announcement reads only 'Thread resolved' with no identifier — when ten threads are open the user cannot tell which one changed.",
+        "Resolve action moves focus to a 'Resolved' toast that must be dismissed — interrupting the user.",
+        "Remote resolves are not announced; the local user only finds out when they scroll to the thread and see it has changed.",
+        "Live region uses assertive priority for every resolve, interrupting the screen reader mid-sentence on a busy review."
+      ],
+      "tags": [
+        "live-regions",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
+    },
+    {
+      "id": "4.1.3-realtime-collab-announce",
+      "wcag_criterion": "4.1.3",
+      "wcag_title": "Status Messages",
+      "level": "AA",
+      "category": "robust",
+      "title": "Remote-collaborator presence and incoming annotations announce non-disruptively via a live region with a user mute",
+      "description": "Real-time collaboration produces a stream of status events: a collaborator joins, a collaborator leaves, a new annotation arrives, a comment is posted. Under WCAG 4.1.3 these are status messages and must be programmatically determinable without stealing focus. But because the stream can be high-frequency and disruptive for screen-reader users, the tool must also offer a user-controlled mute — a setting to silence presence announcements while keeping annotation announcements, or vice versa, or all of them. Without a mute, an over-eager live region becomes a denial-of-service against the screen-reader user.",
+      "how_to_test": [
+        "Open a review with two real users and have the second user join; confirm a polite live region announces 'Bob joined' (or similar) without stealing focus from the first user.",
+        "Have the second user leave; confirm a corresponding 'Bob left' announcement.",
+        "Have the second user add an annotation; confirm a polite announcement names the author and what was added.",
+        "Open the accessibility / notifications settings and confirm a per-channel mute exists — at minimum: mute presence, mute incoming annotations, mute typing indicators.",
+        "Toggle each mute and confirm the corresponding channel goes silent while the others continue.",
+        "Stress-test with 5+ concurrent collaborators making rapid edits and confirm the live region does not produce an unreadable wall of speech — either it batches, debounces, or respects a 'reduced' mode."
+      ],
+      "pass_criteria": [
+        "Presence join/leave events announce via a polite live region without stealing focus.",
+        "Incoming annotations / comments from remote users announce via a polite live region with author + content context.",
+        "A user-controlled mute is exposed in settings, with per-channel granularity (presence, annotations, typing).",
+        "High-frequency announcements are batched, debounced, or reduced to avoid overwhelming screen-reader users.",
+        "Mute settings persist across sessions for the same user."
+      ],
+      "fail_examples": [
+        "Remote collaborator joins are not announced at all; screen-reader users have no idea anyone else is in the room.",
+        "Every keystroke from a remote user produces a live-region update ('Alice is typing… Alice is typing… Alice typed t… Alice typed te…'), DoS-ing the screen reader.",
+        "No mute control is exposed; the only way to silence announcements is to disable the screen reader or close the page.",
+        "Presence announcements use aria-live=\"assertive\" and interrupt the user's own dictation / typing constantly.",
+        "Mute toggle exists but does not persist; every reload reverts to the noisy default."
+      ],
+      "tags": [
+        "live-regions",
+        "realtime"
+      ],
+      "references": [
+        {
+          "label": "WCAG 4.1.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages"
+        }
+      ]
     }
   ]
 }
