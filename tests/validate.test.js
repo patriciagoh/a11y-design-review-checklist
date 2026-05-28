@@ -27,3 +27,9 @@ test('exits 1 when item ids are not unique', () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr + result.stdout, /duplicate.*id/i);
 });
+
+test('exits 1 when an id prefix does not match its wcag_criterion', () => {
+  const result = run(['tests/fixtures/mismatched-prefix.json']);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr + result.stdout, /prefix/i);
+});

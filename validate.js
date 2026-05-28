@@ -54,6 +54,10 @@ function main(argv) {
     } else {
       seen.set(item.id, i);
     }
+    const expectedPrefix = item.wcag_criterion + '-';
+    if (!item.id.startsWith(expectedPrefix)) {
+      semanticErrors.push(`items[${i}] id "${item.id}" does not start with criterion prefix "${expectedPrefix}"`);
+    }
   }
 
   if (semanticErrors.length > 0) {
