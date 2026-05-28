@@ -61,3 +61,18 @@ test('rejects item with duplicate tags', () => {
   const ok = validate(load('duplicate-tags.json'));
   assert.equal(ok, false);
 });
+
+test('rejects item with empty how_to_test', () => {
+  const ok = validate(load('empty-how-to-test.json'));
+  assert.equal(ok, false);
+});
+
+test('rejects item with malformed reference url', () => {
+  const ok = validate(load('bad-reference-url.json'));
+  assert.equal(ok, false);
+});
+
+test('accepts item with valid references array', () => {
+  const ok = validate(load('with-references.json'));
+  assert.equal(ok, true, JSON.stringify(validate.errors, null, 2));
+});
