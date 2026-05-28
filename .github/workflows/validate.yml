@@ -1,0 +1,23 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Schema + semantic validation
+        run: npm run validate
+      - name: Markdown sync check
+        run: npm run check-md
+      - name: Unit tests
+        run: npm test
