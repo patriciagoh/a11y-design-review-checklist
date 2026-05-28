@@ -3,7 +3,7 @@
 > Generated from `checklist.json`. Do not edit by hand.
 > Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
 
-Total items: 36
+Total items: 48
 
 ## Perceivable
 
@@ -1098,3 +1098,365 @@ Real-time collaboration UI is full of attention-grabbing flashes: a green pulse 
 
 **References:**
 - [WCAG 2.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold)
+
+### A skip mechanism lets keyboard users bypass the artifact canvas and jump straight to the thread panel
+
+- **ID:** `2.4.1-skip-to-thread-panel`
+- **WCAG 2.4.1** Bypass Blocks (Level A)
+- **Tags:** `keyboard`, `navigation`, `threads`
+
+The artifact canvas in a design review tool is a heavy interactive surface — focusable pins, region handles, zoom controls, layer toggles. A keyboard or switch user who arrives on the page and just wants to read the conversation must currently tab through every pin and every canvas affordance before reaching the thread panel. A 'Skip to threads' link revealed on focus at the top of the page, or a clearly labeled <nav>/<aside> landmark, lets them jump directly into the conversation without traversing dozens of canvas controls.
+
+**How to test:**
+- Load a review with at least five annotation pins on the artifact and several open threads.
+- Press Tab once from a fresh page load and confirm a 'Skip to threads' (or equivalent) link becomes visible and focusable before any canvas control.
+- Activate the skip link with Enter and confirm focus moves into the thread panel — onto a focusable element, not just scrolled into view.
+- Alternatively, confirm the thread panel is wrapped in a labeled landmark (e.g. <aside aria-label='Threads'> or <section role='region' aria-labelledby='threads-heading'>) reachable via screen-reader landmark navigation (VoiceOver rotor, NVDA D key).
+- Confirm the skip target is reachable without first being forced to tab through every pin, toolbar button, or zoom control.
+
+**Pass criteria:**
+- A 'Skip to threads' link (or equivalent skip mechanism) is the first focusable element on the page after browser chrome.
+- Activating the skip link moves focus into the thread panel, not just scrolls the viewport.
+- The thread panel is exposed as a named landmark so assistive technology users can also jump to it via landmark navigation.
+- Keyboard users can reach the thread panel without traversing the entire canvas tab order.
+
+**Fail examples:**
+- Tabbing from a fresh load lands on the first pin on the canvas; no skip link exists and the thread panel is only reachable after 30+ tab stops.
+- A skip link is in the DOM but is sr-only and never becomes visible on focus, so sighted keyboard users do not know it exists.
+- Activating the skip link scrolls the thread panel into view but leaves focus on the link, so the next Tab still goes back into the canvas tab order.
+- Thread panel is a plain <div> with no landmark role and no skip target; screen-reader landmark navigation skips past it entirely.
+
+**References:**
+- [WCAG 2.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks)
+
+### A skip mechanism exists for the version history sidebar so keyboard users can bypass the canvas to reach versions
+
+- **ID:** `2.4.1-skip-to-version-history`
+- **WCAG 2.4.1** Bypass Blocks (Level A)
+- **Tags:** `keyboard`, `navigation`, `versioning`
+
+The version history sidebar — often a vertical column of version cards on the right — is a primary navigation surface for reviewers comparing changes across drafts. A keyboard user trying to switch from 'v3' to 'v5' must currently tab through every annotation pin and canvas control to reach it. Either a 'Skip to version history' link revealed on focus, or a labeled <nav>/<aside> landmark exposing the version list, must let keyboard and assistive-tech users jump directly to versions without traversing the entire canvas.
+
+**How to test:**
+- Load a review with multiple versions in history (at least four) and several annotations on the canvas.
+- Press Tab from a fresh page load and confirm a 'Skip to version history' link (alongside or in the same skip-links group as the thread skip link) becomes visible and focusable early in the tab order.
+- Activate the link with Enter and confirm focus moves into the version history sidebar — onto the first or current version entry, not just scrolled into view.
+- Alternatively, confirm the version sidebar is wrapped in a labeled landmark (e.g. <nav aria-label='Version history'>) and reachable via landmark navigation in screen readers.
+- Confirm the version sidebar is reachable without first traversing every pin and toolbar control.
+
+**Pass criteria:**
+- A 'Skip to version history' link (or equivalent skip mechanism) appears in the skip-links group and is focusable early in the tab order.
+- Activating the skip moves keyboard focus into the version sidebar onto a focusable version entry, not just scrolls the panel into view.
+- The version sidebar is exposed as a named landmark (e.g. <nav aria-label='Version history'>) so screen-reader landmark navigation can also reach it.
+- Reaching versions does not require tabbing through every annotation pin or canvas control first.
+
+**Fail examples:**
+- The only way to reach the version sidebar with a keyboard is to tab through 40 canvas controls; no skip link or landmark exists.
+- A skip-to-versions link exists in the DOM but is hidden permanently with display:none and never becomes focusable.
+- Version sidebar is a <div class='versions'> with no role; screen-reader landmark navigation passes over it with no announcement.
+- Skip link scrolls the sidebar into view but leaves focus on the skip link, so the next Tab returns to the canvas.
+
+**References:**
+- [WCAG 2.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks)
+
+### Focused annotation pins are not fully obscured by overlay UI such as toolbars, comment cards, or presence avatars
+
+- **ID:** `2.4.11-pin-focus-not-obscured`
+- **WCAG 2.4.11** Focus Not Obscured (Minimum) (Level AA)
+- **Tags:** `focus`, `annotations`
+
+New in WCAG 2.2, this criterion requires that when an element takes focus, the focus indicator is not entirely hidden by other content. Design-review canvases are dense with overlays: floating toolbars docked to the viewport edge, comment cards that pop up over the artifact when a thread opens, presence avatars and live cursors drifting across the surface, and sticky version-compare panels. Any of these can drift on top of a focused pin and fully cover its focus ring. A keyboard user pressing Tab who cannot see where focus landed has no way to recover — they must blindly press arrow keys or Enter and hope. The focus indicator on a focused pin must remain at least partially visible at all times.
+
+**How to test:**
+- Place several annotation pins on the artifact such that some sit near the toolbar, near the comment-card drop position, and near the edges where presence avatars typically appear.
+- Tab to a pin near the bottom-right corner where a floating toolbar usually docks; confirm the focused pin's focus indicator remains at least partially visible.
+- Open a thread by activating a pin, then Tab back onto the originally focused pin while the comment card is open over the artifact; confirm the focused pin's focus indicator is not fully covered by the comment card.
+- Simulate other reviewers' presence avatars or live cursors drifting near focused pins; confirm focus indicators are not fully obscured.
+- If overlays may obscure focused pins, confirm the page auto-scrolls or repositions overlays so the focus indicator stays visible — the indicator must be at least partially visible, not fully hidden behind static or moving overlays.
+
+**Pass criteria:**
+- When an annotation pin receives focus, its focus indicator is not fully obscured by overlay UI (toolbars, comment cards, presence avatars, version-compare panels, live cursors).
+- If an overlay would otherwise cover a focused pin, the page scrolls, the overlay repositions, or the pin moves so at least part of the focus indicator remains visible.
+- The focus indicator stays partially visible even when other reviewers' live presence (avatars, cursors) drifts near the focused pin.
+- This applies to all overlay layers in the review tool — both static (toolbar, comment card) and dynamic (presence, cursors, real-time notifications).
+
+**Fail examples:**
+- Tabbing to a pin near the bottom-right of the canvas places focus under the docked floating toolbar; the focus ring is entirely hidden behind the toolbar and the keyboard user has no idea where focus is.
+- Opening a thread renders a comment card that floats over the artifact and fully covers the focused pin's focus indicator; tabbing forward and back leaves the user lost.
+- A teammate's live cursor with name-tag flag drifts over the currently focused pin and fully covers the focus ring with no auto-scroll or reposition.
+- Version-compare side panel slides in from the right and covers any pin focused near the right edge of the canvas; the focus ring is fully obscured until the panel is dismissed.
+- A 'new comment' real-time notification toast appears at the top-right corner and covers the focus ring on any pin focused in that region.
+
+**References:**
+- [WCAG 2.4.11 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum)
+
+### Browser tab title identifies the artifact and current version, not just the product name
+
+- **ID:** `2.4.2-artifact-page-title`
+- **WCAG 2.4.2** Page Titled (Level A)
+- **Tags:** `navigation`, `versioning`
+
+Reviewers routinely keep multiple review tabs open simultaneously — 'Hero Banner v3', 'Hero Banner v4', 'Checkout flow v2' — and rely on the browser tab title to switch between them. A generic title like 'Design Review' or the product name is useless when five reviews are open. Screen-reader users navigating tabs and window-switching keyboard users depend on the <title> element being specific: it must include the artifact name and current version (e.g. 'Hero Banner v3 — Design Review'), and update when the user switches versions.
+
+**How to test:**
+- Open three different artifacts in three browser tabs and inspect each tab's title.
+- Confirm each title includes the artifact name AND the current version (e.g. 'Hero Banner v3 — Design Review'), not just 'Design Review' or the product name.
+- Switch versions within a single review and confirm the <title> updates to reflect the new version (e.g. v3 → v4).
+- Navigate tabs using Cmd+1 / Ctrl+Tab with a screen reader running and confirm each tab announces with the artifact-specific title.
+- Verify the title pattern is consistent across review states (draft, in review, approved) — the artifact name and version remain identifiable even when state changes.
+
+**Pass criteria:**
+- Every review page's <title> includes the artifact name and the current version label.
+- The title updates dynamically when the user switches versions within the same review.
+- Tab titles are distinct between concurrently open reviews — no two open reviews share the same title.
+- The product name is at most a secondary component of the title, not its sole content.
+
+**Fail examples:**
+- All review tabs show 'Design Review' as the browser tab title; switching between five open reviews requires hovering each tab to see the URL.
+- Tab title is the artifact name only — switching from v3 to v5 does not update the title, so two tabs of the same artifact are indistinguishable.
+- Title is the raw artifact UUID ('Review · a8f3b2c1-…') with no human-readable name.
+- Title is set once at initial load and never updates; a screen-reader user switching versions has no audible confirmation that the page now represents a different version.
+
+**References:**
+- [WCAG 2.4.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/page-titled)
+
+### Keyboard focus through annotation threads follows the visual order of pins on the artifact, not DOM insertion order
+
+- **ID:** `2.4.3-thread-focus-order`
+- **WCAG 2.4.3** Focus Order (Level A)
+- **Tags:** `keyboard`, `focus`, `threads`, `annotations`
+
+Annotation pins are placed at meaningful visual positions on the artifact — top-of-header, mid-CTA, bottom-of-footer — and sighted reviewers read them in that spatial order. The DOM insertion order, however, typically reflects creation time: the order reviewers added pins, which can be arbitrary. If keyboard focus traverses pins in DOM insertion order instead of visual top-to-bottom / left-to-right anchor order, a keyboard user lands on the footer pin, then the header pin, then a mid-canvas pin — the conversation flow makes no sense. Tab order must be derived from anchor position so it matches what a sighted user perceives.
+
+**How to test:**
+- Create at least six annotations across an artifact in a non-sequential order: place pin A at the bottom, then pin B at the top, then pin C in the middle, etc.
+- Tab through the canvas with a keyboard and record the visit order; confirm focus moves top-to-bottom, left-to-right by visual anchor position — not in creation order.
+- Delete a middle pin and add a new one near the top; confirm focus order updates so the new top-positioned pin is visited early, not last.
+- Inspect DOM: the order can be achieved either by sorting the DOM by anchor coordinates or via tabindex management — confirm the visible focus order matches visual spatial order regardless of approach.
+- Verify the same spatial order applies when the user enters the canvas from a 'Skip to canvas' link or from the thread panel via a 'Show on canvas' action.
+
+**Pass criteria:**
+- Keyboard tab order through annotation pins matches the visual top-to-bottom, left-to-right order of pin anchors on the artifact.
+- Focus order updates when pins are added, deleted, or moved so it always reflects current visual position.
+- The same spatial order applies whether the user enters the canvas via Tab traversal, a skip link, or a 'Show on canvas' action from the thread panel.
+- DOM insertion / creation order does not leak into keyboard focus order.
+
+**Fail examples:**
+- Reviewer created pins in this order: footer, header, CTA, sidebar. Tabbing visits them in that creation order, so keyboard users read footer → header → CTA → sidebar instead of header → CTA → sidebar → footer.
+- Pins are rendered as absolutely-positioned siblings in DOM creation order with no tabindex management; focus order is creation order, not spatial order.
+- When a new pin is added at the top of the artifact, it is appended at the end of the DOM and visited last in tab order despite being visually first.
+- Tab order matches creation order in one direction (Tab) but reverse-creation order with Shift+Tab — neither matches visual position.
+
+**References:**
+- [WCAG 2.4.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/focus-order)
+
+### Workflow toolbar focus order is predictable and stable across sessions, roles, and viewport sizes
+
+- **ID:** `2.4.3-workflow-toolbar-focus-order`
+- **WCAG 2.4.3** Focus Order (Level A)
+- **Tags:** `keyboard`, `focus`, `workflow-state`
+
+The workflow toolbar (Approve, Request changes, Comment, Reject, Resolve) is the most-used surface in a review tool. Reviewers build muscle memory: 'Approve is the third tab stop in the toolbar.' If the focus order shifts because actions reorder based on role (an admin sees different controls than an external reviewer), or because the toolbar collapses on narrow viewports into a menu, or because the user's recent-actions sort scrambles button order, keyboard users lose their place. Focus order through workflow actions must be stable and predictable across sessions, viewport changes, and role variations.
+
+**How to test:**
+- Open the workflow toolbar at a wide viewport and tab through it; record the focus visit order.
+- Resize the viewport to a narrow width that collapses some actions into an overflow menu; tab through and confirm the relative order of remaining actions matches the wide-viewport order — Approve still comes before Reject, not after.
+- Sign in as different roles (designer, reviewer, external guest) and confirm the actions each role can see appear in the same relative order — controls are hidden, not reordered.
+- Reload the page and tab through again; confirm focus order is identical to the previous session, with no 'recent action first' reordering.
+- Inspect DOM: confirm the toolbar uses a stable child order driven by a fixed action sequence, not a dynamic sort.
+
+**Pass criteria:**
+- Workflow toolbar focus order is the same across sessions for a given user.
+- When actions collapse into an overflow menu on narrow viewports, the relative order of remaining actions is unchanged.
+- When some actions are hidden by role, the relative order of visible actions matches their order for other roles — actions are removed, not reordered.
+- No 'recent actions first' or dynamic sort scrambles toolbar order between sessions.
+
+**Fail examples:**
+- On a wide viewport the order is Approve / Request changes / Comment / Reject; on a narrow viewport the order becomes Comment / Approve / Reject (Request changes collapsed) — relative order has shifted.
+- Admin sees Approve / Reject / Override; external reviewer sees Reject / Comment — the same Reject button is in a different relative position, breaking muscle memory for users switching contexts.
+- Toolbar reorders so the user's most-recently-clicked action is first; keyboard users tab through a different sequence each session.
+- Approve and Reject swap positions between desktop and tablet layouts, so a reviewer using both devices loses their tab-stop memory.
+
+**References:**
+- [WCAG 2.4.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/focus-order)
+
+### User @mentions in comments expose the mentioned user's name as the accessible link text
+
+- **ID:** `2.4.4-mention-link-purpose`
+- **WCAG 2.4.4** Link Purpose (In Context) (Level A)
+- **Tags:** `threads`, `name-role-value`
+
+When a reviewer mentions a teammate in a comment — '@patricia can you confirm?' — the mention is typically a styled chip that links to the user's profile or filters threads by that user. If the chip's accessible name is just '@u123', the raw user ID, or only conveys a color (the teammate's avatar hue) with no name, screen-reader users hear 'link, u123' or 'link, colored chip' and have no idea who was mentioned. The accessible name of every mention link must be the mentioned user's display name, exposed via the chip's text content, aria-label, or aria-labelledby.
+
+**How to test:**
+- Post a comment containing @mentions of at least three different users with different display names and avatar colors.
+- Tab to each mention chip and confirm the screen reader announces 'link, [display name]' — e.g. 'link, Patricia Goh' — not 'link, u123' or 'link, chip'.
+- Inspect each mention element in DevTools: the accessible name should be the user's display name, exposed via visible text, aria-label, or aria-labelledby pointing at a labeled element.
+- Confirm the same chip's accessible name does not rely solely on a colored avatar or the @ symbol — the name itself must be present.
+- Verify that mentions in different surfaces (in a parent comment, in a reply, in a notification preview) consistently expose the display name.
+
+**Pass criteria:**
+- Every @mention link's accessible name is the mentioned user's display name.
+- User IDs, raw handles without context, or color-only chips are never the sole accessible name.
+- The display name is exposed via visible text content, aria-label, or aria-labelledby.
+- Mentions in all surfaces (comments, replies, notification previews) follow the same naming pattern.
+
+**Fail examples:**
+- Mention chip renders as a colored pill containing the avatar only; the linked element's accessible name is the raw user ID 'u_a8f3b2'.
+- Mention chip has visible text '@p' (first initial only) and no aria-label expanding it to the full name; screen-reader users hear 'link, at p'.
+- Mention is conveyed only by the user's avatar color and an @ glyph; the linked element has no text and no aria-label.
+- Mention chips in the comment body show display names, but in notification previews they collapse to '@user' with no name — accessible name varies by surface.
+
+**References:**
+- [WCAG 2.4.4 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context)
+
+### Links to specific versions in thread comments expose the version label, author, and date — not an opaque ID
+
+- **ID:** `2.4.4-version-link-purpose`
+- **WCAG 2.4.4** Link Purpose (In Context) (Level A)
+- **Tags:** `versioning`, `name-role-value`
+
+Reviewers routinely reference previous versions in a thread — 'this was approved in v3, see [link]' — and the tool typically converts the version reference into a link chip. If that chip's accessible name is an opaque internal ID ('version_a8f3b2c1') or just 'v3' with no surrounding context, screen-reader users skimming a thread's links list have no way to tell which version is which. The link's accessible name should include the version label (v3), the author, and the date — 'v3 by Alex on May 12' — so a user reviewing a list of links knows where each one leads.
+
+**How to test:**
+- Post comments that reference multiple different versions of the artifact via the version-link picker (e.g. v2, v3, v5).
+- Tab to each version link and confirm the screen reader announces 'link, v3 by Alex on May 12' (or equivalent — label, author, date), not 'link, v3' or 'link, version_a8f3b2'.
+- Open the screen reader's links list (VoiceOver rotor → Links, or NVDA Insert+F7) and confirm each version link is uniquely identifiable from the list without needing surrounding sentence context.
+- Inspect DevTools: the link's accessible name should include version label, author, and date — via visible text, aria-label, or aria-labelledby.
+- Confirm raw version IDs or UUIDs never appear as the accessible name.
+
+**Pass criteria:**
+- Every version link's accessible name includes the version label, author, and date.
+- Raw IDs or UUIDs never appear as the accessible name of a version link.
+- Each version link is distinguishable in a screen reader's links list without needing surrounding sentence context.
+- The naming pattern is consistent across comments, replies, and version-change activity log entries.
+
+**Fail examples:**
+- Thread comment renders '[v3]' as a link with accessible name 'v3'; if a thread mentions five different versions, the screen-reader links list reads 'v3, v3, v3, v3, v3' with no way to tell them apart.
+- Version link's accessible name is the internal UUID 'version_a8f3b2c1d4e5'; screen-reader user hears a string of unintelligible characters.
+- Visible link text is 'see here' with no version label; aria-label is also 'see here' or empty.
+- Activity-log entries link to versions with no author or date in the accessible name — only 'Reverted to v2' — so a user cannot tell which v2 across history is meant.
+
+**References:**
+- [WCAG 2.4.4 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context)
+
+### A specific annotation can be located by at least two of: spatial canvas click, thread list, or filter/search
+
+- **ID:** `2.4.5-multiple-ways`
+- **WCAG 2.4.5** Multiple Ways (Level AA)
+- **Tags:** `navigation`, `annotations`
+
+Annotations are the primary content of a review, and users need to find a specific one for many reasons: a teammate referenced it, they want to re-read their own comment, or they are triaging unresolved threads. Sighted mouse users click directly on the pin. But that single mechanism fails users who can't see the pin (blind), can't aim a mouse at it precisely (motor disabilities), or are looking for a thread they remember by content, not by location. The tool must offer at least two distinct ways to find a specific annotation: the spatial click, a thread list (sidebar with all threads), and/or a filter/search by content, author, status, or date.
+
+**How to test:**
+- Open a review with at least 15 annotations across the artifact and confirm at least two distinct mechanisms are available to find a specific one.
+- Mechanism 1 — spatial: click directly on the pin on the canvas and confirm the corresponding thread opens.
+- Mechanism 2 — thread list: open the sidebar that lists all threads, navigate to a specific entry, and confirm activating it opens the same thread.
+- Mechanism 3 (where present) — filter/search: enter a search query for comment content, filter by author, or filter by resolved/unresolved status; confirm matching threads appear and can be activated.
+- Confirm at least two of the three mechanisms are usable with keyboard alone and exposed to assistive technology.
+- Verify the sidebar list is not just a visual representation of pins — it must be a fully usable, focusable alternative path to each annotation.
+
+**Pass criteria:**
+- At least two distinct mechanisms exist to find a specific annotation (spatial click, thread list, filter/search).
+- All available mechanisms are keyboard reachable and exposed to assistive technology.
+- The thread list is fully interactive — activating an entry opens the thread, not just scrolls the canvas.
+- Filter/search (where present) operates on comment content, author, status, or date — not only on internal IDs.
+
+**Fail examples:**
+- The only way to open a thread is to click directly on its pin on the canvas; the sidebar shows pins as a visual minimap but entries are not activatable.
+- A thread list exists but is read-only — entries display the comment text without being focusable or actionable.
+- Search and filter controls exist but only filter the dashboard list of artifacts, not annotations within a single review.
+- Annotation list is reachable but lacks keyboard activation — entries respond to mouse click only, blocking keyboard and switch users.
+
+**References:**
+- [WCAG 2.4.5 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways)
+
+### Thread headings describe the conversation topic, not a sequential thread number
+
+- **ID:** `2.4.6-thread-headings-descriptive`
+- **WCAG 2.4.6** Headings and Labels (Level AA)
+- **Tags:** `threads`, `name-role-value`
+
+When the thread panel or sidebar uses headings to identify each thread, generic labels like 'Thread 17' or 'Annotation #4' give a screen-reader user navigating by heading no information about which conversation they are about to enter. Heading text should describe the thread's topic — typically the first comment's summary, the anchored region's name, or the annotation's title — so a user scanning headings in a screen reader can quickly find the conversation they want. 'Thread 17' is a sequential ID, not a description.
+
+**How to test:**
+- Open a review with at least eight threads covering different topics (a logo color discussion, a CTA copy debate, a broken error state, etc.).
+- Inspect the heading element for each thread (h2 or h3) and confirm the text describes the topic or summarizes the first comment — e.g. 'Logo color contrast on hero — Patricia, 3 replies' — not 'Thread 17' or 'Annotation #4'.
+- Use a screen reader to navigate by heading (VoiceOver rotor → Headings, NVDA H key) and confirm each heading conveys what the thread is about without requiring the user to enter it.
+- Confirm the heading text does not collapse to a sequential ID when threads are sorted or filtered.
+- Verify the same descriptive heading appears consistently in the thread panel and any thread summary surfaces (e.g. notifications, daily digest).
+
+**Pass criteria:**
+- Thread headings describe the conversation topic, summarize the first comment, or name the anchored region — not a sequential thread number.
+- Headings remain descriptive across sort orders, filters, and view modes.
+- Screen-reader heading navigation surfaces meaningful, distinguishable text for each thread.
+- The same descriptive heading appears in notifications and digests, not a generic 'Thread #' fallback.
+
+**Fail examples:**
+- Thread panel renders each thread under an <h3>Thread 17</h3>; screen-reader heading list reads 'Thread 14, Thread 15, Thread 16, Thread 17' with no topic context.
+- Headings are auto-generated as 'Annotation #4' from the annotation's internal index and never reflect the comment content.
+- Heading is the timestamp ('May 12 at 2:14pm') with no topic; multiple threads from the same minute have indistinguishable headings.
+- First-comment summary exists in the body but the visible heading is the raw author display ('@patricia') with no topic — every thread by Patricia has the same heading.
+
+**References:**
+- [WCAG 2.4.6 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/headings-and-labels)
+
+### The artifact canvas shows a clear focus indicator when it itself takes focus for keyboard pan and zoom
+
+- **ID:** `2.4.7-canvas-focus-visible`
+- **WCAG 2.4.7** Focus Visible (Level AA)
+- **Tags:** `focus`, `zoom-pan`
+
+Many review tools support keyboard pan and zoom of the artifact canvas — arrow keys to pan, +/- to zoom — but those interactions require the canvas region itself to take focus first. If the canvas accepts focus but shows no visible indicator that it has done so, keyboard users cannot tell that arrow keys will now pan rather than scroll the page. The canvas frame (a border, outline ring, or labeled focus halo around the canvas viewport) must show a clearly visible focus indicator whenever the canvas itself takes focus.
+
+**How to test:**
+- Tab through the page until focus lands on the artifact canvas region (typically the focusable container that handles arrow-key pan).
+- Confirm a visible focus indicator appears on the canvas frame — a border or outline ring around the canvas viewport that is clearly distinguishable from the resting state.
+- Press arrow keys and confirm the canvas pans (or zooms with +/-), verifying that the focus indicator correctly signals 'keyboard input now affects the canvas'.
+- Tab focus away and confirm the canvas focus indicator disappears.
+- Verify the canvas focus indicator meets 3:1 contrast against adjacent colors (per 1.4.11) and is preserved in forced-colors mode.
+
+**Pass criteria:**
+- When the canvas region takes focus, a clearly visible focus indicator appears on the canvas frame.
+- The focus indicator is distinct from the canvas resting state and from any selected-pin or hover indicators inside the canvas.
+- Focus indicator meets 3:1 contrast against adjacent colors and survives forced-colors mode.
+- Focus indicator disappears when focus moves elsewhere.
+
+**Fail examples:**
+- Canvas accepts focus and arrow-key pan works, but no visible indicator appears; keyboard users press arrow keys and the page scrolls instead because they did not realize the canvas had focus.
+- Canvas focus uses outline:none with no replacement; focus on the canvas is entirely invisible.
+- Focus indicator is a 1px light-gray border that disappears against the tool's light-gray chrome surround.
+- Canvas focus indicator looks identical to the hover state of a pin inside the canvas, confusing users about whether canvas or a pin has focus.
+
+**References:**
+- [WCAG 2.4.7 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible)
+
+### Focused annotation pins show a focus indicator visually distinct from hover and selected states
+
+- **ID:** `2.4.7-pin-focus-visible`
+- **WCAG 2.4.7** Focus Visible (Level AA)
+- **Tags:** `focus`, `annotations`
+
+Annotation pins commonly carry three distinct visual states: hover (mouse hover preview), selected (the pin whose thread is currently open), and focus (the pin the keyboard is currently on). Tools frequently collapse focus into the hover or selected styling, leaving keyboard users unable to tell where their focus actually is — particularly when they have hovered or selected a different pin. The keyboard focus indicator must be visually distinct from both hover and selected: typically a high-contrast outline ring or halo that does not overlap with the hover or selected styling.
+
+**How to test:**
+- Tab through the canvas pins with a keyboard and observe the visual treatment of the currently focused pin.
+- Mouse-hover a different pin without changing keyboard focus and confirm the hover style is visually different from the focus style.
+- Click on a third pin to select its thread, then return keyboard focus to the originally focused pin via Tab and confirm focus, hover, and selected states are all visually distinguishable.
+- Compare all three states side by side: focus indicator must be visually distinct in shape, color, thickness, or position from hover and selected — not just a slightly different shade.
+- Confirm the focus indicator meets contrast requirements (3:1 against adjacent colors per 1.4.11) and does not vanish in forced-colors mode.
+
+**Pass criteria:**
+- Focused annotation pins show a focus indicator that is visually distinct from hover and selected states.
+- All three states (focus, hover, selected) are simultaneously distinguishable when applied to different pins on the canvas.
+- The focus indicator persists for the duration that keyboard focus is on the pin — not briefly flashed or animated away.
+- Focus indicator survives forced-colors mode and meets 3:1 contrast against adjacent colors.
+
+**Fail examples:**
+- Focused pin gets a 2px blue outline that is identical to the hover style; a keyboard user who mouses over a different pin cannot tell which pin actually has focus.
+- Focus styling is the same as selected styling, so once a thread is open the focused pin and the selected pin are visually indistinguishable.
+- Focus indicator is a subtle drop-shadow only; on a busy gradient artifact background the shadow is invisible.
+- Pin focus relies entirely on the browser's default outline:auto which the tool then overrides with outline:none — focus is invisible.
+
+**References:**
+- [WCAG 2.4.7 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible)
