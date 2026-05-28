@@ -3,7 +3,7 @@
 > Generated from `checklist.json`. Do not edit by hand.
 > Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T00:00:00Z
 
-Total items: 13
+Total items: 25
 
 ## Perceivable
 
@@ -388,3 +388,367 @@ Design-review tools often invite external reviewers (clients, contractors, stake
 
 **References:**
 - [WCAG 1.3.5 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose)
+
+### Annotation resolution status uses an icon and text label, not color alone
+
+- **ID:** `1.4.1-annotation-status-not-color-only`
+- **WCAG 1.4.1** Use of Color (Level A)
+- **Tags:** `annotations`, `contrast`
+
+Open vs resolved is the most-scanned annotation attribute in a review — reviewers triage threads by it, designers filter by it, leads close out reviews against it. Tools commonly show 'open' as a filled pin and 'resolved' as the same pin in a muted gray or green. Without a distinct icon (e.g. an open circle vs a checkmark) and a visible or accessible text label, colorblind and low-vision reviewers cannot tell at a glance which threads still need attention.
+
+**How to test:**
+- Open a review with a mix of open and resolved annotations visible on the canvas, in the sidebar list, and in any filter chips.
+- Confirm each annotation pin / list entry shows a distinct icon for open vs resolved (e.g. hollow dot vs checkmark) and a visible or accessible text label ('Open', 'Resolved').
+- Run the canvas through Chrome DevTools deuteranopia and achromatopsia simulators and confirm open vs resolved remain distinguishable.
+- Toggle Windows High Contrast / forced-colors mode and verify the resolution status icon and label survive.
+- Confirm screen-reader announcement of each pin and list entry includes the resolution status as text.
+
+**Pass criteria:**
+- Open and resolved annotations use distinct icon shapes (not the same shape recolored).
+- Resolution status is exposed as text (visible label or accessible name) on both the on-canvas pin and the sidebar list entry.
+- Open and resolved remain distinguishable under colorblindness simulations and forced-colors mode.
+- Screen-reader announcement of an annotation includes its resolution status.
+
+**Fail examples:**
+- Open pins are filled #FF5A5A red and resolved pins are filled #88B988 green — same pin shape, different color only; deuteranopic reviewers cannot triage.
+- Sidebar list shows resolution status as a colored left-border stripe with no icon or text.
+- Resolved annotations are dimmed to 40% opacity with no change in icon or label; a low-vision reviewer cannot tell dim-because-resolved from dim-because-poor-contrast.
+- Filter chip 'Open' is a red dot and 'Resolved' is a green dot with no text labels on the chips themselves.
+
+**References:**
+- [WCAG 1.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color)
+
+### Version-diff regions distinguish added, removed, and changed content using texture or iconography in addition to color
+
+- **ID:** `1.4.1-version-diff-not-color-only`
+- **WCAG 1.4.1** Use of Color (Level A)
+- **Tags:** `versioning`, `contrast`
+
+Version-compare views overwhelmingly use green for added regions and red for removed regions — the same red/green pairing that is invisible to roughly 1 in 12 men with red-green color blindness. A reviewer cannot evaluate whether a removed region was the right one to delete if they cannot tell removed from added. Diff highlights must combine color with a second visual channel: hatching, stripes, plus/minus iconography, or distinct outline styles, so the diff is readable regardless of color perception.
+
+**How to test:**
+- Open a version compare view between two versions with clear additions, deletions, and modifications across different regions of the artifact.
+- Confirm added regions carry a non-color signal (e.g. diagonal hatching, a + icon badge, or a solid green outline), removed regions a different signal (e.g. cross-hatching, a − icon, or a dashed red outline), and changed regions a third (e.g. dotted outline or a Δ icon).
+- Run the view through Chrome DevTools 'Emulate vision deficiencies' for deuteranopia and protanopia and confirm added vs removed are still distinguishable.
+- Toggle forced-colors mode and verify the secondary channel (hatch / icon / outline style) survives.
+- Inspect the diff legend and confirm it teaches users both the color and the shape/texture meaning.
+
+**Pass criteria:**
+- Added, removed, and changed diff regions each use a distinct non-color signal (texture, iconography, or outline style) in addition to color.
+- The three diff states remain distinguishable in deuteranopia, protanopia, tritanopia, and achromatopsia simulations.
+- The diff legend documents both color and the secondary signal.
+- Forced-colors mode preserves a way to distinguish add / remove / change.
+
+**Fail examples:**
+- Added regions are filled with #6BCB77 green and removed regions with #FF6B6B red, with no outline, icon, or hatch; deuteranopic reviewers cannot tell which is which.
+- Diff legend reads 'Green = added, Red = removed' with no shape or texture cue described.
+- Changed regions are signaled only by a yellow tint that washes out in forced-colors mode and disappears entirely.
+- Added and removed regions both use a solid outline of slightly different hues with no hatch or icon — distinguishable only by hue.
+
+**References:**
+- [WCAG 1.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color)
+
+### Workflow state is conveyed by label and icon shape, never by color alone
+
+- **ID:** `1.4.1-workflow-state-not-color-only`
+- **WCAG 1.4.1** Use of Color (Level A)
+- **Tags:** `workflow-state`, `contrast`
+
+Workflow state — draft, in review, approved, requires changes — is one of the most consequential signals in a review tool: it tells reviewers whether to comment, approve, or stop. Many tools encode state with a single colored chip (blue / amber / green / red). A reviewer with deuteranopia, a reviewer in forced-colors mode, or anyone on a monochrome display loses the distinction. State must carry a visible text label and a distinguishing icon shape in addition to color, so the meaning survives when color is unavailable.
+
+**How to test:**
+- Open artifacts in each workflow state and visually inspect the state chip in the artifact header and in the dashboard list view.
+- Confirm each state shows a visible text label ('Draft', 'In review', 'Approved', 'Requires changes') alongside any colored indicator.
+- Confirm each state uses a distinguishable icon shape (e.g. pencil for draft, eye for in review, checkmark for approved, alert triangle for requires changes), not the same icon recolored.
+- Enable a colorblindness simulator (Stark, Chrome DevTools 'Emulate vision deficiencies' for protanopia, deuteranopia, tritanopia, achromatopsia) and confirm each state remains distinguishable.
+- Toggle Windows High Contrast / macOS Increase Contrast / forced-colors mode and verify each state chip remains identifiable by its label and icon.
+
+**Pass criteria:**
+- Every workflow state has a visible text label rendered as part of the chip.
+- Each state uses a unique icon shape, not a recolored variant of the same glyph.
+- All four states remain distinguishable under deuteranopia, protanopia, tritanopia, and achromatopsia simulations.
+- Forced-colors mode preserves the label and icon so state is identifiable without the brand color.
+
+**Fail examples:**
+- Workflow chip is a 12px colored dot — blue for in review, green for approved, red for requires changes — with no accompanying text or icon.
+- All states use the same circle icon recolored; a deuteranopic reviewer sees 'In review' and 'Approved' as the same muted yellow circle.
+- Text label exists but is rendered in the same hue as the chip background (white text on #FFD166 amber chip) and disappears in forced-colors mode.
+- Dashboard list view shows state only as a colored left border on each row, with no label column.
+
+**References:**
+- [WCAG 1.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color)
+
+### Thread panel reflows to a single column at 320 CSS pixels wide without loss of content or function
+
+- **ID:** `1.4.10-thread-panel-reflow-320px`
+- **WCAG 1.4.10** Reflow (Level AA)
+- **Tags:** `threads`
+
+WCAG 1.4.10 requires content to be usable at 320 CSS pixels wide without two-dimensional scrolling. In a review tool, the thread panel is the densest text region — it commonly uses a two-column layout (avatar / reply meta on the left, comment body on the right) that breaks down at narrow widths. At 320px, the thread must reflow to a single column with the avatar inline above or beside the author name, replies stacked vertically, and every action (Reply, Resolve, Edit, Delete) reachable without horizontal scroll.
+
+**How to test:**
+- Resize the viewport to exactly 320 CSS pixels wide (Chrome DevTools device toolbar, custom 320×768).
+- Open a thread with a parent comment, three replies, one nested reply, and a code block.
+- Confirm no horizontal scrollbar appears on the thread panel itself (vertical scroll is fine and expected).
+- Confirm every reply action (Reply, Resolve, Edit, Delete, React) is reachable — collapsed into a menu is acceptable, hidden off-screen is not.
+- Confirm avatar/author/timestamp metadata reflows inline rather than being clipped or hidden.
+- Verify the code block and any tables in comment bodies remain readable (code may wrap or use horizontal scroll inside the code block element — that is allowed under 1.4.10's exception for content requiring two-dimensional layout).
+
+**Pass criteria:**
+- At 320 CSS pixels wide, the thread panel does not introduce horizontal page or panel scrollbars.
+- Thread layout collapses to a single column with avatar, author, timestamp, and body stacked or inlined coherently.
+- All reply actions remain reachable at 320px, either inline or via an accessible overflow menu.
+- Code blocks and other content that legitimately need two-dimensional layout scroll only within their own container, not the whole panel.
+
+**Fail examples:**
+- At 320px the thread panel keeps a fixed 480px two-column layout, producing horizontal scroll on every reply.
+- Reply action buttons (Resolve / Edit / Delete) are pushed off the right edge at 320px with no overflow menu.
+- Avatar column is fixed at 64px wide, leaving 256px for the comment body, and long words break out of the comment surface causing page-level horizontal scroll.
+- @mention pills wrap to a second line at 320px but their tap target is clipped to the original first-line position, becoming unreachable.
+
+**References:**
+- [WCAG 1.4.10 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/reflow)
+
+### Annotation pin focus and selection outlines meet 3:1 against both the pin fill and the underlying artifact
+
+- **ID:** `1.4.11-annotation-pin-outline-contrast`
+- **WCAG 1.4.11** Non-text Contrast (Level AA)
+- **Tags:** `contrast`, `annotations`, `focus`
+
+When a pin is focused (via Tab) or selected (via click), the tool draws a focus ring or selection outline around it. That outline is a non-text UI indicator and must meet 3:1 contrast — but uniquely for pins, the outline sits between the pin fill and the artifact, so it must meet 3:1 against both. A common failure: a 2px white ring around a red pin on a white artifact background. The ring contrasts beautifully with the pin but disappears entirely against the artifact, leaving keyboard users with no visible focus.
+
+**How to test:**
+- Tab to an annotation pin and observe the focus ring; click another pin to select it and observe the selection outline.
+- Sample the outline color against the pin fill and against the immediately surrounding artifact pixels (using Stark or the DevTools color picker), and confirm 3:1 against each independently.
+- Repeat across artifact backgrounds — white, near-black, mid-gray, saturated brand color, photographic — and confirm 3:1 holds against the artifact in every case.
+- Confirm the outline strategy (often a two-layer ring — inner ring matching one and outer ring contrasting with the other) works at 100% and 200% zoom without becoming visually thin.
+- Verify that focus and selection outlines remain visible in forced-colors / high-contrast mode.
+
+**Pass criteria:**
+- Annotation pin focus and selection outlines meet 3:1 contrast against the pin fill.
+- The same outlines meet 3:1 contrast against the underlying artifact background across white, near-black, mid-gray, saturated, and photographic backgrounds.
+- The outline remains visually present at 100% and 200% zoom.
+- Forced-colors mode preserves a visible focus ring on pins.
+
+**Fail examples:**
+- Focus ring is a 2px #FFFFFF white outline around a #FF5A5A red pin — contrasts 4.0:1 with the pin but 1.0:1 against a white artifact background, so the ring vanishes.
+- Selection outline is a #1A1A1A near-black ring that contrasts 14:1 with a red pin but disappears against a dark photograph artifact at 1.2:1.
+- Focus ring uses a thin 1px #B3B3B3 mid-gray that measures 1.4:1 against both pin and artifact in worst-case regions.
+- In forced-colors mode the outline disappears entirely because it was rendered via box-shadow rather than outline / border.
+
+**References:**
+- [WCAG 1.4.11 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast)
+
+### Version-diff highlight outlines meet 3:1 contrast against base content at all zoom levels
+
+- **ID:** `1.4.11-version-diff-highlight-contrast`
+- **WCAG 1.4.11** Non-text Contrast (Level AA)
+- **Tags:** `contrast`, `versioning`
+
+Version-diff outlines are non-text UI components — they communicate where additions, deletions, and changes are without using text. Under WCAG 1.4.11, the visual boundaries of these highlights must meet 3:1 contrast against adjacent colors. A pale green added-region outline on a white screenshot, or a thin pink deletion outline on a pastel background, falls below 3:1 and effectively hides the diff from low-vision reviewers — defeating the entire purpose of the compare view.
+
+**How to test:**
+- Open a version-compare view with added, removed, and changed regions visible on a mix of white, light-gray, and saturated backgrounds.
+- Sample the outline color of each diff highlight against the immediately adjacent base content using Stark, axe DevTools, or the Chrome DevTools color picker, and confirm 3:1 minimum.
+- Zoom to 100%, 200%, and 400% and re-sample — confirm the outline does not become so thin at high zoom that it visually disappears.
+- Test against worst-case backgrounds: place a small added region on a near-matching background color and verify the outline still meets 3:1.
+- Confirm the diff outline meets 3:1 in both light and dark themes.
+
+**Pass criteria:**
+- Added, removed, and changed diff outlines each meet 3:1 contrast against adjacent base content across all sampled backgrounds.
+- Contrast holds at 100% / 200% / 400% zoom and in both light and dark themes.
+- Outlines remain visually distinguishable at the minimum supported outline thickness (typically 2px).
+- axe DevTools (non-text contrast rule) returns no violations on the diff outlines.
+
+**Fail examples:**
+- Added-region outline is #C8E6C9 pale green on a #FFFFFF background at 1.4:1.
+- Removed-region outline is a 1px #FFB3B3 line that drops below visual perception at 200% zoom and measures 1.9:1 even at 100%.
+- Changed-region outline is a yellow dotted line at 2.2:1 against a beige screenshot.
+- Dark theme inverts the outline to #2E5C2E dark green on a #1A1A1A panel at 2.1:1.
+
+**References:**
+- [WCAG 1.4.11 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast)
+
+### Thread comments tolerate user-applied text spacing without clipping, overlap, or loss of function
+
+- **ID:** `1.4.12-thread-text-spacing-survives`
+- **WCAG 1.4.12** Text Spacing (Level AA)
+- **Tags:** `threads`
+
+Users with dyslexia, low vision, or cognitive disabilities frequently apply user stylesheets or browser extensions that override text spacing — line-height 1.5x, paragraph spacing 2x font size, letter-spacing 0.12em, word-spacing 0.16em. Thread comments are dense paragraphs with embedded mentions, links, and timestamps; layouts that pin avatars to fixed heights, truncate at fixed line counts, or use fixed-height comment cards will clip or overlap content under these settings. The thread must absorb the spacing without losing words or buttons.
+
+**How to test:**
+- Open a thread with several multi-paragraph comments, then apply the WCAG text-spacing bookmarklet (or paste these styles in DevTools): line-height: 1.5; letter-spacing: 0.12em; word-spacing: 0.16em; and paragraph spacing (margin-bottom on p) at least 2x the font-size.
+- Confirm no text is clipped, truncated, or hidden by overflow:hidden on comment cards or reply containers.
+- Confirm avatars, author names, timestamps, and action buttons do not overlap the comment body or each other.
+- Confirm @mention pills, links, and code blocks reflow gracefully and remain readable.
+- Verify the same spacing applied at 320px viewport width still produces a usable thread.
+
+**Pass criteria:**
+- Thread comments accept line-height 1.5, paragraph spacing 2x font-size, letter-spacing 0.12em, word-spacing 0.16em without clipping, truncation, or overlap.
+- Comment cards grow vertically to accommodate the new spacing rather than clipping at a fixed height.
+- Action buttons, mention pills, links, and timestamps remain reachable and readable.
+- Spacing tolerance holds at narrow viewports (320px) and standard widths.
+
+**Fail examples:**
+- Comment card has a fixed height of 96px with overflow:hidden; applying line-height 1.5 clips the second paragraph of every comment.
+- Reply container uses display:grid with fixed row heights, so increased line-height causes the timestamp row to overlap the comment body.
+- @mention pill is positioned absolutely relative to a fixed-height card; letter-spacing increases push the pill over the comment text.
+- Action button row sits on a fixed bottom anchor; increased paragraph spacing makes the body text scroll under the buttons, hiding the last sentence behind the action bar.
+
+**References:**
+- [WCAG 1.4.12 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing)
+
+### Mention and quick-info popovers triggered on hover or focus are dismissable, hoverable, and persistent
+
+- **ID:** `1.4.13-comment-mention-popovers-dismissable`
+- **WCAG 1.4.13** Content on Hover or Focus (Level AA)
+- **Tags:** `threads`, `focus`
+
+Hovering or focusing an @mention chip or an annotation pin in a thread commonly opens a small popover with the user's profile, the annotation's region preview, or thread metadata. Under WCAG 1.4.13, that additional content must be (a) dismissable without moving the pointer — typically via Escape, (b) hoverable so the user can move the pointer into the popover to read it without it disappearing, and (c) persistent until the user dismisses it, the trigger loses hover/focus, or the information becomes invalid. It also must not obscure the trigger that opened it.
+
+**How to test:**
+- Hover an @mention chip in a thread comment until its profile popover appears.
+- Press Escape and confirm the popover dismisses without moving the pointer or focus.
+- Hover the popover itself (move the pointer from the trigger into the popover content) and confirm it stays open rather than disappearing once the pointer leaves the trigger.
+- Confirm the popover does not visually obscure the @mention chip or the surrounding sentence — it should anchor adjacent, not on top of.
+- Repeat the test with keyboard focus instead of hover (Tab to the mention chip, confirm popover appears, press Escape to dismiss, confirm focus returns to the trigger).
+- Test the same behaviors for any annotation-pin hover preview and any thread-card quick-info popover.
+
+**Pass criteria:**
+- Mention and quick-info popovers can be dismissed with Escape without moving pointer or focus.
+- The popover remains visible when the pointer moves from the trigger into the popover content.
+- The popover persists until the user dismisses it, the trigger loses hover/focus, or the underlying information becomes invalid.
+- The popover does not obscure the trigger element that opened it.
+- Keyboard focus produces equivalent popover behavior to pointer hover, including dismiss-on-Escape.
+
+**Fail examples:**
+- Hovering an @mention shows a profile popover that disappears the instant the pointer leaves the chip, so the user cannot move into it to read the bio or click a link inside.
+- Annotation pin hover preview cannot be dismissed without scrolling or clicking elsewhere — pressing Escape does nothing.
+- Mention popover renders directly on top of the chip itself, hiding the @mention text behind the popover until the popover closes.
+- Keyboard focus on a mention chip opens the popover but Escape closes the entire thread panel instead of just the popover.
+- Quick-info popover auto-dismisses after 2 seconds regardless of hover or focus state, cutting off slow readers mid-sentence.
+
+**References:**
+- [WCAG 1.4.13 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus)
+
+### Annotation pins meet 4.5:1 contrast against the artifact at every supported zoom level
+
+- **ID:** `1.4.3-annotation-pin-contrast`
+- **WCAG 1.4.3** Contrast (Minimum) (Level AA)
+- **Tags:** `contrast`, `annotations`
+
+Annotation pins are essential meaningful content — they are how reviewers locate every conversation on the artifact. But pins sit on top of the artifact, which can be any color, gradient, photo, or screenshot. A fixed pin color (e.g. #FF5A5A red) that meets contrast against a white background will disappear against a red error-state screenshot or a dark photograph. Pins must maintain a 4.5:1 contrast ratio against whatever they overlay, at every zoom level the tool supports — typically via a high-contrast halo, an outline ring, or automatic color adaptation.
+
+**How to test:**
+- Place annotation pins on regions of the artifact with varied backgrounds: white, near-black (#1A1A1A), saturated brand colors, a photograph, and a gradient.
+- Sample the pin's effective foreground color (the fill plus any halo / outline ring) and the background it overlays using axe DevTools, Stark, or the Chrome DevTools color picker, and confirm 4.5:1 minimum at each location.
+- Zoom the browser to 100%, 150%, 200%, and 400% and re-sample — confirm contrast is preserved as the pin and artifact scale.
+- Apply a screenshot artifact with a busy gradient background and place a pin in the worst-case region; measure with a manual contrast sampler (Stark / Colour Contrast Analyser) and confirm pass.
+- Verify the pin's contrast strategy (halo / outline / adaptive fill) is applied consistently — not only on pin hover or focus.
+
+**Pass criteria:**
+- Annotation pins meet 4.5:1 contrast against the underlying artifact across all sampled background colors and at 100% / 150% / 200% / 400% zoom.
+- Contrast is achieved through an inherent property of the pin (high-contrast halo, outline, or adaptive fill) — not by hovering, focusing, or selecting.
+- Pin contrast is preserved when the artifact is a photo, gradient, or screenshot with multiple competing colors.
+- axe DevTools and Stark return no contrast violations on the pin element across the tested backgrounds.
+
+**Fail examples:**
+- Pin fill is fixed at #FF5A5A and disappears against red regions of an error-state screenshot.
+- Pin is a solid #FFFFFF white circle with no outline; it vanishes against a white background and is invisible at 200% zoom over a light-gradient photograph.
+- Pin meets contrast at 100% zoom but a halo dropped at 200% zoom drops it to 2.8:1 against a mid-gray gradient.
+- Pin only gains a contrasting outline ring on hover; resting state on a busy background is unreadable until the user finds the pin to hover it.
+
+**References:**
+- [WCAG 1.4.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum)
+
+### Presence avatar text overlays (initials, status labels) meet 4.5:1 contrast
+
+- **ID:** `1.4.3-presence-avatar-name-contrast`
+- **WCAG 1.4.3** Contrast (Minimum) (Level AA)
+- **Tags:** `contrast`, `realtime`
+
+Real-time presence in a review tool surfaces who else is on the artifact — typically a row of small circular avatars colored from a user-color palette, often with the user's initials overlaid on the avatar fill. Tooltip labels, live cursor name tags, and 'editing' status pills follow the same color logic. When the avatar background uses a saturated user color and the overlaid initials are white at small sizes (often 11–12px), contrast fails for many palette entries. Initials, name tags, and status labels all need 4.5:1 against their avatar or pill background.
+
+**How to test:**
+- Render the presence row with at least eight active users covering the full user-color palette (especially pale yellows, light greens, mid-grays).
+- Inspect each avatar's initials and sample its contrast against the avatar fill using axe DevTools, Stark, or a manual contrast tool.
+- Confirm 4.5:1 for every palette color, not just the most saturated ones.
+- Repeat for live cursor name tags (the small flag attached to a moving cursor) and any 'Editing' / 'Viewing' status pills.
+- Verify the same contrast strategy applies in dark mode and in forced-colors mode.
+
+**Pass criteria:**
+- Avatar initials meet 4.5:1 against the avatar fill for every user-color palette entry.
+- Live cursor name tags meet 4.5:1 against the tag background.
+- Presence status pills ('Editing', 'Viewing', 'Idle') meet 4.5:1 internally.
+- Contrast holds in light theme, dark theme, and forced-colors mode.
+
+**Fail examples:**
+- Pale yellow avatar (#FFE066) with white 11px initials measures 1.4:1.
+- Live cursor name tag uses the user color as the tag background with the same color as a thin outline only — name text is white at 12px on a light-coral background and reads 2.1:1.
+- 'Editing' status pill is #B5EAD7 mint with white text at 1.6:1.
+- Initials look fine in light mode but in dark mode the avatar gains a dark overlay that drops white initials to 3.2:1 against the resulting muddy fill.
+
+**References:**
+- [WCAG 1.4.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum)
+
+### Thread comment body text meets 4.5:1 contrast against the thread surface, including code blocks, quoted text, and link colors
+
+- **ID:** `1.4.3-thread-comment-text-contrast`
+- **WCAG 1.4.3** Contrast (Minimum) (Level AA)
+- **Tags:** `contrast`, `threads`
+
+Thread comments are dense text-heavy content — review feedback, code snippets, quoted prior comments, @mentions, and inline links. Designers often style secondary content (quoted text, code blocks, timestamps, link colors) with reduced contrast to create visual hierarchy, pushing them below the 4.5:1 AA threshold. Every styled variant of comment body text — including code blocks, quoted text, link colors, and @mention pills — must meet 4.5:1 against its background, not just the primary paragraph color.
+
+**How to test:**
+- Open a thread that contains primary text, a quoted previous comment, an inline code block, a fenced code block, an inline link, and an @mention pill.
+- Run axe DevTools on the thread panel and resolve every contrast finding; sample each variant individually with Stark or the Chrome DevTools color picker.
+- Confirm code-block text (often a monospace at reduced color) meets 4.5:1 against the code-block background, not just against the panel background.
+- Confirm link color meets 4.5:1 against the comment surface in both default and visited states.
+- Confirm @mention pills (pill background + pill text) meet 4.5:1 internally and that the pill outline meets 3:1 against the comment surface if the pill carries meaning by shape.
+
+**Pass criteria:**
+- Primary comment text meets 4.5:1 against the thread surface.
+- Quoted text, code-block text, link text (default and visited), and @mention pill text each meet 4.5:1 against their respective immediate background.
+- axe DevTools reports zero contrast violations on the thread panel.
+- Contrast is preserved in both light and dark thread themes.
+
+**Fail examples:**
+- Quoted prior comment is rendered as #9AA0A6 text on a #F5F5F5 quote-block background — 2.7:1, far below AA.
+- Inline code uses #C7254E pink text on a #F7F7F9 background at 4.3:1, just under threshold.
+- Link color is #6FA8DC light blue on a white comment surface at 2.6:1; visited links drop further to 2.1:1.
+- @mention pill renders white text on #B4D8F8 light blue at 1.9:1, illegible to low-vision reviewers.
+
+**References:**
+- [WCAG 1.4.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum)
+
+### Tool chrome remains usable at 200% browser zoom without horizontal scroll on sidebars, thread panel, or workflow controls
+
+- **ID:** `1.4.4-tool-ui-resize-200`
+- **WCAG 1.4.4** Resize Text (Level AA)
+- **Tags:** `zoom-pan`
+
+Review tools cram sidebars, thread panels, version history, presence rows, and workflow controls around a fixed-aspect artifact canvas. At 200% zoom, designers commonly assume the artifact area can pan/scroll within itself (which is fine — the artifact is essential preview content), but the surrounding chrome must not require horizontal page scroll to reach the Reply button, the Approve action, or the version switcher. Toolbars must wrap, sidebars must collapse, and labels must reflow — the chrome is text-and-image content that must scale.
+
+**How to test:**
+- Open a review at 1280×800, then zoom the browser to 200% (Ctrl/Cmd + several times) and confirm no horizontal scrollbar appears on the page chrome.
+- Confirm the thread panel, version sidebar, workflow controls, presence row, and top toolbar all remain reachable without horizontal scrolling on the chrome.
+- Confirm sidebars collapse or reflow rather than disappearing or being pushed off-screen at 200%.
+- The artifact area itself may scroll/pan internally — that is acceptable, but every chrome control (Approve, Reply, Resolve, Switch version) must remain visible or reachable via collapse/menu without horizontal page scroll.
+- Repeat the test at the OS-level text-size 200% (where supported) in addition to browser zoom, since some users use OS scaling rather than browser zoom.
+
+**Pass criteria:**
+- At 200% browser zoom, no horizontal scrollbar appears on the chrome of the review tool.
+- All primary chrome controls (workflow actions, reply, resolve, version switch, presence) remain reachable without horizontal page scroll.
+- Sidebars and panels reflow, collapse, or move into menus rather than overflowing the viewport.
+- The internal scrolling of the artifact area does not count as a failure — only chrome scroll does.
+
+**Fail examples:**
+- At 200% zoom on a 1280px viewport, the Approve and Request changes buttons are pushed off the right edge of the screen and only reachable by horizontal page scroll.
+- Thread panel maintains a fixed 360px width at all zoom levels, leaving only 100px for the artifact column at 200% and producing horizontal overflow.
+- Version sidebar disappears entirely at 200% with no menu fallback, leaving reviewers unable to switch versions.
+- Top toolbar text labels overlap at 200% because the toolbar uses a fixed-pixel grid that cannot wrap.
+
+**References:**
+- [WCAG 1.4.4 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/resize-text)
