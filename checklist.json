@@ -2286,6 +2286,238 @@
           "url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts"
         }
       ]
+    },
+    {
+      "id": "3.2.1-focus-no-context-change",
+      "wcag_criterion": "3.2.1",
+      "wcag_title": "On Focus",
+      "level": "A",
+      "category": "understandable",
+      "title": "Focusing a thread row, annotation pin, or version-history entry does not auto-navigate or open a modal",
+      "description": "Keyboard users tab through dense lists — thread rows in the sidebar, annotation pins on the canvas, version entries in the history panel — to scan and decide where to engage. If merely focusing a row triggers a context change (auto-loading that thread in the main panel, opening a modal, scrolling the canvas to the pin's location, switching the displayed version), the user is jolted out of their scan position on every Tab keypress and effectively cannot survey their options. Focus must move silently; only explicit activation (Enter, Space, click) may change context.",
+      "how_to_test": [
+        "Tab through the thread sidebar list and confirm focusing a row does not open the thread in the main panel, scroll the artifact, or open a modal.",
+        "Tab through annotation pins on the canvas and confirm focus alone does not pan/zoom the canvas, expand the pin's thread, or trigger any popover beyond a non-intrusive focus ring.",
+        "Tab through version-history entries and confirm focus does not load the version into the canvas — only Enter/Space/click does.",
+        "Verify the same when navigating with screen-reader virtual cursor (NVDA browse mode, VoiceOver QuickNav) — moving the virtual cursor onto a row must not commit a context change.",
+        "Inspect for onFocus / onMouseEnter handlers that mutate route state, open dialogs, or call history.push — these are the classic 3.2.1 violations."
+      ],
+      "pass_criteria": [
+        "Tabbing to a thread row, annotation pin, or version entry produces only a focus ring and any non-intrusive focus styling — no route change, modal open, canvas pan, or content swap.",
+        "Context changes (open thread, switch version, scroll-to pin) require explicit activation: Enter, Space, or click.",
+        "Screen-reader virtual cursor movement does not trigger any of the above.",
+        "No onFocus handler in the codebase performs navigation, dialog opening, or state-load actions."
+      ],
+      "fail_examples": [
+        "Tabbing onto a thread row in the sidebar immediately replaces the main panel content with that thread; a keyboard user cannot scan to row 7 without loading rows 1–6 along the way.",
+        "Focusing an annotation pin auto-pans and zooms the canvas to that pin's location; a screen-reader user reviewing the list of pins ends up at a new canvas viewport on every arrow keypress.",
+        "Version-history row uses onFocus={() => loadVersion(id)} so tabbing through the list triggers a full canvas reload per entry.",
+        "Focusing the 'Approve' button in a popover opens a confirmation modal before the user has pressed Enter."
+      ],
+      "tags": [
+        "focus"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-focus"
+        }
+      ]
+    },
+    {
+      "id": "3.2.2-input-no-context-change",
+      "wcag_criterion": "3.2.2",
+      "wcag_title": "On Input",
+      "level": "A",
+      "category": "understandable",
+      "title": "Typing in the comment composer does not trigger workflow transitions or unexpected submission",
+      "description": "The comment composer is the most-used input in a design-review tool, and it is the easiest place to ship a 3.2.2 violation: plain Enter that submits and posts a comment, a slash-command that fires a workflow transition as the user types, an @mention picker that commits the wrong user when focus moves. Sighted, mouse-driven authors rarely notice; keyboard authors and screen-reader users post truncated drafts, fire 'Approve' by accident, or mention the wrong colleague. Plain Enter must insert a newline by default; submission must require an explicit, well-labeled affordance (e.g. Cmd/Ctrl+Enter, a Submit button), and slash-commands or input-as-you-type behaviors must not cause workflow state changes without a confirmation step.",
+      "how_to_test": [
+        "Open the comment composer, type two sentences across multiple lines using plain Enter for line breaks, and confirm Enter inserts a newline rather than posting the comment.",
+        "Confirm submission requires an explicit gesture: a labeled Submit button activated by mouse or keyboard, or a documented modifier shortcut (Cmd/Ctrl+Enter) whose hint is visible near the composer.",
+        "Type a slash-command (e.g. '/approve' if supported) and confirm the workflow transition does not execute until the user explicitly confirms — not on the next keystroke or on blur.",
+        "Type an @mention, then blur the composer mid-suggestion; confirm no mention is committed silently against the user's intent.",
+        "Verify autocomplete pickers do not commit on focus change — only on Enter or click after the user has selected the intended option."
+      ],
+      "pass_criteria": [
+        "Plain Enter in the comment composer inserts a newline; it does not submit the comment.",
+        "Submission requires either a labeled Submit button or a documented modifier shortcut whose hint is visible.",
+        "Slash-commands that trigger workflow transitions require an explicit confirmation step before they fire.",
+        "@mention pickers and other autocomplete UI commit only on explicit selection (Enter/click on the desired option), not on blur or focus change.",
+        "No keystroke in the composer causes a context change (navigation, modal open, workflow state mutation) without explicit confirmation."
+      ],
+      "fail_examples": [
+        "Plain Enter in the composer immediately posts whatever has been typed; reviewers ship one-line truncated comments because Shift+Enter is undocumented.",
+        "Typing '/approve' followed by space immediately moves the artifact to Approved with no confirmation; a slip of the finger ships unintended approvals.",
+        "Tabbing out of the composer with an open @mention picker commits the first suggestion as the mention, so a comment intended for Patricia tags Patrick.",
+        "Pressing Enter on the workflow-state dropdown immediately commits the highlighted option without an intermediate confirm."
+      ],
+      "tags": [
+        "forms",
+        "workflow-state"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-input"
+        }
+      ]
+    },
+    {
+      "id": "3.2.3-thread-panel-consistent-nav",
+      "wcag_criterion": "3.2.3",
+      "wcag_title": "Consistent Navigation",
+      "level": "AA",
+      "category": "understandable",
+      "title": "Thread panel filter, sort, search, and show-resolved controls appear in the same order and location across every artifact page",
+      "description": "Reviewers move between dozens of artifacts a day — different files, different boards, different review states. The thread panel they use to triage feedback should not shuffle its filter / sort / search / show-resolved controls between pages. A user with low vision who has built spatial muscle memory for 'Filter is in the top-left of the thread panel' should not have to relearn the layout on a board-style review vs a Figma-style review vs a versioned PDF. The same controls should appear in the same order and the same place across every artifact context the tool supports.",
+      "how_to_test": [
+        "Open the same thread-panel controls (filter, sort, search, show-resolved toggle, group-by) on at least three distinct artifact types or page contexts the tool supports — e.g. a single-frame artifact, a multi-frame board, a versioned PDF, a video review.",
+        "Confirm the control set is the same (no missing or extra controls without justification), the order is identical, and the spatial position relative to the thread list is consistent.",
+        "Tab through each panel and confirm keyboard tab order through the controls is identical across artifact contexts.",
+        "Verify that any context-specific controls (e.g. a 'frame' filter only on board views) are clearly differentiated as optional additions, not inserted in a way that shifts the universal controls.",
+        "Confirm screen-reader landmarks and headings around the thread panel are named identically across contexts."
+      ],
+      "pass_criteria": [
+        "Thread panel control set (filter, sort, search, show-resolved, group-by) is the same across all artifact contexts where threads exist.",
+        "The order of these controls is consistent across contexts.",
+        "Spatial position relative to the thread list is consistent.",
+        "Keyboard tab order through the controls is identical across contexts.",
+        "Context-specific additions (if any) are clearly distinguished and do not shift the universal controls."
+      ],
+      "fail_examples": [
+        "Single-frame artifact shows filter / sort / search left-to-right; the board view shows search / filter / sort and adds a 'frame' picker that pushes the show-resolved toggle off-screen.",
+        "Show-resolved toggle is top-right of the thread panel on artifacts but tucked inside an overflow menu on the dashboard view, with no spatial cue that the same control exists.",
+        "Sort dropdown's options reorder between contexts ('Newest first' is default on artifacts but 'Most replied' is default on boards), so users cannot predict where their preferred sort lives.",
+        "Keyboard tab order skips the search input on board views because the input is rendered conditionally below the filter, shifting the entire panel's tab sequence."
+      ],
+      "tags": [
+        "navigation",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.3 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-navigation"
+        }
+      ]
+    },
+    {
+      "id": "3.2.4-workflow-buttons-consistent-identity",
+      "wcag_criterion": "3.2.4",
+      "wcag_title": "Consistent Identification",
+      "level": "AA",
+      "category": "understandable",
+      "title": "Workflow actions like Approve and Request Changes carry the same icon, label, and accessible name everywhere they appear",
+      "description": "An 'Approve' action surfaces in several places: the artifact header toolbar, the bulk-action menu on the dashboard, the right-click context menu, the keyboard-shortcut hint card, and the confirmation dialog that fires after activation. If each surface uses a slightly different icon, label, or accessible name — 'Approve' / 'Approve this' / 'Mark approved' / a checkmark with no text — users (especially cognitively disabled users and screen-reader users) cannot recognize they are the same function. Every instance of a workflow action must share one canonical icon, label, and accessible name.",
+      "how_to_test": [
+        "List every surface where the Approve, Request Changes, Reject, and Reopen actions appear: toolbar, bulk-action menu, context menu, keyboard-shortcut hint, confirmation dialog, notification, audit log.",
+        "Confirm the visible text label is identical across surfaces (not 'Approve' on the toolbar and 'Mark approved' in the menu).",
+        "Confirm the icon used is the same glyph on every surface — same shape, same orientation — even when sizes differ.",
+        "Inspect each instance in DevTools and confirm the accessible name (aria-label or button text) is identical across surfaces; screen-reader output should match word-for-word.",
+        "Repeat for Request Changes, Reject, and Reopen — each canonical action must be uniquely identified and consistently labeled."
+      ],
+      "pass_criteria": [
+        "Every workflow action uses the same visible text label across all surfaces it appears on.",
+        "Every workflow action uses the same icon glyph across surfaces.",
+        "The accessible name (button text or aria-label) for each action is identical across surfaces.",
+        "Distinct actions are not confusable with each other — Approve and Mark Ready are not represented by the same icon or label."
+      ],
+      "fail_examples": [
+        "Toolbar shows a checkmark button labeled 'Approve'; bulk-action menu shows the same checkmark labeled 'Mark approved'; right-click context menu shows it labeled 'Approve this design'. Screen-reader users hear three different commands.",
+        "Approve icon is a checkmark on the toolbar but a thumbs-up in the confirmation dialog; the visual signal that 'I am confirming the same action' breaks.",
+        "Keyboard shortcut hint card lists 'A — Accept' while the toolbar button reads 'Approve'; users mapping the shortcut do not realize they map the same function.",
+        "Approve uses a checkmark and Mark Ready uses the same checkmark with no other differentiation — two distinct actions are visually identical."
+      ],
+      "tags": [
+        "workflow-state",
+        "name-role-value"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.4 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification"
+        }
+      ]
+    },
+    {
+      "id": "3.2.6-help-consistent-location",
+      "wcag_criterion": "3.2.6",
+      "wcag_title": "Consistent Help",
+      "level": "A",
+      "category": "understandable",
+      "title": "Help, keyboard-shortcut, and contact-support entry points appear in the same relative location on every page (WCAG 2.2 new)",
+      "description": "WCAG 2.2 added 3.2.6 Consistent Help as a Level A criterion: when a tool provides help mechanisms — a help link, a keyboard-shortcut overlay opened by '?', a contact-support entry, a feedback form — they must appear in the same relative location on every page. In a review tool, help is something users reach for under stress (a reviewer cannot figure out the keyboard shortcut to resolve a thread, an external guest cannot find how to mention a teammate). If help lives in the top-right user menu on the dashboard but moves to a footer link on artifact pages and disappears entirely from the version-compare view, users in a stressed state cannot reliably find it.",
+      "how_to_test": [
+        "Inventory every help-related affordance the tool ships: help link, '?' shortcut overlay, contact-support entry, feedback form, docs link.",
+        "Visit each top-level page (dashboard, artifact view, version-compare, settings, guest-review gate) and confirm each help affordance present on one page appears in the same relative location on every other page where it exists.",
+        "Confirm the keyboard shortcut to open the help overlay (typically '?') works on every page and the overlay is reachable in the same way.",
+        "Verify the contact-support / feedback entry is consistently in (e.g.) the user-menu top-right across all surfaces, not scattered between header on some pages and footer on others.",
+        "Repeat the inventory for the external-guest view and confirm guests have the same help entry points in the same relative spots."
+      ],
+      "pass_criteria": [
+        "Every help affordance the tool provides appears in the same relative location on every page where it exists.",
+        "The keyboard shortcut to open help (e.g. '?') works consistently across all pages.",
+        "Contact-support and feedback entries live in one canonical relative location and do not move between pages.",
+        "Guest / external-reviewer surfaces follow the same consistent placement.",
+        "If a help affordance is intentionally omitted from a page, that absence is documented and consistent — not random."
+      ],
+      "fail_examples": [
+        "Help link is in the user-menu top-right on the dashboard but moves to a footer link on the artifact page and disappears from the version-compare view entirely.",
+        "'?' keyboard shortcut opens the help overlay on the dashboard but is bound to a different action on artifact pages.",
+        "Contact-support is reachable from a 'Help' icon in the toolbar on some pages and only via a 'Send feedback' link buried in settings on others.",
+        "Guest-review gate ships no help entry at all even though authenticated views have a prominent help affordance — guests in a stressed state cannot find documentation."
+      ],
+      "tags": [
+        "navigation"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.6 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-help"
+        }
+      ]
+    },
+    {
+      "id": "3.2.2-comment-autosave-no-surprise",
+      "wcag_criterion": "3.2.2",
+      "wcag_title": "On Input",
+      "level": "A",
+      "category": "understandable",
+      "title": "Comment autosave persists silently without navigating, refreshing, or shifting view; status is exposed via an unobtrusive indicator",
+      "description": "Many review tools autosave draft comments as the user types so a refresh or accidental tab close does not lose the in-progress reply. Autosave is a 3.2.2 risk when it produces a context change — re-rendering the thread (and stealing focus), scrolling the panel to refresh the draft list, opening a 'Saved!' modal, or briefly disabling the composer. The autosave action itself must not navigate, refresh, or change context; its status (saving / saved / failed) must be available via a polite, non-focus-stealing indicator that does not interrupt typing.",
+      "how_to_test": [
+        "Open the comment composer, type several sentences, and pause periodically to allow autosave to fire.",
+        "Confirm autosave does not steal focus from the composer (focus must remain in the textarea / contenteditable through every save).",
+        "Confirm autosave does not scroll the thread panel, re-render the parent thread, open a modal, or briefly disable the composer.",
+        "Verify the autosave status indicator ('Saving…', 'Saved', 'Save failed') updates in a live region (aria-live=\"polite\") that does not interrupt the user's typing and does not steal focus on each update.",
+        "Trigger a save failure (offline, throttled network) and confirm the failure state is announced via the same polite mechanism, with a clearly labeled retry action — not a blocking modal that yanks focus.",
+        "Verify autosave does not navigate the URL (e.g. attaching a draft ID to the route) in a way that causes a back-button context change."
+      ],
+      "pass_criteria": [
+        "Autosave does not steal focus, scroll the view, re-render parent containers, or open modals.",
+        "Autosave status is exposed via an unobtrusive live region (aria-live=\"polite\") that does not interrupt typing.",
+        "Failure states are surfaced via the same polite mechanism with a retry affordance — no focus-stealing dialogs.",
+        "Autosave does not mutate the URL or browser history in a way that changes context.",
+        "The user can continue typing through every save cycle without their cursor or selection being disturbed."
+      ],
+      "fail_examples": [
+        "Each autosave re-renders the entire thread panel; the textarea remounts, the user's cursor jumps to the start, and the next keystroke types in the wrong place.",
+        "Autosave success pops a 'Draft saved' toast that grabs keyboard focus, forcing the user to dismiss it before they can continue typing.",
+        "Autosave failure opens a blocking modal 'Could not save your draft. Retry?' that interrupts the user mid-sentence.",
+        "Autosave pushes a new URL ('?draft=abc123') on every save so the browser back button replays a string of phantom states.",
+        "Status indicator updates an aria-live=\"assertive\" region on every save, so screen-reader users hear 'Saving… Saved… Saving… Saved…' constantly as they type."
+      ],
+      "tags": [
+        "forms",
+        "threads"
+      ],
+      "references": [
+        {
+          "label": "WCAG 3.2.2 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-input"
+        }
+      ]
     }
   ]
 }
