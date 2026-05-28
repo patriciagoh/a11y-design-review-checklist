@@ -63,6 +63,101 @@
       "references": [
         { "label": "WCAG 1.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content" }
       ]
+    },
+    {
+      "id": "1.2.1-embedded-recording-alternative",
+      "wcag_criterion": "1.2.1",
+      "wcag_title": "Audio-only and Video-only (Prerecorded)",
+      "level": "A",
+      "category": "perceivable",
+      "title": "Embedded screen recordings in threads ship with a text alternative that conveys the review content",
+      "description": "Reviewers frequently attach short screen-recorded walkthroughs to a thread comment — 'here's what I changed on the nav, watch this 30-second clip' — and these recordings are typically silent video-only artifacts. A blind reviewer, a low-bandwidth user, or anyone who cannot play the embed needs the same information in text. The thread must surface a transcript, written summary, or detailed description alongside the embed so the review content lives in text, not only in pixels.",
+      "how_to_test": [
+        "Attach a video-only screen recording (e.g. a Loom or .mp4 walkthrough with no audio track) to a thread comment.",
+        "Confirm the comment composer prompts for, requires, or strongly nudges the author to add a written summary or transcript before publishing.",
+        "Open the published thread card with a screen reader and verify the text alternative is read as part of the comment, not hidden behind a 'show transcript' toggle that lacks an accessible name.",
+        "Inspect DOM: the alternative text must be programmatically associated with the embed (aria-describedby, adjacent text in the same comment, or a visible transcript region) — not stored only in a tooltip or metadata field."
+      ],
+      "pass_criteria": [
+        "Every video-only embed in a thread is accompanied by a written transcript, summary, or step-by-step description in the same comment.",
+        "The text alternative conveys the same review content (what changed, where, why) — not just 'video walkthrough attached'.",
+        "The alternative is exposed to assistive technology by default, without requiring the user to discover and toggle a 'transcript' control."
+      ],
+      "fail_examples": [
+        "Reviewer pastes a Loom embed showing edits to the checkout flow with the comment body 'see video'; no transcript or summary exists.",
+        "Embed has a 'CC' button that only toggles auto-generated captions on the video player, with no separate text transcript in the thread.",
+        "Transcript exists but is collapsed under an unlabeled chevron <button> with no accessible name, so screen readers skip past it.",
+        "A 45-second silent walkthrough of color changes is captioned only as 'video.mp4 — 0:45'."
+      ],
+      "tags": ["media", "threads"],
+      "references": [
+        { "label": "WCAG 1.2.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-only-and-video-only-prerecorded" }
+      ]
+    },
+    {
+      "id": "1.2.2-embedded-recording-captions",
+      "wcag_criterion": "1.2.2",
+      "wcag_title": "Captions (Prerecorded)",
+      "level": "A",
+      "category": "perceivable",
+      "title": "Prerecorded video walkthroughs in threads include synchronized captions",
+      "description": "Loom-style walkthroughs are now a default review medium — reviewers narrate decisions, point at regions, and explain rationale on top of a screen recording. For deaf and hard-of-hearing reviewers, that audio narration is the review. The embedded player must offer synchronized captions: either author-supplied caption tracks, or auto-generated captions that the author has reviewed and corrected before publishing. Captions that drift, mistranscribe component names, or are simply absent break participation for an entire class of reviewers.",
+      "how_to_test": [
+        "Record a short walkthrough with spoken narration ('I moved the CTA from the right rail into the hero') and attach it to a thread comment.",
+        "Open the published thread and confirm the embedded player exposes a captions control (CC button) with an accessible name and a visible state (on/off).",
+        "Play the video with captions on and verify the captions appear synchronized with the spoken audio, including speaker changes if multiple voices are present.",
+        "If captions are auto-generated, confirm the comment authoring flow surfaces a 'review captions' step before publish, and that corrected captions persist on the embed.",
+        "Inspect the player: the caption track should be a real <track kind=\"captions\"> or equivalent ARIA-exposed region, not burned-in pixels that cannot be styled or resized by the user."
+      ],
+      "pass_criteria": [
+        "Every prerecorded video embed with audio content has a synchronized caption track available by default.",
+        "The captions control is keyboard reachable, has an accessible name, and exposes its on/off state to assistive technology.",
+        "If captions are auto-generated, the authoring flow requires or prompts the reviewer to verify them before the comment publishes.",
+        "Captions are real text (selectable, resizable, restyleable) rather than burned into the video frame."
+      ],
+      "fail_examples": [
+        "Loom embed has no CC button at all; deaf reviewer hears nothing and sees a silent screen recording with no transcript.",
+        "Captions exist only as the platform's raw auto-transcript, with 'design system' transcribed as 'design sister' and no author review step.",
+        "CC button is an unlabeled icon <button> with no accessible name; screen reader announces only 'button'.",
+        "Captions are baked into the video as 12px white text on a light-grey UI screenshot, with no way to enlarge or restyle them."
+      ],
+      "tags": ["media", "threads"],
+      "references": [
+        { "label": "WCAG 1.2.2 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-prerecorded" }
+      ]
+    },
+    {
+      "id": "1.2.4-live-presentation-captions",
+      "wcag_criterion": "1.2.4",
+      "wcag_title": "Captions (Live)",
+      "level": "AA",
+      "category": "perceivable",
+      "title": "Live presentation and screen-share modes provide real-time captions for spoken narration",
+      "description": "When a design-review tool supports a live 'walkthrough' or presentation mode — one user shares their screen, navigates the artifact, and narrates rationale to other reviewers in the session — a deaf reviewer in that same session has no path into the conversation without live captions. Synchronous review is now a core collaboration pattern, and captioning it is a non-negotiable AA requirement, not a deferred 'nice to have' for prerecorded archives.",
+      "how_to_test": [
+        "Start a live walkthrough / presentation session with at least one presenter narrating and one reviewer attendee.",
+        "From the attendee view, confirm a 'live captions' control is present in the session toolbar, has an accessible name, and can be toggled on with the keyboard.",
+        "Enable captions and verify spoken narration appears as text in near real time (typical latency under a few seconds), with speaker attribution when multiple presenters talk.",
+        "Confirm captions are anchored to a stable on-screen region, are resizable or restyleable by the viewer, and do not obscure the artifact under review.",
+        "Verify the captions region is exposed as a live region (aria-live=\"polite\" or equivalent) so screen-reader users who also need captions get programmatic updates — and confirm the feature is documented in the tool's accessibility settings."
+      ],
+      "pass_criteria": [
+        "Live presentation / screen-share modes offer live captions that can be enabled by any session participant.",
+        "Captions render synchronously with spoken audio, attribute speakers when more than one person presents, and persist for the full duration of the session.",
+        "The captions control is keyboard reachable and exposes its state to assistive technology.",
+        "Caption display is positioned and styled so it does not occlude the artifact, and viewers can adjust size or contrast."
+      ],
+      "fail_examples": [
+        "Presenter shares their screen narrating 'I'm collapsing the filter panel here because it crowds the canvas' and a deaf reviewer in the session sees only the cursor moving — no captions are available.",
+        "Live captions exist but only the host can enable them, and they are off by default for attendees.",
+        "Captions render as 11px white text overlaid on the shared artifact, obscuring the very region being discussed with no way to resize or reposition.",
+        "Captions appear 20+ seconds behind the narration, so reviewers lose the connection between the presenter's words and what is being pointed at.",
+        "The captions toggle is an unlabeled icon button in the session toolbar; keyboard users tab past it with no announcement of its purpose."
+      ],
+      "tags": ["media", "realtime"],
+      "references": [
+        { "label": "WCAG 1.2.4 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-live" }
+      ]
     }
   ]
 }
