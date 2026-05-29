@@ -12,10 +12,17 @@
       "category": "perceivable",
       "title": "Placeholder",
       "description": "Placeholder description.",
-      "how_to_test": ["Test step."],
-      "pass_criteria": ["Pass criterion."],
-      "fail_examples": ["Fail example."],
-      "tags": []
+      "how_to_test": [
+        "Test step."
+      ],
+      "pass_criteria": [
+        "Pass criterion."
+      ],
+      "fail_examples": [
+        "Fail example."
+      ],
+      "tags": [],
+      "surface": "Annotation pins & markups"
     }
   ]
 }

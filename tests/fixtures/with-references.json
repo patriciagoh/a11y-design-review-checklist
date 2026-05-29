@@ -12,11 +12,25 @@
       "category": "perceivable",
       "title": "Placeholder",
       "description": "Placeholder description.",
-      "how_to_test": ["Test step."],
-      "pass_criteria": ["Pass criterion."],
-      "fail_examples": ["Fail example."],
-      "tags": ["annotations"],
-      "references": [{"label": "WCAG 1.1.1 Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content"}]
+      "how_to_test": [
+        "Test step."
+      ],
+      "pass_criteria": [
+        "Pass criterion."
+      ],
+      "fail_examples": [
+        "Fail example."
+      ],
+      "tags": [
+        "annotations"
+      ],
+      "references": [
+        {
+          "label": "WCAG 1.1.1 Understanding",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content"
+        }
+      ],
+      "surface": "Annotation pins & markups"
     }
   ]
 }

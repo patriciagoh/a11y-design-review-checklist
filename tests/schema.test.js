@@ -76,3 +76,21 @@ test('accepts item with valid references array', () => {
   const ok = validate(load('with-references.json'));
   assert.equal(ok, true, JSON.stringify(validate.errors, null, 2));
 });
+
+test('rejects item missing required surface field', () => {
+  const ok = validate(load('missing-surface.json'));
+  assert.equal(ok, false);
+  assert.ok(
+    (validate.errors ?? []).some(e => e.keyword === 'required' && e.params?.missingProperty === 'surface'),
+    'expected a missing-surface required error'
+  );
+});
+
+test('rejects item with invalid surface value', () => {
+  const ok = validate(load('bad-surface.json'));
+  assert.equal(ok, false);
+  assert.ok(
+    (validate.errors ?? []).some(e => e.instancePath.includes('/surface')),
+    'expected an error on the surface property'
+  );
+});

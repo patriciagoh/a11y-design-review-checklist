@@ -20,7 +20,7 @@
     "item": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "wcag_criterion", "wcag_title", "level", "category", "title", "description", "how_to_test", "pass_criteria", "fail_examples", "tags"],
+      "required": ["id", "wcag_criterion", "wcag_title", "level", "category", "surface", "title", "description", "how_to_test", "pass_criteria", "fail_examples", "tags"],
       "properties": {
         "id": {
           "type": "string",
@@ -34,6 +34,19 @@
         "level": { "enum": ["A", "AA"] },
         "category": {
           "enum": ["perceivable", "operable", "understandable", "robust", "dynamic_collaborative"]
+        },
+        "surface": {
+          "enum": [
+            "3D model viewer",
+            "Annotation pins & markups",
+            "Discussion threads",
+            "Review workflow & status",
+            "Version history & comparison",
+            "Issue tracking",
+            "Notifications & live updates",
+            "AI-generated content",
+            "Notebooks & documents"
+          ]
         },
         "title": { "type": "string" },
         "description": { "type": "string" },
@@ -87,7 +100,16 @@
               "forms",
               "media",
               "language",
-              "name-role-value"
+              "name-role-value",
+              "canvas",
+              "viewer",
+              "status",
+              "color",
+              "workflow",
+              "touch-target",
+              "toolbar",
+              "wcag22",
+              "ai-content"
             ]
           }
         }

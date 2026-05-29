@@ -1,9 +1,9 @@
 # a11y-design-review-checklist
 
 > Generated from `checklist.json`. Do not edit by hand.
-> Version 1.0.0 · WCAG 2.2 AA · Released 2026-05-28T12:00:00Z
+> Version 1.1.0 · WCAG 2.2 AA · Released 2026-05-29T21:28:59.805Z
 
-Total items: 87
+Total items: 95
 
 ## Perceivable
 
@@ -11,6 +11,7 @@ Total items: 87
 
 - **ID:** `1.1.1-annotation-icon-labels`
 - **WCAG 1.1.1** Non-text Content (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`, `name-role-value`
 
 Annotation markers (pins, region boxes, arrows, callouts) are the navigational landmarks of a design review — they are how a screen-reader user finds and enters each conversation. If the marker's accessible name describes its shape or color ('red circle', 'pin icon') rather than its purpose and target ('annotation 3 by Patricia on the header logo'), the user cannot orient themselves on the canvas or distinguish one thread from another in a list of markers.
@@ -39,6 +40,7 @@ Annotation markers (pins, region boxes, arrows, callouts) are the navigational l
 
 - **ID:** `1.1.1-artifact-alt-text`
 - **WCAG 1.1.1** Non-text Content (Level A)
+- **Surface:** 3D model viewer
 - **Tags:** `name-role-value`, `media`
 
 In a design-review tool, the artifact under review is the entire subject of the conversation — a screen-reader user who cannot perceive it has no way to participate in the thread. File names like 'Frame 47 copy 3.png' or 'final_v2_FINAL.fig' describe nothing. The uploader must supply meaningful alt text, and the viewer must surface it as the accessible name of the artifact region so assistive tech users know what is being reviewed before they engage with annotations.
@@ -67,6 +69,7 @@ In a design-review tool, the artifact under review is the entire subject of the 
 
 - **ID:** `1.2.1-embedded-recording-alternative`
 - **WCAG 1.2.1** Audio-only and Video-only (Prerecorded) (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `media`, `threads`
 
 Reviewers frequently attach short screen-recorded walkthroughs to a thread comment — 'here's what I changed on the nav, watch this 30-second clip' — and these recordings are typically silent video-only artifacts. A blind reviewer, a low-bandwidth user, or anyone who cannot play the embed needs the same information in text. The thread must surface a transcript, written summary, or detailed description alongside the embed so the review content lives in text, not only in pixels.
@@ -95,6 +98,7 @@ Reviewers frequently attach short screen-recorded walkthroughs to a thread comme
 
 - **ID:** `1.2.2-embedded-recording-captions`
 - **WCAG 1.2.2** Captions (Prerecorded) (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `media`, `threads`
 
 Loom-style walkthroughs are now a default review medium — reviewers narrate decisions, point at regions, and explain rationale on top of a screen recording. For deaf and hard-of-hearing reviewers, that audio narration is the review. The embedded player must offer synchronized captions: either author-supplied caption tracks, or auto-generated captions that the author has reviewed and corrected before publishing. Captions that drift, mistranscribe component names, or are simply absent break participation for an entire class of reviewers.
@@ -125,6 +129,7 @@ Loom-style walkthroughs are now a default review medium — reviewers narrate de
 
 - **ID:** `1.2.4-live-presentation-captions`
 - **WCAG 1.2.4** Captions (Live) (Level AA)
+- **Surface:** Notifications & live updates
 - **Tags:** `media`, `realtime`
 
 When a design-review tool supports a live 'walkthrough' or presentation mode — one user shares their screen, navigates the artifact, and narrates rationale to other reviewers in the session — a deaf reviewer in that same session has no path into the conversation without live captions. Synchronous review is now a core collaboration pattern, and captioning it is a non-negotiable AA requirement, not a deferred 'nice to have' for prerecorded archives.
@@ -156,6 +161,7 @@ When a design-review tool supports a live 'walkthrough' or presentation mode —
 
 - **ID:** `1.3.1-annotation-spatial-relationship-programmatic`
 - **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`, `name-role-value`
 
 An annotation pin's meaning depends entirely on what part of the artifact it points at. Sighted reviewers get that relationship for free — the pin sits visually on top of the button, the header, the broken state. A screen-reader user reading a comment in isolation has no idea which region it refers to unless the relationship is exposed in the DOM. The pin (or its associated thread card) must use aria-describedby, aria-labelledby, or an equivalent programmatic association pointing at the anchored region — not rely on x/y positioning alone.
@@ -180,10 +186,105 @@ An annotation pin's meaning depends entirely on what part of the artifact it poi
 **References:**
 - [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
 
+### Measurement results are exposed as readable text, not only as floating viewport labels
+
+- **ID:** `1.3.1-measurement-output`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** 3D model viewer
+- **Tags:** `canvas`, `viewer`, `name-role-value`
+
+When a reviewer takes a measurement on a 3D model — an edge length, a face-to-face distance, a radius, an angle — the result is the entire point of the interaction. If that result is only rendered as a small floating label painted into the 3D viewport (a WebGL texture, a positioned overlay drawn at viewer coordinates), a screen-reader user has no way to read the number. The measurement value and its unit must be exposed as programmatic text — either in a measurement panel adjacent to the viewer, in a live region that announces the result when the measurement completes, or as the accessible name of a focusable measurement marker on the canvas.
+
+**How to test:**
+- Take a measurement using each measurement tool (edge length, distance, radius, angle).
+- Confirm the resulting value and unit appear as real DOM text somewhere in the page — in a measurements panel, in a thread comment, or as an accessible name on the measurement marker.
+- Run a screen reader over the measurement result and verify it reads the number and unit (e.g. "Distance: 42.3 millimetres") without the user having to read pixels.
+- Use a measurements list view (if one exists) and confirm every measurement is listed as selectable, readable text — not only rendered as labels floating in the viewport.
+- Inspect the floating viewport label in DevTools: if it is a WebGL texture or canvas-drawn glyph, confirm an aria-equivalent text node exists elsewhere in the DOM.
+
+**Pass criteria:**
+- Every measurement result (value and unit) exists as readable DOM text, not only as a viewport-drawn label.
+- A screen reader can read the measurement value and unit without the user having to interact with the canvas itself.
+- Measurement markers focusable on the canvas expose the measurement value and unit as their accessible name.
+- A measurement panel or list view aggregates all measurements as readable text the user can navigate and copy.
+
+**Fail examples:**
+- A distance measurement is drawn into the WebGL canvas as a small "42.3 mm" label; screen readers find no corresponding text in the DOM.
+- Measurements appear in a viewport tooltip on hover that disappears when focus moves; keyboard users cannot trigger or read it.
+- A measurements panel exists but only renders icons — the values themselves are stored only as canvas labels.
+- The angle tool reports "37°" only as a floating callout; a blind reviewer asks "what was the angle?" and there is no text answer.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
+### Notebooks use a proper heading hierarchy so screen-reader users can navigate by heading
+
+- **ID:** `1.3.1-notebook-heading-structure`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** Notebooks & documents
+- **Tags:** `versioning`, `name-role-value`
+
+Notebooks in CoLab carry pre-read briefs, requirements specs, and decision logs — long documents reviewers must skim to find the section relevant to them. Sighted users skim by visual hierarchy: large bold for the title, slightly smaller bold for sections. Screen-reader users skim by pressing H to jump heading to heading — but only when the document uses real heading elements (h1 through h6) in a sensible nesting order. Notebooks that style text with font-size and font-weight alone, without h-tags, force assistive-tech users to read the entire document linearly to find anything. Every notebook must use an H1 for the document title, H2 for major sections, H3 for subsections, with no skipped levels.
+
+**How to test:**
+- Open a notebook with at least three section headings of varying levels.
+- With a screen reader, press H repeatedly and confirm the navigation lands on every heading in the document, in source order, with no missing headings.
+- Open the headings outline view in the screen reader (or use a tool like HeadingsMap) and confirm the hierarchy is well-formed: one H1, H2 for major sections, H3 nested inside H2 — no jumps from H2 to H4.
+- Inspect the DOM: confirm headings are real h1–h6 elements, not styled <div> or <p> with role="heading" only when role is necessary.
+- Test a notebook authored by an end user (not just a template) and confirm the editor surfaces heading-level controls clearly enough that authors use them instead of bold-and-larger styling.
+
+**Pass criteria:**
+- Every notebook starts with a single H1 for the document title.
+- Major sections use H2; subsections use H3; no heading level is skipped (no H2 followed directly by H4).
+- Headings are real h1–h6 elements (or correctly use role="heading" with aria-level when an element cannot be h-tag).
+- The notebook editor offers a clear, discoverable way to set heading level (a paragraph style menu, a markdown shortcut) so author-generated notebooks are accessible by default.
+
+**Fail examples:**
+- A notebook uses a 24px bold <div> for the title and 18px bold <p> for sections; pressing H in a screen reader jumps to nothing.
+- Document has an H1, then jumps to H4 for sections, then H2 elsewhere — outline view is incoherent.
+- Two competing H1s appear in the same notebook (one for the title and one for the first section), confusing 'go to top of document' navigation.
+- Authors can only bold text — there is no UI affordance to mark something as a heading, so user-generated notebooks always lack structure.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
+### Review Key identifiers are exposed as selectable, readable text — not only as visual badges
+
+- **ID:** `1.3.1-review-key-accessible`
+- **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** Review workflow & status
+- **Tags:** `workflow`, `name-role-value`
+
+Every review has a unique Review Key (e.g. RVW-4821) that engineers, suppliers, and external collaborators copy into emails, JIRA tickets, and shop drawings. If the Review Key is rendered only as a stylised badge (SVG glyphs, an image, or CSS-generated content via ::before), assistive-tech users cannot read it and nobody — sighted or otherwise — can select and copy it. The Review Key must live in the DOM as real selectable text, exposed to assistive technology, with no CSS preventing user selection. A 'copy to clipboard' affordance is welcome but does not replace the underlying requirement that the key be readable text.
+
+**How to test:**
+- Open any review and locate the Review Key in the page chrome.
+- Triple-click or click-and-drag across the Review Key text and confirm it selects normally, like any other text.
+- Copy the selection and paste into another field — the pasted value must match the visible key exactly.
+- Run a screen reader over the Review Key and confirm it announces the alphanumeric string, not a generic "image" or "badge".
+- Inspect the DOM: the Review Key must be real text content inside a normal element (span, code, dd) — not background-image, content: attr(), or an SVG with no accessible name.
+- Confirm any 'copy key' button has an accessible name (e.g. 'Copy review key RVW-4821') and is keyboard reachable.
+
+**Pass criteria:**
+- The Review Key is real DOM text and can be selected with mouse or keyboard.
+- The Review Key is exposed to assistive technology as its alphanumeric value, not as 'image' or 'icon'.
+- User-select CSS does not prevent the key from being copied; if a `copy` button is provided, the underlying text is still selectable.
+- Any explicit copy affordance has a descriptive accessible name and works with the keyboard.
+
+**Fail examples:**
+- Review Key is rendered as an SVG of stylised glyphs with no <title> or aria-label; screen readers announce nothing.
+- Key uses CSS `content: attr(data-key)` on a ::before pseudo-element; the value cannot be selected or copied.
+- Key is wrapped in `user-select: none`; users must hand-type RVW-4821 into the JIRA ticket they are filing.
+- Copy button has no accessible name; screen reader announces only 'button' with no indication of what gets copied.
+
+**References:**
+- [WCAG 1.3.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships)
+
 ### Annotation threads use list semantics so replies are conveyed as a structured conversation
 
 - **ID:** `1.3.1-thread-structure-semantics`
 - **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `threads`, `name-role-value`
 
 A thread is a conversation — a parent comment followed by ordered replies, sometimes with nested sub-replies. Sighted users see that structure through indentation and connecting lines. Screen-reader users need the same structure exposed via list semantics: <ul>/<ol> or role=list, with each reply as an <li>/role=listitem, and nested replies as nested lists. Without it, a screen reader reads twelve unrelated text blocks and the user cannot tell whether a comment is a top-level reply, a reply-to-a-reply, or part of a different thread entirely.
@@ -213,6 +314,7 @@ A thread is a conversation — a parent comment followed by ordered replies, som
 
 - **ID:** `1.3.1-version-list-semantics`
 - **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** Version history & comparison
 - **Tags:** `versioning`, `name-role-value`
 
 The version history panel is how reviewers find 'the version Patricia approved last Tuesday' or 'the one before the navigation rework'. Sighted users skim a column of cards with version number, author avatar, and timestamp. Screen-reader users need that same structure exposed semantically: a list of versions, each as a grouped item with version label, author, and timestamp as programmatically associated fields — not three loose strings in a styled <div> that announces as 'V3 Patricia 2:14pm' with no relationship between the values.
@@ -243,6 +345,7 @@ The version history panel is how reviewers find 'the version Patricia approved l
 
 - **ID:** `1.3.1-workflow-state-programmatic`
 - **WCAG 1.3.1** Info and Relationships (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `workflow-state`, `name-role-value`
 
 Workflow state — is this design a draft, in review, approved, or sent back for changes — drives almost every reviewer decision: whether to comment, whether to approve, whether to ship. Designers commonly signal state with a colored chip ('blue = in review, green = approved, red = requires changes') and an icon. A blind reviewer or a colorblind reviewer needs the state exposed as text via aria-label, a labeled status region, or aria-current — not communicated only by a color or icon they cannot perceive.
@@ -273,6 +376,7 @@ Workflow state — is this design a draft, in review, approved, or sent back for
 
 - **ID:** `1.3.2-thread-reading-order`
 - **WCAG 1.3.2** Meaningful Sequence (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `threads`, `keyboard`
 
 Threaded conversations only make sense in order — reply two answers reply one, reply three reacts to reply two, and a nested reply hangs off whichever parent it answers. Sighted reviewers follow the order top-to-bottom, indented for nesting. If the DOM order doesn't match (replies rendered in reverse-chronological order with CSS, or absolutely-positioned out of source order, or with nested replies hoisted to the bottom), screen-reader and keyboard users encounter the conversation as a scrambled transcript and cannot reconstruct who said what to whom.
@@ -303,6 +407,7 @@ Threaded conversations only make sense in order — reply two answers reply one,
 
 - **ID:** `1.3.3-annotation-instructions-not-sensory`
 - **WCAG 1.3.3** Sensory Characteristics (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`
 
 Onboarding tooltips, empty-state hints, and help text in a review tool routinely point at controls using sensory cues alone — 'click the red pin icon on the right' or 'use the circle button at the top to add an annotation'. A blind reviewer cannot see red, a colorblind reviewer may not distinguish the color, and a screen-reader user on a small viewport may not perceive 'on the right'. Instructions must identify controls by their text label or accessible name as the primary reference — sensory cues can supplement, never replace.
@@ -333,6 +438,7 @@ Onboarding tooltips, empty-state hints, and help text in a review tool routinely
 
 - **ID:** `1.3.4-tool-orientation-flexibility`
 - **WCAG 1.3.4** Orientation (Level AA)
+- **Surface:** Notebooks & documents
 - **Tags:** `navigation`
 
 Reviewers on tablets, mounted displays, or devices fixed to a wheelchair often cannot rotate their screen. A design-review tool that forces landscape — common because designers want a wide canvas — locks out anyone whose device is held or mounted in portrait. The canvas, the thread panel, the version sidebar, and the toolbar must all reflow to the current orientation. Locking orientation is acceptable only where it is genuinely essential (a presentation mode mirroring a specific aspect ratio), and even then an unlock option should exist.
@@ -363,6 +469,7 @@ Reviewers on tablets, mounted displays, or devices fixed to a wheelchair often c
 
 - **ID:** `1.3.5-comment-input-autocomplete`
 - **WCAG 1.3.5** Identify Input Purpose (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `forms`
 
 Design-review tools often invite external reviewers (clients, contractors, stakeholders) via a share link that asks for a name and email before posting a comment. These inputs collect the user's own identity information and must declare the WCAG-defined autocomplete tokens (autocomplete="name", autocomplete="email") so password managers, browser autofill, and assistive tech tools that translate or pre-fill fields can recognize their purpose. Missing or wrong tokens force users with motor or cognitive disabilities to re-type identity information on every external review.
@@ -393,6 +500,7 @@ Design-review tools often invite external reviewers (clients, contractors, stake
 
 - **ID:** `1.4.1-annotation-status-not-color-only`
 - **WCAG 1.4.1** Use of Color (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`, `contrast`
 
 Open vs resolved is the most-scanned annotation attribute in a review — reviewers triage threads by it, designers filter by it, leads close out reviews against it. Tools commonly show 'open' as a filled pin and 'resolved' as the same pin in a muted gray or green. Without a distinct icon (e.g. an open circle vs a checkmark) and a visible or accessible text label, colorblind and low-vision reviewers cannot tell at a glance which threads still need attention.
@@ -419,10 +527,42 @@ Open vs resolved is the most-scanned annotation attribute in a review — review
 **References:**
 - [WCAG 1.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color)
 
+### Review status badges convey state through icon or text, not color alone
+
+- **ID:** `1.4.1-status-color-alone`
+- **WCAG 1.4.1** Use of Color (Level A)
+- **Surface:** Review workflow & status
+- **Tags:** `status`, `color`, `workflow`
+
+Review status (Approved, Requires Changes, In Review, Rejected) is the single most-scanned signal in a design-review tool — reviewers glance at a list of artifacts and use status colour to decide where to act next. Because roughly 8% of male engineers have a red-green colour vision deficiency, encoding state only as a green vs. red pill leaves a meaningful portion of the audience unable to distinguish 'good to ship' from 'blocking issue'. Every status badge must pair its colour with a non-colour signal: a shape, an icon, a glyph, or — most reliably — a short text label that reads the state aloud.
+
+**How to test:**
+- Open a list view that shows multiple artifacts in different review states (Approved, Requires Changes, In Review, Rejected).
+- View the page through a red-green colour-blindness simulator (e.g. Chrome DevTools Rendering > Emulate vision deficiencies > Protanopia / Deuteranopia) and confirm each status is still distinguishable.
+- Convert the page to greyscale and confirm the badges remain readable — text or icon should still communicate the state without colour.
+- Inspect each badge in DevTools: it must contain a text label or an icon with an accessible name describing the state, not just a coloured <span>.
+- Run a screen reader over the badge and confirm the announced text matches the visual state.
+
+**Pass criteria:**
+- Every status badge pairs its colour with at least one non-colour signal — a text label, a recognisable icon with an accessible name, or both.
+- The badge remains distinguishable from other statuses under red-green colour vision simulation and in greyscale.
+- The status text is exposed to assistive technology as part of the badge accessible name, not stored only in a tooltip on hover.
+- Icons used as the non-colour signal are distinct in shape across statuses (e.g. checkmark for Approved, exclamation triangle for Requires Changes) — not the same icon recoloured.
+
+**Fail examples:**
+- Status pills are a green dot for Approved and a red dot for Requires Changes, with no text or icon — under protanopia simulation both render as the same muddy brown.
+- All status badges use the same circle icon recoloured per state; without colour they are indistinguishable.
+- Status text exists but is hidden in a tooltip that only appears on hover, so keyboard and screen-reader users get only colour.
+- 'Rejected' badge is communicated solely by a red background on an otherwise empty pill.
+
+**References:**
+- [WCAG 1.4.1 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color)
+
 ### Version-diff regions distinguish added, removed, and changed content using texture or iconography in addition to color
 
 - **ID:** `1.4.1-version-diff-not-color-only`
 - **WCAG 1.4.1** Use of Color (Level A)
+- **Surface:** Version history & comparison
 - **Tags:** `versioning`, `contrast`
 
 Version-compare views overwhelmingly use green for added regions and red for removed regions — the same red/green pairing that is invisible to roughly 1 in 12 men with red-green color blindness. A reviewer cannot evaluate whether a removed region was the right one to delete if they cannot tell removed from added. Diff highlights must combine color with a second visual channel: hatching, stripes, plus/minus iconography, or distinct outline styles, so the diff is readable regardless of color perception.
@@ -453,6 +593,7 @@ Version-compare views overwhelmingly use green for added regions and red for rem
 
 - **ID:** `1.4.1-workflow-state-not-color-only`
 - **WCAG 1.4.1** Use of Color (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `workflow-state`, `contrast`
 
 Workflow state — draft, in review, approved, requires changes — is one of the most consequential signals in a review tool: it tells reviewers whether to comment, approve, or stop. Many tools encode state with a single colored chip (blue / amber / green / red). A reviewer with deuteranopia, a reviewer in forced-colors mode, or anyone on a monochrome display loses the distinction. State must carry a visible text label and a distinguishing icon shape in addition to color, so the meaning survives when color is unavailable.
@@ -483,6 +624,7 @@ Workflow state — draft, in review, approved, requires changes — is one of th
 
 - **ID:** `1.4.10-thread-panel-reflow-320px`
 - **WCAG 1.4.10** Reflow (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `threads`
 
 WCAG 1.4.10 requires content to be usable at 320 CSS pixels wide without two-dimensional scrolling. In a review tool, the thread panel is the densest text region — it commonly uses a two-column layout (avatar / reply meta on the left, comment body on the right) that breaks down at narrow widths. At 320px, the thread must reflow to a single column with the avatar inline above or beside the author name, replies stacked vertically, and every action (Reply, Resolve, Edit, Delete) reachable without horizontal scroll.
@@ -514,6 +656,7 @@ WCAG 1.4.10 requires content to be usable at 320 CSS pixels wide without two-dim
 
 - **ID:** `1.4.11-annotation-pin-outline-contrast`
 - **WCAG 1.4.11** Non-text Contrast (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `contrast`, `annotations`, `focus`
 
 When a pin is focused (via Tab) or selected (via click), the tool draws a focus ring or selection outline around it. That outline is a non-text UI indicator and must meet 3:1 contrast — but uniquely for pins, the outline sits between the pin fill and the artifact, so it must meet 3:1 against both. A common failure: a 2px white ring around a red pin on a white artifact background. The ring contrasts beautifully with the pin but disappears entirely against the artifact, leaving keyboard users with no visible focus.
@@ -544,6 +687,7 @@ When a pin is focused (via Tab) or selected (via click), the tool draws a focus 
 
 - **ID:** `1.4.11-version-diff-highlight-contrast`
 - **WCAG 1.4.11** Non-text Contrast (Level AA)
+- **Surface:** Version history & comparison
 - **Tags:** `contrast`, `versioning`
 
 Version-diff outlines are non-text UI components — they communicate where additions, deletions, and changes are without using text. Under WCAG 1.4.11, the visual boundaries of these highlights must meet 3:1 contrast against adjacent colors. A pale green added-region outline on a white screenshot, or a thin pink deletion outline on a pastel background, falls below 3:1 and effectively hides the diff from low-vision reviewers — defeating the entire purpose of the compare view.
@@ -574,6 +718,7 @@ Version-diff outlines are non-text UI components — they communicate where addi
 
 - **ID:** `1.4.12-thread-text-spacing-survives`
 - **WCAG 1.4.12** Text Spacing (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `threads`
 
 Users with dyslexia, low vision, or cognitive disabilities frequently apply user stylesheets or browser extensions that override text spacing — line-height 1.5x, paragraph spacing 2x font size, letter-spacing 0.12em, word-spacing 0.16em. Thread comments are dense paragraphs with embedded mentions, links, and timestamps; layouts that pin avatars to fixed heights, truncate at fixed line counts, or use fixed-height comment cards will clip or overlap content under these settings. The thread must absorb the spacing without losing words or buttons.
@@ -604,6 +749,7 @@ Users with dyslexia, low vision, or cognitive disabilities frequently apply user
 
 - **ID:** `1.4.13-comment-mention-popovers-dismissable`
 - **WCAG 1.4.13** Content on Hover or Focus (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `threads`, `focus`
 
 Hovering or focusing an @mention chip or an annotation pin in a thread commonly opens a small popover with the user's profile, the annotation's region preview, or thread metadata. Under WCAG 1.4.13, that additional content must be (a) dismissable without moving the pointer — typically via Escape, (b) hoverable so the user can move the pointer into the popover to read it without it disappearing, and (c) persistent until the user dismisses it, the trigger loses hover/focus, or the information becomes invalid. It also must not obscure the trigger that opened it.
@@ -637,6 +783,7 @@ Hovering or focusing an @mention chip or an annotation pin in a thread commonly 
 
 - **ID:** `1.4.3-annotation-pin-contrast`
 - **WCAG 1.4.3** Contrast (Minimum) (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `contrast`, `annotations`
 
 Annotation pins are essential meaningful content — they are how reviewers locate every conversation on the artifact. But pins sit on top of the artifact, which can be any color, gradient, photo, or screenshot. A fixed pin color (e.g. #FF5A5A red) that meets contrast against a white background will disappear against a red error-state screenshot or a dark photograph. Pins must maintain a 4.5:1 contrast ratio against whatever they overlay, at every zoom level the tool supports — typically via a high-contrast halo, an outline ring, or automatic color adaptation.
@@ -667,6 +814,7 @@ Annotation pins are essential meaningful content — they are how reviewers loca
 
 - **ID:** `1.4.3-presence-avatar-name-contrast`
 - **WCAG 1.4.3** Contrast (Minimum) (Level AA)
+- **Surface:** Notifications & live updates
 - **Tags:** `contrast`, `realtime`
 
 Real-time presence in a review tool surfaces who else is on the artifact — typically a row of small circular avatars colored from a user-color palette, often with the user's initials overlaid on the avatar fill. Tooltip labels, live cursor name tags, and 'editing' status pills follow the same color logic. When the avatar background uses a saturated user color and the overlaid initials are white at small sizes (often 11–12px), contrast fails for many palette entries. Initials, name tags, and status labels all need 4.5:1 against their avatar or pill background.
@@ -697,6 +845,7 @@ Real-time presence in a review tool surfaces who else is on the artifact — typ
 
 - **ID:** `1.4.3-thread-comment-text-contrast`
 - **WCAG 1.4.3** Contrast (Minimum) (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `contrast`, `threads`
 
 Thread comments are dense text-heavy content — review feedback, code snippets, quoted prior comments, @mentions, and inline links. Designers often style secondary content (quoted text, code blocks, timestamps, link colors) with reduced contrast to create visual hierarchy, pushing them below the 4.5:1 AA threshold. Every styled variant of comment body text — including code blocks, quoted text, link colors, and @mention pills — must meet 4.5:1 against its background, not just the primary paragraph color.
@@ -727,6 +876,7 @@ Thread comments are dense text-heavy content — review feedback, code snippets,
 
 - **ID:** `1.4.4-tool-ui-resize-200`
 - **WCAG 1.4.4** Resize Text (Level AA)
+- **Surface:** Notebooks & documents
 - **Tags:** `zoom-pan`
 
 Review tools cram sidebars, thread panels, version history, presence rows, and workflow controls around a fixed-aspect artifact canvas. At 200% zoom, designers commonly assume the artifact area can pan/scroll within itself (which is fine — the artifact is essential preview content), but the surrounding chrome must not require horizontal page scroll to reach the Reply button, the Approve action, or the version switcher. Toolbars must wrap, sidebars must collapse, and labels must reflow — the chrome is text-and-image content that must scale.
@@ -759,6 +909,7 @@ Review tools cram sidebars, thread panels, version history, presence rows, and w
 
 - **ID:** `2.1.1-annotation-placement-keyboard`
 - **WCAG 2.1.1** Keyboard (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `keyboard`, `annotations`
 
 Creating a new annotation is the foundational action in a design-review tool — without it, a user can read threads but cannot contribute. Tools overwhelmingly implement annotation placement as a pointer-only flow (click the canvas at the desired location), making the most important contributive action of the product inaccessible to keyboard-only and switch-control users. A keyboard path must exist: a discoverable command to enter placement mode (e.g. an 'Add annotation' button or shortcut), arrow keys to move a visible placement cursor across the canvas, and Enter to commit the placement and open the comment composer.
@@ -790,6 +941,7 @@ Creating a new annotation is the foundational action in a design-review tool —
 
 - **ID:** `2.1.1-thread-keyboard-actions`
 - **WCAG 2.1.1** Keyboard (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `keyboard`, `threads`
 
 A thread is interactive content: reviewers reply, resolve, edit their own comments, delete mistaken posts, and insert @mentions to pull collaborators in. If any of these actions is gated behind a hover-only menu, a right-click context menu without a keyboard equivalent, or a typeahead that requires pointer selection, keyboard-only users are reduced to read-only participants — they can see the conversation but cannot take part. Every action must reach via Tab, activate via Enter or Space, and the mention typeahead must support arrow keys + Enter to select a candidate.
@@ -821,6 +973,7 @@ A thread is interactive content: reviewers reply, resolve, edit their own commen
 
 - **ID:** `2.1.1-workflow-transition-keyboard`
 - **WCAG 2.1.1** Keyboard (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `keyboard`, `workflow-state`
 
 Workflow transitions are the highest-stakes actions in the tool — approving an artifact, sending it back for changes, or moving it from draft to review changes downstream behavior across the whole team. These actions are commonly clustered in a workflow toolbar with custom-styled buttons or split-button menus that look right but bypass native button semantics. Every workflow transition must be reachable by Tab, activatable by Enter or Space, and any confirmation modal that gates a destructive transition must itself be keyboard operable (focus moves to the modal, Escape cancels, Enter confirms the primary action).
@@ -852,6 +1005,7 @@ Workflow transitions are the highest-stakes actions in the tool — approving an
 
 - **ID:** `2.1.1-zoom-pan-keyboard`
 - **WCAG 2.1.1** Keyboard (Level A)
+- **Surface:** 3D model viewer
 - **Tags:** `keyboard`, `zoom-pan`
 
 Zooming into a button hit-state, panning to the corner of an artboard, and resetting back to fit-to-screen are core review actions — they are how a reviewer inspects whether the spec is right. Tools commonly ship zoom and pan as pointer-only gestures (scroll-wheel zoom, click-drag pan, pinch on trackpad), leaving keyboard-only and switch-control users locked out of every part of the artifact that is not visible in the default viewport. Zoom in, zoom out, fit-to-screen, and pan in four directions must each have a discoverable keyboard equivalent — either standard shortcuts (+/−, 0 to reset, arrow keys to pan) or documented bindings surfaced in the keyboard-shortcuts help dialog.
@@ -883,6 +1037,7 @@ Zooming into a button hit-state, panning to the corner of an artboard, and reset
 
 - **ID:** `2.1.2-annotation-mode-no-trap`
 - **WCAG 2.1.2** No Keyboard Trap (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `keyboard`, `focus`, `annotations`
 
 Annotation placement is a modal-ish state: arrow keys are repurposed to move a placement cursor, Enter commits the pin, and ordinary Tab behavior is often suppressed so focus does not wander off the canvas mid-placement. That repurposing is fine, but it must include a documented escape route. Users who enter placement mode by accident, change their mind, or cannot complete the placement (because the target is off-screen, or because they activated the mode while intending to do something else) need a way out. Escape must exit placement mode without committing a pin and must restore focus to the control that opened the mode.
@@ -914,6 +1069,7 @@ Annotation placement is a modal-ish state: arrow keys are repurposed to move a p
 
 - **ID:** `2.1.2-modal-thread-no-trap`
 - **WCAG 2.1.2** No Keyboard Trap (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `keyboard`, `focus`, `threads`
 
 Some review tools open the full thread for an annotation in a modal overlay — typically when the side panel would be too narrow or when the user clicks a pin directly on the canvas. The modal correctly traps focus while open (keeping Tab inside its replies, action buttons, and composer), but the failure mode is forgetting an exit: Escape does nothing, the close button is pointer-only, or focus on close lands somewhere arbitrary instead of returning to the pin that opened the modal. Keyboard users are then either stuck inside the modal or dropped at the top of the document, losing their place in the review.
@@ -945,6 +1101,7 @@ Some review tools open the full thread for an annotation in a modal overlay — 
 
 - **ID:** `2.1.4-shortcut-collisions`
 - **WCAG 2.1.4** Character Key Shortcuts (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `keyboard`
 
 Design-review tools love single-character shortcuts: 'c' to comment, 'r' to reply, 'a' to add annotation, 'e' to edit, 'g' for go-to-version. Power users love them; speech-input users and users who occasionally bump a key on a stuck keyboard hate them, because typing the letter 'c' inside a comment textarea can trigger a global 'create comment' action that loses their draft. WCAG 2.1.4 requires single-character shortcuts to be disable-able, remappable, or active only when the relevant component has focus. The acceptable design-review pattern is to scope shortcuts to the canvas: 'c' fires the action only when the canvas has focus, never while a text input or contenteditable is focused.
@@ -976,6 +1133,7 @@ Design-review tools love single-character shortcuts: 'c' to comment, 'r' to repl
 
 - **ID:** `2.2.1-realtime-presence-not-time-limited`
 - **WCAG 2.2.1** Timing Adjustable (Level A)
+- **Surface:** Notifications & live updates
 - **Tags:** `realtime`
 
 Real-time presence systems sometimes piggyback an 'idle' concept onto active viewing — 'you have been idle 30 seconds, leaving the review session' or 'inactive viewers are removed from the live cursor list after 60 seconds'. For a reviewer who reads slowly, uses a screen reader and needs time to absorb a long thread, or simply pauses to think, this is a time limit on the act of viewing. WCAG 2.2.1 does not permit imposing such limits on a non-real-time activity like reading a design and its comments. Presence and cursor systems may dim or fade an idle indicator visually, but must not eject the viewer from the session, hide content, or block their ability to continue reviewing.
@@ -1006,6 +1164,7 @@ Real-time presence systems sometimes piggyback an 'idle' concept onto active vie
 
 - **ID:** `2.2.1-session-timeout-warning`
 - **WCAG 2.2.1** Timing Adjustable (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `workflow-state`
 
 Design-review sessions are long: a reviewer can spend twenty minutes drafting a careful comment that explains a missed edge case, only to have an idle-timeout kick them out mid-paragraph and discard the draft. Users with cognitive disabilities, motor disabilities, or anyone who reads slowly are disproportionately punished by silent timeouts. WCAG 2.2.1 requires that any time limit either be adjustable, extendable, or removable. The acceptable pattern: warn the user before the session expires, give them at least 20 seconds (preferably more) to extend, and guarantee that in-progress drafts in the comment composer survive a session refresh.
@@ -1037,6 +1196,7 @@ Design-review sessions are long: a reviewer can spend twenty minutes drafting a 
 
 - **ID:** `2.2.2-realtime-cursor-pause`
 - **WCAG 2.2.2** Pause, Stop, Hide (Level A)
+- **Surface:** Notifications & live updates
 - **Tags:** `realtime`, `motion`
 
 Live remote cursors that dart across the artifact, 'Patricia is typing…' pulsing dots on every open thread, and presence avatars that bounce when a teammate joins are constant moving content that a viewer did not start and cannot stop. For users with vestibular disorders, attention disabilities, or anyone trying to focus on a single piece of feedback, this motion is disabling. WCAG 2.2.2 requires that any moving, blinking, or auto-updating content that starts automatically, lasts more than 5 seconds, and is presented alongside other content can be paused, stopped, or hidden by the user — without losing access to the underlying review.
@@ -1069,6 +1229,7 @@ Live remote cursors that dart across the artifact, 'Patricia is typing…' pulsi
 
 - **ID:** `2.3.1-realtime-flash-threshold`
 - **WCAG 2.3.1** Three Flashes or Below Threshold (Level A)
+- **Surface:** Notifications & live updates
 - **Tags:** `realtime`, `motion`
 
 Real-time collaboration UI is full of attention-grabbing flashes: a green pulse when a comment saves, a red badge that strobes when an @mention lands, presence avatars that flash on join/leave, and the cursor halo that pings to draw attention to a teammate's pointer. Any of these can trigger photosensitive seizures if they flash more than three times in any one-second window, especially when the flashing area is large (more than ~25% of the viewport) or contains saturated red. WCAG 2.3.1 requires that no content flashes more than three times in any one-second period, and large-area flashes should be avoided altogether for collaboration indicators — a single fade-in or one-shot animation is fine, a strobing pulse is not.
@@ -1103,6 +1264,7 @@ Real-time collaboration UI is full of attention-grabbing flashes: a green pulse 
 
 - **ID:** `2.4.1-skip-to-thread-panel`
 - **WCAG 2.4.1** Bypass Blocks (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `keyboard`, `navigation`, `threads`
 
 The artifact canvas in a design review tool is a heavy interactive surface — focusable pins, region handles, zoom controls, layer toggles. A keyboard or switch user who arrives on the page and just wants to read the conversation must currently tab through every pin and every canvas affordance before reaching the thread panel. A 'Skip to threads' link revealed on focus at the top of the page, or a clearly labeled <nav>/<aside> landmark, lets them jump directly into the conversation without traversing dozens of canvas controls.
@@ -1133,6 +1295,7 @@ The artifact canvas in a design review tool is a heavy interactive surface — f
 
 - **ID:** `2.4.1-skip-to-version-history`
 - **WCAG 2.4.1** Bypass Blocks (Level A)
+- **Surface:** Version history & comparison
 - **Tags:** `keyboard`, `navigation`, `versioning`
 
 The version history sidebar — often a vertical column of version cards on the right — is a primary navigation surface for reviewers comparing changes across drafts. A keyboard user trying to switch from 'v3' to 'v5' must currently tab through every annotation pin and canvas control to reach it. Either a 'Skip to version history' link revealed on focus, or a labeled <nav>/<aside> landmark exposing the version list, must let keyboard and assistive-tech users jump directly to versions without traversing the entire canvas.
@@ -1163,6 +1326,7 @@ The version history sidebar — often a vertical column of version cards on the 
 
 - **ID:** `2.4.11-pin-focus-not-obscured`
 - **WCAG 2.4.11** Focus Not Obscured (Minimum) (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `focus`, `annotations`
 
 New in WCAG 2.2, this criterion requires that when an element takes focus, the focus indicator is not entirely hidden by other content. Design-review canvases are dense with overlays: floating toolbars docked to the viewport edge, comment cards that pop up over the artifact when a thread opens, presence avatars and live cursors drifting across the surface, and sticky version-compare panels. Any of these can drift on top of a focused pin and fully cover its focus ring. A keyboard user pressing Tab who cannot see where focus landed has no way to recover — they must blindly press arrow keys or Enter and hope. The focus indicator on a focused pin must remain at least partially visible at all times.
@@ -1194,6 +1358,7 @@ New in WCAG 2.2, this criterion requires that when an element takes focus, the f
 
 - **ID:** `2.4.2-artifact-page-title`
 - **WCAG 2.4.2** Page Titled (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `navigation`, `versioning`
 
 Reviewers routinely keep multiple review tabs open simultaneously — 'Hero Banner v3', 'Hero Banner v4', 'Checkout flow v2' — and rely on the browser tab title to switch between them. A generic title like 'Design Review' or the product name is useless when five reviews are open. Screen-reader users navigating tabs and window-switching keyboard users depend on the <title> element being specific: it must include the artifact name and current version (e.g. 'Hero Banner v3 — Design Review'), and update when the user switches versions.
@@ -1224,6 +1389,7 @@ Reviewers routinely keep multiple review tabs open simultaneously — 'Hero Bann
 
 - **ID:** `2.4.3-thread-focus-order`
 - **WCAG 2.4.3** Focus Order (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `keyboard`, `focus`, `threads`, `annotations`
 
 Annotation pins are placed at meaningful visual positions on the artifact — top-of-header, mid-CTA, bottom-of-footer — and sighted reviewers read them in that spatial order. The DOM insertion order, however, typically reflects creation time: the order reviewers added pins, which can be arbitrary. If keyboard focus traverses pins in DOM insertion order instead of visual top-to-bottom / left-to-right anchor order, a keyboard user lands on the footer pin, then the header pin, then a mid-canvas pin — the conversation flow makes no sense. Tab order must be derived from anchor position so it matches what a sighted user perceives.
@@ -1254,6 +1420,7 @@ Annotation pins are placed at meaningful visual positions on the artifact — to
 
 - **ID:** `2.4.3-workflow-toolbar-focus-order`
 - **WCAG 2.4.3** Focus Order (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `keyboard`, `focus`, `workflow-state`
 
 The workflow toolbar (Approve, Request changes, Comment, Reject, Resolve) is the most-used surface in a review tool. Reviewers build muscle memory: 'Approve is the third tab stop in the toolbar.' If the focus order shifts because actions reorder based on role (an admin sees different controls than an external reviewer), or because the toolbar collapses on narrow viewports into a menu, or because the user's recent-actions sort scrambles button order, keyboard users lose their place. Focus order through workflow actions must be stable and predictable across sessions, viewport changes, and role variations.
@@ -1284,6 +1451,7 @@ The workflow toolbar (Approve, Request changes, Comment, Reject, Resolve) is the
 
 - **ID:** `2.4.4-mention-link-purpose`
 - **WCAG 2.4.4** Link Purpose (In Context) (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `threads`, `name-role-value`
 
 When a reviewer mentions a teammate in a comment — '@patricia can you confirm?' — the mention is typically a styled chip that links to the user's profile or filters threads by that user. If the chip's accessible name is just '@u123', the raw user ID, or only conveys a color (the teammate's avatar hue) with no name, screen-reader users hear 'link, u123' or 'link, colored chip' and have no idea who was mentioned. The accessible name of every mention link must be the mentioned user's display name, exposed via the chip's text content, aria-label, or aria-labelledby.
@@ -1314,6 +1482,7 @@ When a reviewer mentions a teammate in a comment — '@patricia can you confirm?
 
 - **ID:** `2.4.4-version-link-purpose`
 - **WCAG 2.4.4** Link Purpose (In Context) (Level A)
+- **Surface:** Version history & comparison
 - **Tags:** `versioning`, `name-role-value`
 
 Reviewers routinely reference previous versions in a thread — 'this was approved in v3, see [link]' — and the tool typically converts the version reference into a link chip. If that chip's accessible name is an opaque internal ID ('version_a8f3b2c1') or just 'v3' with no surrounding context, screen-reader users skimming a thread's links list have no way to tell which version is which. The link's accessible name should include the version label (v3), the author, and the date — 'v3 by Alex on May 12' — so a user reviewing a list of links knows where each one leads.
@@ -1344,6 +1513,7 @@ Reviewers routinely reference previous versions in a thread — 'this was approv
 
 - **ID:** `2.4.5-multiple-ways`
 - **WCAG 2.4.5** Multiple Ways (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `navigation`, `annotations`
 
 Annotations are the primary content of a review, and users need to find a specific one for many reasons: a teammate referenced it, they want to re-read their own comment, or they are triaging unresolved threads. Sighted mouse users click directly on the pin. But that single mechanism fails users who can't see the pin (blind), can't aim a mouse at it precisely (motor disabilities), or are looking for a thread they remember by content, not by location. The tool must offer at least two distinct ways to find a specific annotation: the spatial click, a thread list (sidebar with all threads), and/or a filter/search by content, author, status, or date.
@@ -1375,6 +1545,7 @@ Annotations are the primary content of a review, and users need to find a specif
 
 - **ID:** `2.4.6-thread-headings-descriptive`
 - **WCAG 2.4.6** Headings and Labels (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `threads`, `name-role-value`
 
 When the thread panel or sidebar uses headings to identify each thread, generic labels like 'Thread 17' or 'Annotation #4' give a screen-reader user navigating by heading no information about which conversation they are about to enter. Heading text should describe the thread's topic — typically the first comment's summary, the anchored region's name, or the annotation's title — so a user scanning headings in a screen reader can quickly find the conversation they want. 'Thread 17' is a sequential ID, not a description.
@@ -1405,6 +1576,7 @@ When the thread panel or sidebar uses headings to identify each thread, generic 
 
 - **ID:** `2.4.7-canvas-focus-visible`
 - **WCAG 2.4.7** Focus Visible (Level AA)
+- **Surface:** 3D model viewer
 - **Tags:** `focus`, `zoom-pan`
 
 Many review tools support keyboard pan and zoom of the artifact canvas — arrow keys to pan, +/- to zoom — but those interactions require the canvas region itself to take focus first. If the canvas accepts focus but shows no visible indicator that it has done so, keyboard users cannot tell that arrow keys will now pan rather than scroll the page. The canvas frame (a border, outline ring, or labeled focus halo around the canvas viewport) must show a clearly visible focus indicator whenever the canvas itself takes focus.
@@ -1435,6 +1607,7 @@ Many review tools support keyboard pan and zoom of the artifact canvas — arrow
 
 - **ID:** `2.4.7-pin-focus-visible`
 - **WCAG 2.4.7** Focus Visible (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `focus`, `annotations`
 
 Annotation pins commonly carry three distinct visual states: hover (mouse hover preview), selected (the pin whose thread is currently open), and focus (the pin the keyboard is currently on). Tools frequently collapse focus into the hover or selected styling, leaving keyboard users unable to tell where their focus actually is — particularly when they have hovered or selected a different pin. The keyboard focus indicator must be visually distinct from both hover and selected: typically a high-contrast outline ring or halo that does not overlap with the hover or selected styling.
@@ -1465,6 +1638,7 @@ Annotation pins commonly carry three distinct visual states: hover (mouse hover 
 
 - **ID:** `2.5.1-multi-finger-zoom-alternative`
 - **WCAG 2.5.1** Pointer Gestures (Level A)
+- **Surface:** 3D model viewer
 - **Tags:** `zoom-pan`
 
 Design-review canvases lean heavily on multi-touch gestures — pinch to zoom, two-finger swipe to pan, three-finger tap to fit — because that's how Figma, Sketch, and InVision trained users to navigate. But anyone using a single switch, a head-pointer, a mouth-stick, or a stylus on a small touch surface cannot perform a coordinated two-finger pinch. Every gesture that controls zoom or pan must have an equivalent single-pointer path: visible zoom-in/zoom-out buttons, +/− keyboard shortcuts, or scroll-with-modifier — so the canvas is fully navigable without ever needing two fingers at once.
@@ -1495,6 +1669,7 @@ Design-review canvases lean heavily on multi-touch gestures — pinch to zoom, t
 
 - **ID:** `2.5.1-region-annotation-single-pointer`
 - **WCAG 2.5.1** Pointer Gestures (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`
 
 Region annotations — the rectangles reviewers draw around 'this whole section of the header' — are typically placed via a drag from one corner to the opposite corner. That drag is a path-based gesture: a user who cannot hold-and-move (single-switch users, users with tremor, head-pointer users) cannot complete it. The tool must offer a single-pointer alternative: click to set the first corner, click again to set the opposite corner, or place a default-sized region first and then resize via discrete handle clicks.
@@ -1523,6 +1698,7 @@ Region annotations — the rectangles reviewers draw around 'this whole section 
 
 - **ID:** `2.5.2-annotation-place-cancellable`
 - **WCAG 2.5.2** Pointer Cancellation (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`
 
 When a reviewer starts placing an annotation and realizes mid-gesture that they're about to drop a pin in the wrong place — wrong frame, wrong artifact, wrong region — they need to be able to back out without creating noise the whole team has to clean up. The down-event must not commit the annotation. Either the up-event fires the creation only when released on a valid target, or pressing Escape during placement cancels cleanly, leaving no orphan pin and no toast notification fired to collaborators.
@@ -1553,6 +1729,7 @@ When a reviewer starts placing an annotation and realizes mid-gesture that they'
 
 - **ID:** `2.5.3-pin-accessible-name-matches`
 - **WCAG 2.5.3** Label in Name (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`, `name-role-value`
 
 Annotation pins typically show a visible number ('3', '12') or short label so reviewers can reference them in conversation ('see pin 3'). Voice-control users (Dragon, Voice Control on macOS/iOS) say what they see — 'click pin three' — and the underlying accessible name must start with that visible label for the voice command to match. If the visible label is '3' but the accessible name is 'Annotation by Patricia on header, unresolved, 2 replies', the voice command fails and the user cannot activate the pin by speaking what they see.
@@ -1582,6 +1759,7 @@ Annotation pins typically show a visible number ('3', '12') or short label so re
 
 - **ID:** `2.5.3-workflow-button-name-matches`
 - **WCAG 2.5.3** Label in Name (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `workflow-state`, `name-role-value`
 
 The Approve, Request Changes, Reject, and Submit buttons drive the review workflow — these are the highest-stakes controls in the entire UI. Voice-control users must be able to invoke them by saying what they see ('click Approve', 'click Request Changes'). If the visible label is 'Approve' but the accessible name is 'Submit approval decision for version 4 of homepage redesign', the voice command 'click Approve' fails and the user cannot drive the workflow without keyboard or pointer.
@@ -1612,6 +1790,7 @@ The Approve, Request Changes, Reject, and Submit buttons drive the review workfl
 
 - **ID:** `2.5.4-no-motion-actuated-pan`
 - **WCAG 2.5.4** Motion Actuation (Level A)
+- **Surface:** 3D model viewer
 - **Tags:** `motion`, `zoom-pan`
 
 Mobile and tablet design-review apps sometimes bind device-motion gestures to canvas operations — tilt the tablet to pan the artifact, shake to undo an annotation. These are inaccessible to users who hold their device in a mount, who have tremor, who cannot reliably move their device through space, or who have disabled motion in OS settings. Every motion-actuated operation must have an equivalent UI control (button, menu item, keyboard shortcut), and users must be able to disable the motion binding entirely.
@@ -1642,6 +1821,7 @@ Mobile and tablet design-review apps sometimes bind device-motion gestures to ca
 
 - **ID:** `2.5.7-annotation-drag-alternative`
 - **WCAG 2.5.7** Dragging Movements (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `annotations`
 
 WCAG 2.2 adds 2.5.7 Dragging Movements: any operation that uses a drag must have a non-drag alternative. In a design-review tool, drags are everywhere — drag a pin to reposition it, drag a region's handle to resize, drag-and-drop comments in a sidebar to reorder, drag an annotation onto a different layer. Each must have a non-drag path: click-then-click to reposition, arrow keys to nudge, a 'move to' menu, a 'reorder' affordance with up/down buttons. Users with tremor, with single-pointer setups, on switch devices, or with limited dexterity cannot reliably drag.
@@ -1672,6 +1852,7 @@ WCAG 2.2 adds 2.5.7 Dragging Movements: any operation that uses a drag must have
 
 - **ID:** `2.5.7-version-drag-compare-alternative`
 - **WCAG 2.5.7** Dragging Movements (Level AA)
+- **Surface:** Version history & comparison
 - **Tags:** `versioning`
 
 WCAG 2.2's 2.5.7 also covers the version-compare slider — that 'before / after' divider you drag across the artifact to reveal version A under version B. Users who can't drag cannot operate it as designed. The slider must accept click-anywhere-on-track to jump the divider to that position, support keyboard left/right and Home/End, and offer a text input or stepper for the exact percentage. Drag is the affordance for precision; non-drag alternatives must match its expressiveness.
@@ -1702,6 +1883,7 @@ WCAG 2.2's 2.5.7 also covers the version-compare slider — that 'before / after
 
 - **ID:** `2.5.8-annotation-pin-target-size`
 - **WCAG 2.5.8** Target Size (Minimum) (Level AA)
+- **Surface:** Annotation pins & markups
 - **Tags:** `target-size`, `annotations`
 
 WCAG 2.2 adds 2.5.8 Target Size (Minimum) at AA: pointer targets must be at least 24x24 CSS pixels, or have enough spacing around them that a 24x24 circle around the target center does not intersect any other target. Annotation pins are notoriously small — 16x16 dots, 20x20 numbered circles — because designers want them visually unobtrusive. But on a dense canvas with adjacent pins they become impossible to hit with a trackpad on a tablet or with a tremor-affected finger. Pins must either grow to 24x24 (the hit target, not just the visual dot), or sit far enough apart that the 24x24 spacing exception is satisfied.
@@ -1732,6 +1914,7 @@ WCAG 2.2 adds 2.5.8 Target Size (Minimum) at AA: pointer targets must be at leas
 
 - **ID:** `2.5.8-thread-action-target-size`
 - **WCAG 2.5.8** Target Size (Minimum) (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `target-size`, `threads`
 
 Thread comment cards bristle with small action buttons — reply, resolve, edit, delete, the emoji reaction picker, the overflow menu kebab. These are typically icon-only 16x16 or 20x20 buttons squeezed into a dense card layout. Under WCAG 2.2's 2.5.8 (AA, new in 2.2), each must hit at least 24x24 CSS pixels or satisfy the spacing exception. A reviewer with limited dexterity, on a tablet with a finger, or on a small viewport must be able to resolve a thread or delete their own comment without mis-tapping its neighbor.
@@ -1758,12 +1941,44 @@ Thread comment cards bristle with small action buttons — reply, resolve, edit,
 **References:**
 - [WCAG 2.5.8 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum)
 
+### Markup toolbar controls meet the WCAG 2.2 minimum target size of 24×24 CSS pixels
+
+- **ID:** `2.5.8-toolbar-target-size`
+- **WCAG 2.5.8** Target Size (Minimum) (Level AA)
+- **Surface:** Annotation pins & markups
+- **Tags:** `touch-target`, `toolbar`, `wcag22`
+
+Markup toolbars in CoLab cluster many small tools side-by-side: pin tool, region tool, distance measurement, angle measurement, section plane controls, view presets. Designers often shrink these to 16×16 or 20×20 to keep the toolbar compact, but WCAG 2.2 introduces a new AA requirement that any pointer target must be at least 24×24 CSS pixels (or have 24px of clear spacing around a smaller target). Users with motor impairments, tremor, or coarse pointers (touch on a tablet, a head-tracker) lose accuracy below this threshold and accidentally activate the wrong tool — often catastrophic when the wrong tool deletes or moves an annotation.
+
+**How to test:**
+- Open the markup toolbar in the model viewer and measure each interactive control in DevTools using the box model — confirm width and height are each at least 24 CSS pixels.
+- For any control deliberately smaller than 24×24, confirm it has at least 24px of clear space (no other targets) around its centre, satisfying the spacing exception.
+- Resize the viewport to a tablet width and re-measure — controls must remain at least 24×24 across breakpoints, not shrink at small sizes.
+- Tap each control with a stylus or finger on a touch device and confirm the intended tool activates without accidental neighbouring hits.
+- Run axe-core or Accessibility Insights on the toolbar and confirm it raises no target-size violations.
+
+**Pass criteria:**
+- Every interactive control in the markup toolbar (pin tool, region tool, measurement tools, section plane controls, view presets) is at least 24×24 CSS pixels.
+- Smaller controls only ship if they are surrounded by 24px of clear spacing, with no other interactive targets within that radius.
+- The 24×24 minimum holds across breakpoints, including compact / tablet layouts.
+- Spacing between adjacent controls is large enough that a coarse-pointer user does not accidentally hit the wrong tool.
+
+**Fail examples:**
+- Toolbar packs eight 16×16 icon buttons into a 160px-wide bar with 2px gaps — touch users repeatedly activate the wrong tool.
+- Section plane toggles are 20×20 with no spacing exception; axe-core reports a target-size violation.
+- Tools are 24×24 on desktop but collapse to 18×18 in a compact toolbar at tablet width.
+- The measurement tool dropdown trigger is a 12×12 chevron tucked into the corner of a button, with the only valid hit area being that chevron.
+
+**References:**
+- [WCAG 2.5.8 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum)
+
 ## Understandable
 
 ### The review tool declares the page's primary human language on the <html> element
 
 - **ID:** `3.1.1-document-language`
 - **WCAG 3.1.1** Language of Page (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `language`
 
 Screen readers, browser translation engines, and language-aware spellcheck all key off the page's lang attribute. A design-review tool without a lang declaration on <html> leaves a screen reader guessing — JAWS may read English content with a French voice, VoiceOver may mispronounce reviewer names and UI strings, and Google Translate may translate-into the very language the page already uses. The primary language of the review tool's UI shell must be declared on <html lang="..."> so assistive tech and language tools render the right voice, prosody, and hyphenation from the moment the page loads.
@@ -1794,6 +2009,7 @@ Screen readers, browser translation engines, and language-aware spellcheck all k
 
 - **ID:** `3.1.2-comment-language-tagging`
 - **WCAG 3.1.2** Language of Parts (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `language`, `threads`
 
 Cross-team design reviews routinely mix languages — a reviewer in Tokyo replies in Japanese to a thread on an English-defaulting tool, a contractor in São Paulo drops a Portuguese clarification into an otherwise-English review. If the page-level lang is 'en' and the Japanese reply has no lang attribute of its own, a screen reader pronounces the Japanese characters with an English voice and produces unintelligible output. The comment renderer must either detect or let the author declare the comment's language and emit a corresponding lang attribute on the comment element — and must never assert a language it cannot verify.
@@ -1825,6 +2041,7 @@ Cross-team design reviews routinely mix languages — a reviewer in Tokyo replie
 
 - **ID:** `3.2.1-focus-no-context-change`
 - **WCAG 3.2.1** On Focus (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `focus`
 
 Keyboard users tab through dense lists — thread rows in the sidebar, annotation pins on the canvas, version entries in the history panel — to scan and decide where to engage. If merely focusing a row triggers a context change (auto-loading that thread in the main panel, opening a modal, scrolling the canvas to the pin's location, switching the displayed version), the user is jolted out of their scan position on every Tab keypress and effectively cannot survey their options. Focus must move silently; only explicit activation (Enter, Space, click) may change context.
@@ -1855,6 +2072,7 @@ Keyboard users tab through dense lists — thread rows in the sidebar, annotatio
 
 - **ID:** `3.2.2-comment-autosave-no-surprise`
 - **WCAG 3.2.2** On Input (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `forms`, `threads`
 
 Many review tools autosave draft comments as the user types so a refresh or accidental tab close does not lose the in-progress reply. Autosave is a 3.2.2 risk when it produces a context change — re-rendering the thread (and stealing focus), scrolling the panel to refresh the draft list, opening a 'Saved!' modal, or briefly disabling the composer. The autosave action itself must not navigate, refresh, or change context; its status (saving / saved / failed) must be available via a polite, non-focus-stealing indicator that does not interrupt typing.
@@ -1888,6 +2106,7 @@ Many review tools autosave draft comments as the user types so a refresh or acci
 
 - **ID:** `3.2.2-input-no-context-change`
 - **WCAG 3.2.2** On Input (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `forms`, `workflow-state`
 
 The comment composer is the most-used input in a design-review tool, and it is the easiest place to ship a 3.2.2 violation: plain Enter that submits and posts a comment, a slash-command that fires a workflow transition as the user types, an @mention picker that commits the wrong user when focus moves. Sighted, mouse-driven authors rarely notice; keyboard authors and screen-reader users post truncated drafts, fire 'Approve' by accident, or mention the wrong colleague. Plain Enter must insert a newline by default; submission must require an explicit, well-labeled affordance (e.g. Cmd/Ctrl+Enter, a Submit button), and slash-commands or input-as-you-type behaviors must not cause workflow state changes without a confirmation step.
@@ -1919,6 +2138,7 @@ The comment composer is the most-used input in a design-review tool, and it is t
 
 - **ID:** `3.2.3-thread-panel-consistent-nav`
 - **WCAG 3.2.3** Consistent Navigation (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `navigation`, `threads`
 
 Reviewers move between dozens of artifacts a day — different files, different boards, different review states. The thread panel they use to triage feedback should not shuffle its filter / sort / search / show-resolved controls between pages. A user with low vision who has built spatial muscle memory for 'Filter is in the top-left of the thread panel' should not have to relearn the layout on a board-style review vs a Figma-style review vs a versioned PDF. The same controls should appear in the same order and the same place across every artifact context the tool supports.
@@ -1950,6 +2170,7 @@ Reviewers move between dozens of artifacts a day — different files, different 
 
 - **ID:** `3.2.4-workflow-buttons-consistent-identity`
 - **WCAG 3.2.4** Consistent Identification (Level AA)
+- **Surface:** Review workflow & status
 - **Tags:** `workflow-state`, `name-role-value`
 
 An 'Approve' action surfaces in several places: the artifact header toolbar, the bulk-action menu on the dashboard, the right-click context menu, the keyboard-shortcut hint card, and the confirmation dialog that fires after activation. If each surface uses a slightly different icon, label, or accessible name — 'Approve' / 'Approve this' / 'Mark approved' / a checkmark with no text — users (especially cognitively disabled users and screen-reader users) cannot recognize they are the same function. Every instance of a workflow action must share one canonical icon, label, and accessible name.
@@ -1980,6 +2201,7 @@ An 'Approve' action surfaces in several places: the artifact header toolbar, the
 
 - **ID:** `3.2.6-help-consistent-location`
 - **WCAG 3.2.6** Consistent Help (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `navigation`
 
 WCAG 2.2 added 3.2.6 Consistent Help as a Level A criterion: when a tool provides help mechanisms — a help link, a keyboard-shortcut overlay opened by '?', a contact-support entry, a feedback form — they must appear in the same relative location on every page. In a review tool, help is something users reach for under stress (a reviewer cannot figure out the keyboard shortcut to resolve a thread, an external guest cannot find how to mention a teammate). If help lives in the top-right user menu on the dashboard but moves to a footer link on artifact pages and disappears entirely from the version-compare view, users in a stressed state cannot reliably find it.
@@ -2011,6 +2233,7 @@ WCAG 2.2 added 3.2.6 Consistent Help as a Level A criterion: when a tool provide
 
 - **ID:** `3.3.1-comment-validation-error-identified`
 - **WCAG 3.3.1** Error Identification (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `forms`
 
 When a reviewer's comment submission fails — over the length cap, flagged by a profanity filter, missing a required @mention to assign an action, attaching an unsupported file type — the error must be identified in text that names both the field and the specific issue. A red border around the textarea with no accompanying text leaves screen-reader users with no idea why the Submit button bounced their reply. The error must be programmatically associated with the failing input (aria-describedby) and rendered as readable text adjacent to it, so a screen reader announces 'Comment is over the 2000-character limit' rather than silently inheriting an invalid state.
@@ -2043,6 +2266,7 @@ When a reviewer's comment submission fails — over the length cap, flagged by a
 
 - **ID:** `3.3.1-workflow-transition-error`
 - **WCAG 3.3.1** Error Identification (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `workflow-state`, `threads`
 
 When a reviewer tries to move an artifact from 'In review' to 'Approved' but the transition is blocked — unresolved blocking threads, missing required approvers, a stale version — the failure message must identify which specific thread(s) or condition(s) block the change, not just 'Cannot approve.' A generic refusal leaves the user hunting through dozens of threads to find the blocker. The error should name each blocking thread by its topic or anchor and, where possible, link to it, so the reviewer can resolve the actual obstacle.
@@ -2074,6 +2298,7 @@ When a reviewer tries to move an artifact from 'In review' to 'Approved' but the
 
 - **ID:** `3.3.2-comment-field-label`
 - **WCAG 3.3.2** Labels or Instructions (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `forms`, `threads`, `name-role-value`
 
 Comment composers in review tools are often visually minimal — a placeholder that disappears on focus, no label, no indication of which thread the reply belongs to. WCAG 3.3.2 requires labels or instructions when content needs user input. For threaded reply UIs, the label must also clarify the reply target: a reply 4 levels deep on a long thread needs to make clear (programmatically and visibly) which comment it answers, so a screen-reader user composing from the keyboard knows they are replying to Alice's comment about contrast and not Bob's later remark about copy.
@@ -2106,6 +2331,7 @@ Comment composers in review tools are often visually minimal — a placeholder t
 
 - **ID:** `3.3.3-comment-error-suggestion`
 - **WCAG 3.3.3** Error Suggestion (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `forms`
 
 Beyond identifying that an error occurred (3.3.1), WCAG 3.3.3 requires that when a fix is known, the system suggests it. For comment composers this means: an over-length error states the current count and the limit ('2147 / 2000 — trim by 147 characters'); a missing-mention error suggests typing '@' to open the picker; an unsupported attachment lists supported formats; a profanity rejection explains the policy and suggests rephrasing. The suggestion must be concrete and actionable, not a vague 'Please try again.'
@@ -2138,6 +2364,7 @@ Beyond identifying that an error occurred (3.3.1), WCAG 3.3.3 requires that when
 
 - **ID:** `3.3.4-irreversible-approval-confirm`
 - **WCAG 3.3.4** Error Prevention (Legal, Financial, Data) (Level AA)
+- **Surface:** Review workflow & status
 - **Tags:** `workflow-state`
 
 Final approval that locks an artifact, archiving a review that removes it from active dashboards, deleting a thread that has replies (destroying the conversation history) — these are irreversible or hard-to-reverse data actions and fall under WCAG 3.3.4's requirement for reviewable, confirmable, or reversible flows. The UI must require an explicit confirmation step (not a single-click destructive action), state the consequences in the confirmation text ('this will lock the artifact and notify all reviewers; new comments will be disabled'), and ideally support a grace-period undo.
@@ -2171,6 +2398,7 @@ Final approval that locks an artifact, archiving a review that removes it from a
 
 - **ID:** `3.3.7-redundant-entry-reviewer-info`
 - **WCAG 3.3.7** Redundant Entry (Level A)
+- **Surface:** Notebooks & documents
 - **Tags:** `forms`
 
 WCAG 2.2 added 3.3.7 Redundant Entry as a Level A criterion: information the user has already entered in a process must not be requested again in the same process, unless re-entry is essential (e.g. password confirmation). External / guest reviewers commonly enter their name and email on a magic-link gate to start commenting; the tool must not re-prompt them when they navigate back, revisit the link, or switch artifacts inside the same review. Either auto-populate, persist via the magic-link token, or expose a clear 'already identified as <name>' indicator with an explicit edit affordance.
@@ -2203,6 +2431,7 @@ WCAG 2.2 added 3.3.7 Redundant Entry as a Level A criterion: information the use
 
 - **ID:** `3.3.8-accessible-auth-no-cognitive-test`
 - **WCAG 3.3.8** Accessible Authentication (Minimum) (Level AA)
+- **Surface:** Notebooks & documents
 - **Tags:** `forms`
 
 WCAG 2.2 added 3.3.8 Accessible Authentication (Minimum) as Level AA: authentication must not require a cognitive function test (memorising a code, transcribing an audio CAPTCHA, solving a puzzle, identifying objects in images) unless an alternative is provided. For review tools this most often means the guest-reviewer auth flow: one-time codes must be pasteable (not blocked from clipboard), password managers must work (no fields that block autofill via autocomplete=off without justification), magic-link auth must be supported as a path of least cognitive load, and any CAPTCHA must offer a non-cognitive alternative.
@@ -2236,10 +2465,74 @@ WCAG 2.2 added 3.3.8 Accessible Authentication (Minimum) as Level AA: authentica
 
 ## Robust
 
+### AI-authored comments are programmatically distinguishable from human comments
+
+- **ID:** `4.1.2-ai-comment-attribution`
+- **WCAG 4.1.2** Name, Role, Value (Level A)
+- **Surface:** AI-generated content
+- **Tags:** `ai-content`, `annotations`, `name-role-value`
+
+When AI is a participant in the review — summarising threads, suggesting fixes, flagging issues — its contributions must be programmatically distinguishable from human comments. A sighted user sees a sparkle avatar or a tinted background; a screen-reader user gets none of that unless the distinction is in the accessible name, role, or an exposed attribute. Trust is the load-bearing concern: a blind reviewer who cannot tell that 'this looks misaligned' came from a language model rather than a senior designer is being denied the same provenance signal everyone else gets. The author identity must be part of the comment's accessible name, and any 'AI' role attribute must be exposed via ARIA, not inferred from styling.
+
+**How to test:**
+- Trigger an AI-authored comment on a thread (e.g. an AI summary, a suggested resolution, or an automated review flag) and one human-authored comment alongside it.
+- Tab through both comments with a screen reader and confirm the AI-authored one announces its author as the AI agent ("Comment by CoLab AI" or similar) before the body, not merely "Comment by P. Goh" with no distinction.
+- Inspect the AI comment in DevTools: it must carry an accessible name or attribute (e.g. aria-label including "AI assistant", a visible "AI" badge with a text label, or a data attribute exposed via aria-roledescription) — not just a sparkle SVG with empty alt text.
+- Convert the comment to greyscale and confirm a sighted user without colour can also tell it apart from human comments — relying on tinted background alone fails for both colour-blind and screen-reader users.
+- Confirm the AI badge or label has a text accessible name, not an icon-only button with no alt or aria-label.
+
+**Pass criteria:**
+- AI-authored comments expose an author identity (e.g. "CoLab AI", "AI assistant") as part of their accessible name, surfaced before or alongside the comment body.
+- The AI vs. human distinction is conveyed through text or a labelled badge — not background tint, avatar shape, or sparkle icon alone.
+- Sighted users without colour can also tell the difference at a glance — there is a non-colour visual signal (label, badge text, icon with accessible name).
+- Inline AI suggestions inside a draft (e.g. autocomplete completions) are similarly attributed when they appear in the final published comment.
+
+**Fail examples:**
+- AI comments use a sparkle SVG and a pale purple background; a screen reader announces only "Comment by Assistant" with no indication it was AI-generated.
+- The AI avatar is decorative (alt="") and there is no other text label, so the comment reads identically to a human comment with assistive tech.
+- AI suggestions are tagged in a tooltip on hover but never exposed in the comment's accessible name.
+- Background tint is the only signal that distinguishes AI from human — a user with low vision or grayscale display sees a uniform thread.
+
+**References:**
+- [WCAG 4.1.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value)
+
+### 3D model viewer exposes keyboard equivalents for every pointer interaction
+
+- **ID:** `4.1.2-canvas-keyboard-controls`
+- **WCAG 4.1.2** Name, Role, Value (Level A)
+- **Surface:** 3D model viewer
+- **Tags:** `canvas`, `keyboard`, `viewer`
+
+The 3D model viewer is the centerpiece of a CoLab review — a user who cannot operate it with a pointer cannot inspect the artifact at all. Mouse-only controls (drag to rotate, scroll to zoom, middle-click to pan) leave keyboard-only reviewers and switch-device users stranded on a canvas they cannot move. The viewer must expose first-class keyboard equivalents: zoom (+ and −), pan (arrow keys), rotate (Shift + arrow keys), and a single-key reset (R or Home) that returns the camera to its default framing. Each control must be programmatically discoverable so assistive technology can announce role, name, and current state.
+
+**How to test:**
+- Open a review with a 3D model loaded and place focus on the model viewer with the keyboard alone (no mouse).
+- Press + and − and confirm the camera zooms in and out incrementally; press the arrow keys and confirm the view pans; press Shift + arrow keys and confirm the model rotates around its centre.
+- Press R (or Home) and confirm the camera resets to the default view in a single keystroke.
+- Inspect the viewer element in DevTools: it must expose role, an accessible name describing the model, and the keyboard controls must be documented in an accessible help affordance reachable from the viewer toolbar.
+- Run a screen reader over the viewer and confirm the announced name and role identify it as an interactive 3D viewer, not a generic image or canvas.
+
+**Pass criteria:**
+- Zoom, pan, rotate, and reset all have keyboard bindings that work when the viewer has focus.
+- Bindings are documented in an accessible, keyboard-reachable help affordance — not hidden in marketing pages.
+- The viewer element exposes a role and accessible name to assistive technology, not just a bare <canvas> with no semantics.
+- No interaction in the viewer is reachable only by pointer (drag, scroll, middle-click).
+
+**Fail examples:**
+- Viewer renders as <canvas> with no role, no accessible name, and no key handlers; a keyboard user tabs into it and cannot rotate the model.
+- Zoom only responds to scroll-wheel; there is no + / − keyboard equivalent.
+- Pan requires holding the middle mouse button — there is no arrow-key alternative.
+- A "reset view" button exists but is only triggered by double-clicking the canvas, with no keyboard shortcut and no toolbar button.
+- Keyboard shortcuts work but are undocumented; a screen-reader user has no way to discover that + zooms in.
+
+**References:**
+- [WCAG 4.1.2 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value)
+
 ### Annotation pins expose role, accessible name, and state (selected, focused, resolved/unresolved) programmatically
 
 - **ID:** `4.1.2-pin-role-name-state`
 - **WCAG 4.1.2** Name, Role, Value (Level A)
+- **Surface:** Annotation pins & markups
 - **Tags:** `name-role-value`, `annotations`
 
 Annotation pins on a design artifact are interactive controls — they receive focus, can be activated, anchor a thread, and toggle between resolved and unresolved. WCAG 4.1.2 requires that for every UI component the role, accessible name, and current state are programmatically determinable. Pins built as bare <div> elements with click handlers fail this entirely: they have no role, no name, and no state exposed to assistive tech. The correct implementation is a focusable button (or a role=button element) with an accessible name describing what it annotates ('Pin 3, on the primary CTA button'), and ARIA states for selected (aria-pressed or aria-current), focused (native focus), and resolved/unresolved (aria-label includes the state, or an aria-describedby points to a status text).
@@ -2274,6 +2567,7 @@ Annotation pins on a design artifact are interactive controls — they receive f
 
 - **ID:** `4.1.2-thread-role-name`
 - **WCAG 4.1.2** Name, Role, Value (Level A)
+- **Surface:** Discussion threads
 - **Tags:** `name-role-value`, `threads`
 
 Each thread in a review tool is a discoverable conversation — a screen-reader user navigating by landmark or by article must be able to find it, recognise what it is about, and know whether it is open or resolved. WCAG 4.1.2 requires role, name, and state for each thread container. The correct pattern: each thread is a role=article (or role=region) with an aria-label or aria-labelledby naming the thread (topic if user-set, otherwise an excerpt of the first comment) and an aria-describedby or aria-label suffix that includes the open/resolved state.
@@ -2307,6 +2601,7 @@ Each thread in a review tool is a discoverable conversation — a screen-reader 
 
 - **ID:** `4.1.2-workflow-button-role-state`
 - **WCAG 4.1.2** Name, Role, Value (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `name-role-value`, `workflow-state`
 
 Workflow buttons (Approve, Request changes, Reject, Archive) commonly become disabled in certain states — e.g. Approve is disabled while blocking threads are unresolved. WCAG 4.1.2 requires that role, name, and value (state) be exposed programmatically. A button greyed out with no aria-disabled (or worse, hidden via disabled but with no exposed reason) leaves assistive-tech users unable to discover both that it is disabled and why. The pattern: use aria-disabled="true" (not the disabled attribute, which removes the button from focus order entirely and prevents the user from reading the reason via aria-describedby) plus aria-describedby pointing to a visible reason text.
@@ -2340,6 +2635,7 @@ Workflow buttons (Approve, Request changes, Reject, Archive) commonly become dis
 
 - **ID:** `4.1.3-realtime-collab-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Notifications & live updates
 - **Tags:** `live-regions`, `realtime`
 
 Real-time collaboration produces a stream of status events: a collaborator joins, a collaborator leaves, a new annotation arrives, a comment is posted. Under WCAG 4.1.3 these are status messages and must be programmatically determinable without stealing focus. But because the stream can be high-frequency and disruptive for screen-reader users, the tool must also offer a user-controlled mute — a setting to silence presence announcements while keeping annotation announcements, or vice versa, or all of them. Without a mute, an over-eager live region becomes a denial-of-service against the screen-reader user.
@@ -2369,10 +2665,43 @@ Real-time collaboration produces a stream of status events: a collaborator joins
 **References:**
 - [WCAG 4.1.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/status-messages)
 
+### Section plane activation and deactivation are announced via a live region
+
+- **ID:** `4.1.3-section-plane-announcement`
+- **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** 3D model viewer
+- **Tags:** `canvas`, `live-regions`, `viewer`
+
+Section planes cut into a 3D model to reveal interior geometry — a fundamental review affordance for mechanical artifacts. When a reviewer activates a section plane on the X, Y, or Z axis, the visible scene changes radically: half the model disappears, an interior surface becomes visible. A sighted user sees this immediately; a screen-reader user must be told. The viewer must announce the change through an aria-live region with enough context for the user to understand what was activated and on what axis. Deactivation must also announce so the user knows the full model has been restored.
+
+**How to test:**
+- With a screen reader running, activate a section plane on the X axis from the viewer toolbar.
+- Confirm a polite live-region announcement fires within ~1 second, saying something like "Section plane activated on X axis" — clear enough to know what changed without seeing the viewport.
+- Deactivate the section plane and confirm a corresponding "Section plane deactivated" announcement fires.
+- Repeat for the Y and Z axes; each must announce the axis explicitly, not just "section plane on" / "section plane off".
+- Inspect the announcement region in DevTools: it must be a real aria-live region (polite, not assertive), present in the DOM before the user activates the plane — not injected on activation, which screen readers may miss.
+
+**Pass criteria:**
+- Activating a section plane fires a live-region announcement that names the axis or plane within roughly one second.
+- Deactivating a section plane fires a corresponding announcement that confirms the full model is restored.
+- The live region is polite (does not interrupt other speech), persists in the DOM, and is not removed between announcements.
+- Announcements are concise — a single short sentence — and consistent in phrasing across axes.
+
+**Fail examples:**
+- Activating a section plane changes the WebGL viewport but emits no DOM update; a screen-reader user has no way to know the view changed.
+- An announcement fires but says only "section plane" with no axis information.
+- The live region is aria-live="assertive" and interrupts a thread being read aloud every time the user toggles a plane.
+- The region is created on demand each time a plane is toggled — the first announcement is silently dropped by screen readers.
+- Deactivation is silent; the user activates a plane, navigates away, and is never told the plane is still on when they return.
+
+**References:**
+- [WCAG 4.1.3 Understanding](https://www.w3.org/WAI/WCAG22/Understanding/status-messages)
+
 ### Resolving or reopening a thread announces via a live region
 
 - **ID:** `4.1.3-thread-resolve-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `live-regions`, `threads`
 
 Marking a thread resolved (or reopening a resolved thread) is a status message: the change is meaningful to anyone tracking the review's progress, particularly screen-reader users who cannot rely on visual cues like a strike-through or fade. WCAG 4.1.3 requires this be announced via a live region without stealing focus. The announcement should name the thread and the new state — 'Thread on primary CTA resolved by Alice' — so the user has enough context to know which thread changed.
@@ -2406,6 +2735,7 @@ Marking a thread resolved (or reopening a resolved thread) is a status message: 
 
 - **ID:** `4.1.3-workflow-state-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Review workflow & status
 - **Tags:** `live-regions`, `workflow-state`
 
 When an artifact moves between workflow states (draft → in review → approved → requires changes), the transition is a status message under WCAG 4.1.3: it must be programmatically determinable to assistive tech without receiving focus and without requiring the user to navigate to find it. The pattern is a polite live region (aria-live="polite" or role="status") that announces 'Artifact moved to In Review' on transition. The announcement must not steal focus (the reviewer should not be yanked from their current task) and must not be assertive unless the transition is genuinely urgent.
@@ -2441,6 +2771,7 @@ When an artifact moves between workflow states (draft → in review → approved
 
 - **ID:** `1.4.13-presence-tooltip-dismissable`
 - **WCAG 1.4.13** Content on Hover or Focus (Level AA)
+- **Surface:** Notifications & live updates
 - **Tags:** `realtime`, `focus`
 
 Presence avatars in a collaborative tool typically reveal a tooltip on hover or focus showing the user's full name and role. WCAG 1.4.13 requires that such tooltips (a) be dismissable without moving pointer / focus (Escape must dismiss), (b) be hoverable (the user can move the pointer into the tooltip itself without it disappearing — e.g. to read text or click a link inside), and (c) be persistent (the tooltip remains visible until the trigger or tooltip itself loses hover/focus, the user dismisses it, or the information becomes invalid).
@@ -2474,6 +2805,7 @@ Presence avatars in a collaborative tool typically reveal a tooltip on hover or 
 
 - **ID:** `2.4.3-focus-survives-remote-update`
 - **WCAG 2.4.3** Focus Order (Level A)
+- **Surface:** Notifications & live updates
 - **Tags:** `focus`, `realtime`, `keyboard`
 
 In a collaborative tool, remote events constantly mutate the DOM: a teammate adds a comment, a new version is dropped, presence changes. Each of these can cause a careless re-render to dump the user's focus — the textarea they were typing in unmounts, focus reverts to <body>, and the next Tab moves from the top of the page rather than from where they were. Under WCAG 2.4.3, focus order must be preserved through these mutations. Remote updates must be applied in ways that retain the local user's focus on the element they were interacting with, either via stable keys / refs, focus restoration after re-render, or insertion strategies that do not unmount the focused element.
@@ -2507,6 +2839,7 @@ In a collaborative tool, remote events constantly mutate the DOM: a teammate add
 
 - **ID:** `2.4.3-role-aware-focus-order`
 - **WCAG 2.4.3** Focus Order (Level A)
+- **Surface:** Review workflow & status
 - **Tags:** `focus`, `roles`, `workflow-state`
 
 Roles can change mid-session — a viewer is promoted to approver, an external guest is granted comment-only access, a reviewer is removed from the artifact entirely. When this happens, the workflow toolbar gains or loses controls (Approve, Request changes, Archive, etc.) and the tab order must update predictably. Under WCAG 2.4.3 the focus order must remain logical AND the current focus must not be dropped: if the user has focus on the comment composer when their role changes, focus must stay on the composer. New controls should slot into the natural tab sequence; removed controls should leave a sensible neighbour as the next stop.
@@ -2540,6 +2873,7 @@ Roles can change mid-session — a viewer is promoted to approver, an external g
 
 - **ID:** `3.2.2-remote-version-no-auto-switch`
 - **WCAG 3.2.2** On Input (Level A)
+- **Surface:** Version history & comparison
 - **Tags:** `versioning`, `realtime`, `workflow-state`
 
 When a teammate uploads a new version of an artifact, a naive implementation might auto-switch every viewer to the new version. Under WCAG 3.2.2 a change of context must not happen as a side effect of a remote action — the local user did not request the switch, and the auto-switch is exactly the kind of unexpected context change the criterion forbids. The correct pattern is a non-modal banner ('Bob uploaded v3 — switch to view it') that lets the local user choose when to switch. This preserves their current focus, their scroll position, and any in-progress comment.
@@ -2576,6 +2910,7 @@ When a teammate uploads a new version of an artifact, a naive implementation mig
 
 - **ID:** `4.1.3-conflict-resolution-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `live-regions`, `realtime`, `forms`
 
 When two users edit the same comment or annotation simultaneously, a conflict arises: the local user's draft is about to be overwritten or merged with a remote edit. Unlike the routine status events that should be polite, a conflict requires the user's attention before they continue — typing into a field that is mid-conflict will lose data. WCAG 4.1.3 status messages allow assertive priority for genuinely urgent updates; conflict resolution is the canonical example. The announcement must name the conflict, name the conflicting party, and clearly state the available resolution paths (keep mine, keep theirs, merge, view diff).
@@ -2609,6 +2944,7 @@ When two users edit the same comment or annotation simultaneously, a conflict ar
 
 - **ID:** `4.1.3-presence-list-changes-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Notifications & live updates
 - **Tags:** `live-regions`, `realtime`, `roles`
 
 The presence list — the avatar stack showing 'who else is here right now' — is a real-time status surface unique to collaborative review tools. When a collaborator joins or leaves, the change is meaningful: it affects whether private feedback is safe, whether typing a comment will produce a typing indicator visible to specific people, and whether the artifact will be reviewed by the expected audience. Under WCAG 4.1.3 these presence changes are status messages and must be programmatically determinable without stealing focus. Polite live-region announcements are the right pattern: 'Bob joined. 3 reviewers present.' The list itself must also expose its current count and roster to assistive tech via a role / aria-label.
@@ -2642,6 +2978,7 @@ The presence list — the avatar stack showing 'who else is here right now' — 
 
 - **ID:** `4.1.3-realtime-error-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Notifications & live updates
 - **Tags:** `live-regions`, `realtime`
 
 Real-time collaboration depends on a persistent connection (websocket, long-poll, presence channel). When the connection drops, the user is no longer seeing teammate edits and their own comments may not be reaching the server. Under WCAG 4.1.3 these state changes are status messages: connection loss, reconnect attempts, successful reconnect, and the state of any unsaved-comment buffer must all be announced via live regions. The pattern: an assertive announcement on first disconnect (because the user is about to type into the void), polite announcements for each subsequent state change, and a clear status indicator that screen-reader users can poll on demand.
@@ -2677,6 +3014,7 @@ Real-time collaboration depends on a persistent connection (websocket, long-poll
 
 - **ID:** `4.1.3-typing-indicator-announce`
 - **WCAG 4.1.3** Status Messages (Level AA)
+- **Surface:** Discussion threads
 - **Tags:** `live-regions`, `realtime`, `threads`
 
 Typing indicators ('Alice is typing…') are visual-only by default in most tools — an animated three-dot ellipsis in the thread. For screen-reader users this is invisible context; they may post a comment seconds before Alice's reply lands, producing an awkward overlap. Under WCAG 4.1.3 typing indicators are status messages: they should be exposed programmatically. But because typing indicators can be high-frequency and noisy, they MUST be combined with a user-controlled mute. Without a mute, exposing every keystroke as a status update would itself become a denial-of-service.

@@ -16,6 +16,7 @@ function renderItem(item) {
   lines.push('');
   lines.push(`- **ID:** \`${item.id}\``);
   lines.push(`- **WCAG ${item.wcag_criterion}** ${item.wcag_title} (Level ${item.level})`);
+  lines.push(`- **Surface:** ${item.surface}`);
   lines.push(`- **Tags:** ${item.tags.map(t => `\`${t}\``).join(', ')}`);
   lines.push('');
   lines.push(item.description);

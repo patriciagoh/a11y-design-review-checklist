@@ -9,22 +9,14 @@
       "wcag_criterion": "1.1.1",
       "wcag_title": "Non-text Content",
       "level": "A",
-      "category": "other",
+      "category": "perceivable",
+      "surface": "Made-up surface",
       "title": "Placeholder",
       "description": "Placeholder description.",
-      "how_to_test": [
-        "Test step."
-      ],
-      "pass_criteria": [
-        "Pass criterion."
-      ],
-      "fail_examples": [
-        "Fail example."
-      ],
-      "tags": [
-        "annotations"
-      ],
-      "surface": "Annotation pins & markups"
+      "how_to_test": ["Test step."],
+      "pass_criteria": ["Pass criterion."],
+      "fail_examples": ["Fail example."],
+      "tags": ["annotations"]
     }
   ]
 }
