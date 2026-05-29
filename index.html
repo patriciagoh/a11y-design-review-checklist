@@ -673,7 +673,8 @@
       </div>
 
       <div class="actions">
-        <button class="btn primary" id="btn-export" type="button">Export JSON</button>
+        <button class="btn primary" id="btn-copy-pr" type="button">Copy PR comment</button>
+        <button class="btn" id="btn-export" type="button">Export JSON</button>
         <button class="btn" id="btn-import" type="button">Import…</button>
         <input id="import-input" type="file" accept="application/json,.json" hidden>
         <button class="btn danger" id="btn-reset" type="button">Reset</button>
@@ -969,6 +970,7 @@
 
     // Actions
     document.getElementById("btn-export").addEventListener("click", exportReport);
+    document.getElementById("btn-copy-pr").addEventListener("click", copyPRComment);
     document.getElementById("btn-import").addEventListener("click", () => {
       document.getElementById("import-input").click();
     });
@@ -1019,10 +1021,15 @@
   }
 
   function updateExportEnabled() {
-    const btn = document.getElementById("btn-export");
+    const exportBtn = document.getElementById("btn-export");
+    const copyBtn = document.getElementById("btn-copy-pr");
     const ok = (state.ctx.component || "").trim() && (state.ctx.auditor || "").trim();
-    btn.disabled = !ok;
-    btn.title = ok ? "Download audit report" : "Fill component & auditor to export";
+    exportBtn.disabled = !ok;
+    exportBtn.title = ok ? "Download audit report" : "Fill component & auditor to export";
+    if (copyBtn) {
+      copyBtn.disabled = !ok;
+      copyBtn.title = ok ? "Copy a GitHub-flavored PR comment to clipboard" : "Fill component & auditor to copy a PR comment";
+    }
     document.getElementById("f-component").classList.toggle("required-empty", !(state.ctx.component || "").trim());
     document.getElementById("f-auditor").classList.toggle("required-empty", !(state.ctx.auditor || "").trim());
   }
@@ -1323,12 +1330,8 @@
     document.getElementById("bar-ni").style.width   = pct(ni);
   }
 
-  // ─── Export ──────────────────────────────────────────────
-  function exportReport() {
-    if (!state.ctx.component || !state.ctx.auditor) {
-      alert("Component and Auditor are required for export.");
-      return;
-    }
+  // ─── Build report (shared by Export + Copy PR comment) ──
+  function buildReport() {
     const scoped = getScopedItems();
     const surfaces = Array.from(state.filters.surfaces);
     const surfaceField = surfaces.length ? surfaces.join(", ") : "(all)";
@@ -1346,7 +1349,6 @@
       });
     });
 
-    // Summary scoped to current filter
     const summary = {
       total: state.items.length,
       scoped: scoped.length,
@@ -1362,7 +1364,7 @@
       summary.by_surface[it.surface] = bs;
     });
 
-    const report = {
+    return {
       meta: {
         component: state.ctx.component,
         surface: surfaceField,
@@ -1374,16 +1376,184 @@
       results: results,
       summary: summary
     };
+  }
+
+  // ─── Export ──────────────────────────────────────────────
+  function exportReport() {
+    if (!state.ctx.component || !state.ctx.auditor) {
+      alert("Component and Auditor are required for export.");
+      return;
+    }
+    const report = buildReport();
 
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "audit-" + slug(state.ctx.component) + "-" + today + ".json";
+    a.download = "audit-" + slug(state.ctx.component) + "-" + report.meta.date + ".json";
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  // ─── Render PR comment markdown ──────────────────────────
+  // Mirrors generate-pr-comment.js so output is identical whether
+  // generated in-browser or from the CLI.
+  const REPO_URL = "https://github.com/patriciagoh/a11y-design-review-checklist";
+
+  function escapeMd(s) {
+    return String(s).replace(/[<>]/g, c => c === "<" ? "&lt;" : "&gt;");
+  }
+  function slugifyHeader(title) {
+    return String(title).toLowerCase().replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-");
+  }
+  function findUnderstandingURL(item) {
+    if (Array.isArray(item.references)) {
+      const w3c = item.references.find(r => /WAI\/WCAG\d+\/Understanding\//.test(r.url));
+      if (w3c) return w3c.url;
+    }
+    return "https://www.w3.org/WAI/WCAG22/Understanding/";
+  }
+
+  function renderPRCommentMarkdown(report) {
+    const itemsById = Object.fromEntries(state.items.map(i => [i.id, i]));
+    const results = report.results || [];
+    const failed = results.filter(r => r.status === "fail");
+    const investigation = results.filter(r => r.status === "needs_investigation");
+
+    const summary = report.summary || {};
+    const pass = summary.pass ?? 0;
+    const fail = summary.fail ?? failed.length;
+    const na = summary.na ?? 0;
+    const needs = summary.needs_investigation ?? investigation.length;
+    const scoped = summary.scoped ?? 0;
+    const markedTotal = pass + fail + na + needs;
+    const coveragePct = scoped > 0 ? Math.round((markedTotal / scoped) * 100) : 0;
+
+    const verdict = fail > 0
+      ? "⚠️ **" + fail + " accessibility issue" + (fail === 1 ? "" : "s") + "** to address before merge"
+      : (needs > 0
+          ? "🔎 **" + needs + " item" + (needs === 1 ? "" : "s") + " need" + (needs === 1 ? "s" : "") + " investigation**"
+          : "✅ **Accessibility audit clean** for this scope");
+
+    const renderItemBlock = (r, item) => {
+      const understandingUrl = findUnderstandingURL(item);
+      const noteBlock = r.note && r.note.trim()
+        ? "\n> " + r.note.trim().replace(/\n/g, "\n> ")
+        : "\n> _(no note left)_";
+      return [
+        "<details>",
+        "<summary><strong>" + escapeMd(item.title) + "</strong> &nbsp;·&nbsp; <code>" + item.id + "</code></summary>",
+        "",
+        "- **WCAG " + item.wcag_criterion + "** " + escapeMd(item.wcag_title) + " (Level " + item.level + ")",
+        "- **Surface:** " + escapeMd(item.surface),
+        "- **Understanding:** " + understandingUrl,
+        "",
+        "**Engineer note:**" + noteBlock,
+        "",
+        "[View item in checklist](" + REPO_URL + "/blob/main/checklist.md#" + slugifyHeader(item.title) + ")",
+        "</details>",
+        "",
+      ].join("\n");
+    };
+
+    const surfaceContextBlock = () => {
+      const counts = {};
+      for (const r of failed) {
+        const item = itemsById[r.id];
+        if (!item) continue;
+        counts[item.surface] = (counts[item.surface] || 0) + 1;
+      }
+      const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([s, n]) => "- **" + n + "** in " + s);
+      return rows.length > 0 ? rows.join("\n") : "_No failures._";
+    };
+
+    const out = [];
+    out.push("### ♿ Accessibility audit — `" + report.meta.component + "`");
+    out.push("");
+    out.push(verdict);
+    out.push("");
+    out.push("| | |");
+    out.push("|---|---|");
+    out.push("| **Component** | `" + report.meta.component + "` |");
+    out.push("| **Surface** | " + report.meta.surface + " |");
+    out.push("| **Audit date** | " + report.meta.date + " |");
+    out.push("| **Scope** | " + scoped + " items |");
+    out.push("| **Pass** | " + pass + " |");
+    out.push("| **Fail** | " + fail + " |");
+    out.push("| **N/A** | " + na + " |");
+    out.push("| **Needs investigation** | " + needs + " |");
+    out.push("| **Coverage** | " + coveragePct + "% |");
+    out.push("");
+
+    if (fail > 0) {
+      out.push("#### Where failures landed");
+      out.push("");
+      out.push(surfaceContextBlock());
+      out.push("");
+      out.push("#### ❌ Failed items (" + fail + ")");
+      out.push("");
+      for (const r of failed) {
+        const item = itemsById[r.id];
+        if (!item) {
+          out.push("<details><summary><code>" + r.id + "</code> — _(item not found in checklist)_</summary></details>");
+          out.push("");
+          continue;
+        }
+        out.push(renderItemBlock(r, item));
+      }
+    }
+
+    if (needs > 0) {
+      out.push("#### 🔎 Needs investigation (" + needs + ")");
+      out.push("");
+      for (const r of investigation) {
+        const item = itemsById[r.id];
+        if (!item) {
+          out.push("<details><summary><code>" + r.id + "</code> — _(item not found in checklist)_</summary></details>");
+          out.push("");
+          continue;
+        }
+        out.push(renderItemBlock(r, item));
+      }
+    }
+
+    out.push("---");
+    out.push("");
+    out.push("<sub>Generated from [a11y-design-review-checklist](" + REPO_URL + ") v" +
+      (report.meta.checklist_version || "unknown") +
+      " · audit mode: `" + (report.meta.mode || "unknown") + "`" +
+      " · auditor: `" + (report.meta.auditor || "unknown") + "`</sub>");
+
+    return out.join("\n") + "\n";
+  }
+
+  async function copyPRComment() {
+    if (!state.ctx.component || !state.ctx.auditor) {
+      alert("Component and Auditor are required.");
+      return;
+    }
+    const report = buildReport();
+    const md = renderPRCommentMarkdown(report);
+    const btn = document.getElementById("btn-copy-pr");
+    const originalLabel = btn.textContent;
+    try {
+      await navigator.clipboard.writeText(md);
+      btn.textContent = "Copied ✓";
+      btn.disabled = true;
+      setTimeout(() => { btn.textContent = originalLabel; btn.disabled = false; updateExportButton(); }, 1500);
+    } catch (err) {
+      // Fallback: stick the markdown in a textarea so the user can copy manually
+      const ta = document.createElement("textarea");
+      ta.value = md;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;height:60%;z-index:9999;padding:12px;font-family:monospace;font-size:12px;";
+      document.body.appendChild(ta);
+      ta.select();
+      alert("Clipboard write was blocked. Copy the text manually (Cmd+C), then dismiss this alert and close the textarea.");
+      ta.remove();
+    }
   }
 
   // ─── Import ──────────────────────────────────────────────

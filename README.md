@@ -116,9 +116,11 @@ The web UI exports (and the PR generator consumes) JSON in this shape:
 }
 ```
 
-## Post the audit on a PR (generate-pr-comment.js)
+## Post the audit on a PR
 
-Turn an exported report into a GitHub-flavored Markdown PR comment:
+**From the web UI (easiest):** click **Copy PR comment** in the audit UI's actions area. The same Markdown the CLI tool produces lands on your clipboard. Paste it into the PR comment box on GitHub.
+
+**From the CLI (`generate-pr-comment.js`)** — useful for scripted / CI use, or when you already have an exported report on disk:
 
 ```bash
 node generate-pr-comment.js \
