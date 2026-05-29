@@ -30,23 +30,19 @@ Generic WCAG checklists treat "annotation" as "image with alt text" and miss the
 | `generate-pr-comment.js` | Node CLI — turns an audit report JSON into a Markdown PR comment |
 | `scripts/generate-markdown.js` | Regenerates `checklist.md` from `checklist.json` |
 
-## Install
+## Get it
 
-```bash
-npm install a11y-design-review-checklist
-```
+This project is **not published to npm.** The hosted UI on Pages is the primary surface; everything else is a `git clone` or a raw URL away.
 
-Or as a git submodule:
+| Use case | How |
+|---|---|
+| **Run an audit** | Open https://patriciagoh.github.io/a11y-design-review-checklist/ |
+| **Fetch the JSON for a script** | `curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.json` |
+| **Fetch the schema** | `curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.schema.json` |
+| **Vendor it into your repo** | `git submodule add https://github.com/patriciagoh/a11y-design-review-checklist vendor/a11y-design-review-checklist` |
+| **Fork + extend + run CLIs** | `git clone https://github.com/patriciagoh/a11y-design-review-checklist && cd a11y-design-review-checklist && npm install` |
 
-```bash
-git submodule add https://github.com/patriciagoh/a11y-design-review-checklist vendor/a11y-design-review-checklist
-```
-
-Or fetch the raw JSON:
-
-```bash
-curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.json
-```
+> **Note:** `npm install` here installs the project's own dev dependencies (ajv, ajv-formats) so the CLIs run locally. It does *not* fetch this package from npm — the package is intentionally unpublished. Earlier versions (1.0.0 and 1.1.0) exist on npm but are deprecated; new releases ship via GitHub only.
 
 ## Run an audit (the web UI)
 
@@ -166,8 +162,11 @@ The web UI filters by surface, and `generate-pr-comment.js` takes the surface as
 
 ## Consume the JSON programmatically
 
+Fetch the raw JSON from main and filter it like any other dataset:
+
 ```javascript
-import checklist from 'a11y-design-review-checklist/checklist.json' with { type: 'json' };
+const URL = 'https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.json';
+const checklist = await fetch(URL).then(r => r.json());
 
 const contrastItems = checklist.items.filter(i => i.tags.includes('contrast'));
 const aaOnly = checklist.items.filter(i => i.level === 'AA');
@@ -177,13 +176,21 @@ const focusInRealtime = checklist.items.filter(i =>
 );
 ```
 
+For pinned, reproducible consumption, replace `main` with a specific git SHA or tag (e.g. `.../v1.1.1/checklist.json` once tags exist).
+
 ## Validate a fork or extension
 
-If you fork this checklist to extend it with team-specific items, validate your fork in CI:
+If you fork this checklist to extend it with team-specific items, clone the repo and run the validator in CI:
 
 ```yaml
 # .github/workflows/checklist.yml
-- run: npx a11y-design-review-checklist-validate ./my-checklist.json
+- uses: actions/checkout@v4
+  with:
+    submodules: true   # if you vendor this repo as a submodule
+- uses: actions/setup-node@v4
+  with: { node-version: '20' }
+- run: npm ci
+- run: node validate.js ./my-checklist.json
 ```
 
 Exit 0 = passes schema + semantic checks. Exit 1 = failures (printed to stderr).
@@ -204,7 +211,8 @@ Exit 0 = passes schema + semantic checks. Exit 1 = failures (printed to stderr).
 
 ### Changelog
 
-- **1.1.1** (2026-05-29) — Tooling-only patch. Added in-UI **Copy PR comment** button (one-click clipboard render, byte-for-byte parity with the CLI generator). Added hosted Pages URL to the README. No checklist data changes.
+- **1.1.2** (2026-05-29) — Distribution change. Stopped publishing to npm; GitHub + Pages is now the only release channel. `package.json` marked private. Earlier npm versions (1.0.0, 1.1.0) deprecated with a redirect message — they still install but warn.
+- **1.1.1** (2026-05-29) — Tooling-only patch. Added in-UI **Copy PR comment** button (one-click clipboard render, byte-for-byte parity with the CLI generator). Added hosted Pages URL to the README. No checklist data changes. (Never published to npm.)
 - **1.1.0** (2026-05-29) — Added `surface` field (required, 9-value enum) for CoLab-style scoping. Added 9 new tags (`canvas`, `viewer`, `status`, `color`, `workflow`, `touch-target`, `toolbar`, `wcag22`, `ai-content`). Added 8 new items covering 3D viewer keyboard controls, status badge color reliance, toolbar target sizes, AI comment attribution, measurement output, section plane announcements, notebook heading structure, and review key accessibility. Shipped the interactive web UI (`index.html`) and the PR comment generator (`generate-pr-comment.js`).
 - **1.0.0** (2026-05-28) — Initial release. 87 items across all WCAG 2.2 AA criteria.
 
