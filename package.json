@@ -1,6 +1,6 @@
 {
   "name": "a11y-design-review-checklist",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "WCAG 2.2 AA accessibility checklist for design-review UI patterns (annotations, threads, versioning, workflows, real-time collaboration). Machine-readable JSON + generated Markdown.",
   "keywords": [
     "accessibility",
@@ -34,18 +34,22 @@
     "checklist.schema.json",
     "checklist.md",
     "index.js",
+    "index.html",
     "validate.js",
+    "generate-pr-comment.js",
     "scripts/",
     "LICENSE",
     "README.md"
   ],
   "bin": {
-    "a11y-design-review-checklist-validate": "./validate.js"
+    "a11y-design-review-checklist-validate": "./validate.js",
+    "a11y-design-review-checklist-pr-comment": "./generate-pr-comment.js"
   },
   "scripts": {
     "validate": "node validate.js",
     "generate-md": "node scripts/generate-markdown.js",
     "check-md": "node scripts/generate-markdown.js --check",
+    "pr-comment": "node generate-pr-comment.js",
     "test": "node --test tests/",
     "prepublishOnly": "npm run validate && npm run check-md && npm test"
   },
