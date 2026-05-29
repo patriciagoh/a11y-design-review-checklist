@@ -204,6 +204,7 @@ Exit 0 = passes schema + semantic checks. Exit 1 = failures (printed to stderr).
 
 ### Changelog
 
+- **1.1.1** (2026-05-29) — Tooling-only patch. Added in-UI **Copy PR comment** button (one-click clipboard render, byte-for-byte parity with the CLI generator). Added hosted Pages URL to the README. No checklist data changes.
 - **1.1.0** (2026-05-29) — Added `surface` field (required, 9-value enum) for CoLab-style scoping. Added 9 new tags (`canvas`, `viewer`, `status`, `color`, `workflow`, `touch-target`, `toolbar`, `wcag22`, `ai-content`). Added 8 new items covering 3D viewer keyboard controls, status badge color reliance, toolbar target sizes, AI comment attribution, measurement output, section plane announcements, notebook heading structure, and review key accessibility. Shipped the interactive web UI (`index.html`) and the PR comment generator (`generate-pr-comment.js`).
 - **1.0.0** (2026-05-28) — Initial release. 87 items across all WCAG 2.2 AA criteria.
 
