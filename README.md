@@ -4,6 +4,10 @@ A WCAG 2.2 AA accessibility checklist for **design-review UI patterns** — inte
 
 Built as **infrastructure for teams building, auditing, or testing design review tools** — not as documentation for end users. Ships a strict JSON Schema, a hand-authored JSON dataset, a generated Markdown rendering, a Node validator CLI, an **interactive web UI for running an audit**, and a **PR comment generator** for posting audit results on a pull request.
 
+> **Try it online →** https://patriciagoh.github.io/a11y-design-review-checklist/
+>
+> The audit UI is hosted on GitHub Pages. No install needed — pick a surface, walk the checklist, export a report, post it to your PR.
+
 ## Why this exists
 
 Generic WCAG checklists treat "annotation" as "image with alt text" and miss the failure modes that are specific to this UI pattern: pin contrast against user-provided artifacts, focus order through anchored threads, live-region etiquette for remote collaborators, focus-not-obscured behavior when an approval toolbar overlays a pin. This checklist names those failure modes concretely so toolmakers can ship for them and auditors can test for them.
@@ -46,9 +50,13 @@ curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checkli
 
 ## Run an audit (the web UI)
 
-Open `index.html` in a browser. The page fetches `checklist.json` from the same directory and renders an interactive checklist.
+**The easy way** — open the hosted UI in your browser:
 
-**Easiest way to run it locally:**
+> https://patriciagoh.github.io/a11y-design-review-checklist/
+
+Everything happens client-side. Your audit data stays in your browser's localStorage; exports are downloaded directly to your machine.
+
+**Running it locally** — useful for offline audits, forks, or if you want to point it at a modified `checklist.json`:
 
 ```bash
 # From the project root (or anywhere checklist.json + index.html sit together)
@@ -56,7 +64,7 @@ python3 -m http.server 8000
 # → open http://localhost:8000
 ```
 
-You can also host it on GitHub Pages straight from the repo, or stick the two files behind any static file server.
+The page fetches `checklist.json` from the same directory it's served from, so any static file server works.
 
 ### What the web UI does
 
