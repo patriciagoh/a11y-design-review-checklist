@@ -36,6 +36,7 @@ This project is **not published to npm.** The hosted UI on Pages is the primary 
 
 | Use case | How |
 |---|---|
+| **Audit your design-review UI (Claude skill)** | In any Claude Code session, ask Claude to use the `a11y-design-review-checklist` skill — it audits your code against the checklist and produces a PR comment with fixes. See [SKILL.md](SKILL.md). |
 | **Run an audit** | Open https://patriciagoh.github.io/a11y-design-review-checklist/ |
 | **Fetch the JSON for a script** | `curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.json` |
 | **Fetch the schema** | `curl -L https://raw.githubusercontent.com/patriciagoh/a11y-design-review-checklist/main/checklist.schema.json` |
@@ -88,7 +89,7 @@ The web UI exports (and the PR generator consumes) JSON in this shape:
     "auditor": "patricia",
     "date": "2026-05-29",
     "mode": "pre-pr",
-    "checklist_version": "1.1.0"
+    "checklist_version": "1.2.0"
   },
   "results": [
     {
@@ -188,7 +189,7 @@ If you fork this checklist to extend it with team-specific items, clone the repo
   with:
     submodules: true   # if you vendor this repo as a submodule
 - uses: actions/setup-node@v4
-  with: { node-version: '20' }
+  with: { node-version: '24' }
 - run: npm ci
 - run: node validate.js ./my-checklist.json
 ```
@@ -211,6 +212,7 @@ Exit 0 = passes schema + semantic checks. Exit 1 = failures (printed to stderr).
 
 ### Changelog
 
+- **1.2.0** (2026-06-02) — Added a Claude skill (`SKILL.md`) that audits a design-review UI against the checklist and renders a PR comment with fix suggestions; the PR-comment generator now shows a per-failure suggested fix + `file:line`. Added OSS-hygiene files (Code of Conduct, Security policy, Architecture, issue templates) and bumped CI to Node 24.
 - **1.1.2** (2026-05-29) — Distribution change. Stopped publishing to npm; GitHub + Pages is now the only release channel. `package.json` marked private. The earlier npm versions (1.0.0, 1.1.0) were later unpublished (2026-06-02) and no longer exist on npm.
 - **1.1.1** (2026-05-29) — Tooling-only patch. Added in-UI **Copy PR comment** button (one-click clipboard render, byte-for-byte parity with the CLI generator). Added hosted Pages URL to the README. No checklist data changes. (Never published to npm.)
 - **1.1.0** (2026-05-29) — Added `surface` field (required, 9-value enum) for CoLab-style scoping. Added 9 new tags (`canvas`, `viewer`, `status`, `color`, `workflow`, `touch-target`, `toolbar`, `wcag22`, `ai-content`). Added 8 new items covering 3D viewer keyboard controls, status badge color reliance, toolbar target sizes, AI comment attribution, measurement output, section plane announcements, notebook heading structure, and review key accessibility. Shipped the interactive web UI (`index.html`) and the PR comment generator (`generate-pr-comment.js`).

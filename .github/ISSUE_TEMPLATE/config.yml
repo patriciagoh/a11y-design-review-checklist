@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Run an audit (hosted UI)
+    url: https://patriciagoh.github.io/a11y-design-review-checklist/
+    about: Use the hosted interactive checklist to audit a design-review UI — no setup needed.

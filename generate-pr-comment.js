@@ -40,7 +40,7 @@ function printHelp() {
 Generates a GitHub PR comment in Markdown from an audit report JSON.
 
 Required flags:
-  --report <path>          Path to the audit report JSON (exported from the web UI)
+  --report <path>          Path to the audit report JSON (from the web UI or the audit skill)
   --component <name>       Component name (e.g. "FeedbackPanel")
   --surface <surface>      Primary CoLab surface (e.g. "Annotation pins & markups")
 
@@ -83,20 +83,37 @@ function renderItemBlock(result, item, repoUrl) {
   const noteBlock = result.note && result.note.trim()
     ? `\n> ${result.note.trim().replace(/\n/g, '\n> ')}`
     : '\n> _(no note left)_';
-  return [
+
+  const lines = [
     `<details>`,
     `<summary><strong>${escape(item.title)}</strong> &nbsp;·&nbsp; <code>${item.id}</code></summary>`,
     ``,
     `- **WCAG ${item.wcag_criterion}** ${escape(item.wcag_title)} (Level ${item.level})`,
     `- **Surface:** ${escape(item.surface)}`,
-    `- **Understanding:** ${understandingUrl}`,
+  ];
+
+  // Audit-mode extras: only emitted when the report supplies them, so reports
+  // exported from the web UI (which lack these fields) render exactly as before.
+  if (result.location && String(result.location).trim()) {
+    // Strip backticks — a file:line value should never contain them, and they
+    // would break the inline code span (GFM doesn't honor backslash escapes there).
+    const loc = escape(String(result.location).trim()).replace(/`/g, '');
+    lines.push(`- **Location:** \`${loc}\``);
+  }
+  lines.push(`- **Understanding:** ${understandingUrl}`);
+  if (result.fix && String(result.fix).trim()) {
+    lines.push(``, `**Suggested fix:** ${escape(String(result.fix).trim())}`);
+  }
+
+  lines.push(
     ``,
     `**Engineer note:**${noteBlock}`,
     ``,
     `[View item in checklist](${repoUrl}/blob/main/checklist.md#${slugifyHeader(item.title)})`,
     `</details>`,
     ``,
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 function renderSurfaceContext(failedResults, itemsById) {
