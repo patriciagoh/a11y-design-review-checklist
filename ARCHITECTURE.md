@@ -13,12 +13,13 @@ that checklist.
 | `checklist.md` | Human-readable view, generated from JSON (`scripts/generate-markdown.js`) | Readers |
 | `index.html` | Hosted interactive audit UI; exports an audit-report JSON | End users |
 | `generate-pr-comment.js` | Renders an audit-report JSON into a GitHub PR comment | End users / the skill |
+| `index.js` | ES-module entry — exports `checklist` and `schema` for JS consumers (and the tests) | JS integrators / tests |
 | `SKILL.md` | Claude skill: audits a user's design-review code against the checklist and emits a PR comment | Claude / engineers |
 
 ## Data flow
 
-`checklist.json` is authored → `validate.js` checks it against the schema → `generate-markdown.js`
-renders `checklist.md` (kept in sync; CI runs `--check`). An **audit** (from the web UI or the
+`checklist.json` is authored; `validate.js` checks it against the schema and `generate-markdown.js`
+renders `checklist.md` (independent steps — CI runs validation and the `--check` md-sync separately). An **audit** (from the web UI or the
 skill) produces an **audit-report JSON** (`meta` / `summary` / `results[]` with
 `status: pass | fail | na | needs_investigation`); `generate-pr-comment.js` turns that into a PR
 comment. The skill additionally supplies a per-failure `fix` + `location`.

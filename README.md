@@ -189,7 +189,7 @@ If you fork this checklist to extend it with team-specific items, clone the repo
   with:
     submodules: true   # if you vendor this repo as a submodule
 - uses: actions/setup-node@v4
-  with: { node-version: '20' }
+  with: { node-version: '24' }
 - run: npm ci
 - run: node validate.js ./my-checklist.json
 ```
