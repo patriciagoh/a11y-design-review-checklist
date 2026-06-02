@@ -5,68 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>a11y-design-review-checklist · audit</title>
 <style>
+  /* Palette aligned with the wcag-explainer reference template:
+     stock Tailwind blue/gray, light-only (no theme toggle). Control-boundary
+     colors are darkened to meet WCAG 2.2 non-text contrast (1.4.11, >=3:1). */
   :root {
-    --ink: #1a1a1f;
-    --muted: #5b6271;
-    --muted-2: #8a91a1;
-    --line: #e4e6ea;
-    --line-2: #eef0f3;
-    --bg: #fafbfc;
+    color-scheme: light;
+    --ink: #111827;          /* gray-900 — body text, 16.9:1 on white */
+    --muted: #4b5563;        /* gray-600 — secondary text, 7.0:1 on white */
+    --muted-2: #6b7280;      /* gray-500 — swatches/glyphs, 4.8:1 on white */
+    --line: #e5e7eb;         /* gray-200 — decorative card/section borders */
+    --line-2: #f3f4f6;       /* gray-100 */
+    --control-line: #6b7280; /* gray-500 — form-control boundaries, 4.8:1 (1.4.11) */
+    --bg: #f9fafb;           /* gray-50 — page background */
     --card: #ffffff;
-    --card-2: #f6f7f9;
-    --accent: #4b56d2;
-    --accent-soft: #eef0ff;
-    --accent-ink: #2a35a8;
-    --amber-bg: #fef3c7;
-    --amber-ink: #78350f;
-    --amber-line: #f3d894;
-    --green-bg: #d1fae5;
-    --green-ink: #065f46;
-    --green-line: #9be3c4;
-    --red-bg: #fee2e2;
-    --red-ink: #991b1b;
-    --red-line: #f5b6b6;
-    --gray-bg: #eceef2;
-    --gray-ink: #4b5363;
-    --gray-line: #d6d9df;
-    --code-bg: #0f1419;
-    --code-ink: #d6e0ff;
-    --shadow: 0 1px 2px rgba(15,20,25,0.04);
+    --card-2: #f3f4f6;       /* gray-100 — input/pill fill */
+    --accent: #2563eb;       /* blue-600 — links/accents, 5.2:1 on white */
+    --accent-soft: #eff6ff;  /* blue-50 */
+    --accent-ink: #1e3a8a;   /* blue-900 — text on accent-soft, 9.8:1 */
+    --amber-bg: #fffbeb;     /* amber-50 */
+    --amber-ink: #92400e;    /* amber-800 — 6.9:1 on amber-50 */
+    --amber-line: #fcd34d;   /* amber-300 */
+    --green-bg: #f0fdf4;     /* green-50 */
+    --green-ink: #166534;    /* green-800 — 7.5:1 on green-50 */
+    --green-line: #86efac;   /* green-300 */
+    --red-bg: #fef2f2;       /* red-50 */
+    --red-ink: #991b1b;      /* red-800 — 7.7:1 on red-50 */
+    --red-line: #fca5a5;     /* red-300 */
+    --gray-bg: #f3f4f6;      /* gray-100 */
+    --gray-ink: #374151;     /* gray-700 — 8.9:1 on gray-100 */
+    --gray-line: #d1d5db;    /* gray-300 */
+    --code-bg: #111827;      /* gray-900 */
+    --code-ink: #f3f4f6;     /* gray-100 */
+    --shadow: 0 1px 2px rgba(17,24,39,0.04);
   }
-  html[data-theme="dark"] {
-    --ink: #e8eaf0;
-    --muted: #9098a8;
-    --muted-2: #6b7282;
-    --line: #262932;
-    --line-2: #1e2128;
-    --bg: #0f1116;
-    --card: #161922;
-    --card-2: #1a1d27;
-    --accent: #8b94f0;
-    --accent-soft: #1d2140;
-    --accent-ink: #b6bcff;
-    --amber-bg: #3a2d10;
-    --amber-ink: #fbd28a;
-    --amber-line: #5a4519;
-    --green-bg: #0f3326;
-    --green-ink: #86e7bf;
-    --green-line: #1a513a;
-    --red-bg: #3a1717;
-    --red-ink: #f5a3a3;
-    --red-line: #5e2828;
-    --gray-bg: #20232c;
-    --gray-ink: #aab1c0;
-    --gray-line: #2d313c;
-    --code-bg: #050709;
-    --code-ink: #c6d0ee;
-    --shadow: 0 1px 2px rgba(0,0,0,0.4);
-  }
-  html[data-theme="dark"] { color-scheme: dark; }
-  html[data-theme="light"] { color-scheme: light; }
 
   * { box-sizing: border-box; }
   body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     color: var(--ink);
     background: var(--bg);
     margin: 0;
@@ -76,7 +51,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
   code, .mono, kbd {
-    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   }
 
   a { color: var(--accent); }
@@ -126,31 +101,11 @@
     font-size: 12px;
     margin: 0 0 24px;
   }
-  .theme-row {
-    display: flex;
-    gap: 4px;
-    margin-top: 14px;
-  }
-  .theme-row button {
-    background: transparent;
-    border: 1px solid var(--line);
-    color: var(--muted);
-    padding: 4px 8px;
-    border-radius: 5px;
-    font-size: 11px;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .theme-row button[aria-pressed="true"] {
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-color: var(--accent);
-  }
 
   /* ─── Rail sections ────────────────────────────────────── */
 
   .rail-section { margin-bottom: 22px; }
-  .rail-section h3 {
+  .rail-section h2 {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -169,18 +124,26 @@
   }
   .field input[type="text"], .field input[type="search"] {
     background: var(--card-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--control-line);
     color: var(--ink);
     padding: 7px 10px;
     border-radius: 6px;
     font-size: 13px;
     font-family: inherit;
   }
-  .field input:focus, textarea:focus, button:focus-visible {
+  /* Visible focus indicator on every interactive element (2.4.7);
+     accent ring is 5.2:1 on white, >=3:1 required (1.4.11). */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
-  .field input.required-empty { border-color: var(--amber-line); }
+  .field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .field input.required-empty { border-color: #b45309; }  /* amber-700, paired with text hint (not color-only) */
 
   /* Mode radios — segmented look */
   .mode-radios { display: grid; gap: 4px; }
@@ -189,7 +152,7 @@
     align-items: flex-start;
     gap: 8px;
     padding: 7px 9px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--control-line);
     border-radius: 6px;
     cursor: pointer;
     background: var(--card-2);
@@ -206,10 +169,13 @@
   .pills { display: flex; flex-wrap: wrap; gap: 4px; }
   .pill {
     font-size: 11.5px;
-    padding: 3px 9px;
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
     border-radius: 999px;
     background: var(--card-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--control-line);
     color: var(--muted);
     cursor: pointer;
     user-select: none;
@@ -219,11 +185,14 @@
     background: var(--accent-soft);
     color: var(--accent-ink);
     border-color: var(--accent);
+    font-weight: 600;  /* non-color cue for selected state (1.4.1) */
   }
   .pill.quick { background: transparent; }
   .pill.quick[aria-pressed="true"] {
     background: var(--accent-soft);
+    color: var(--accent-ink);
     border-color: var(--accent);
+    font-weight: 600;
   }
 
   details.tags-more { margin-top: 6px; }
@@ -234,6 +203,9 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     list-style: none;
+    display: flex;
+    align-items: center;
+    min-height: 24px;
     padding: 4px 0;
   }
   details.tags-more summary::-webkit-details-marker { display: none; }
@@ -241,16 +213,17 @@
   details.tags-more[open] summary::before { content: "− "; }
 
   /* Level seg */
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .seg { display: inline-flex; border: 1px solid var(--control-line); border-radius: 6px; overflow: hidden; }
   .seg button {
     background: var(--card-2);
     color: var(--muted);
     border: none;
-    padding: 5px 12px;
+    min-height: 26px;
+    padding: 6px 12px;
     font-size: 12px;
     cursor: pointer;
     font-family: inherit;
-    border-right: 1px solid var(--line);
+    border-right: 1px solid var(--control-line);
   }
   .seg button:last-child { border-right: none; }
   .seg button[aria-pressed="true"] {
@@ -328,8 +301,9 @@
   }
   .btn {
     background: var(--card);
-    border: 1px solid var(--line);
+    border: 1px solid var(--control-line);
     color: var(--ink);
+    min-height: 30px;
     padding: 7px 11px;
     border-radius: 6px;
     font-size: 12.5px;
@@ -353,10 +327,11 @@
     gap: 16px;
     flex-wrap: wrap;
   }
-  .main-head h1 {
+  .main-head h2 {
     font-size: 22px;
     margin: 0 0 2px;
     letter-spacing: -0.3px;
+    font-weight: 700;
   }
   .main-head .sub {
     margin: 0;
@@ -395,7 +370,7 @@
     gap: 6px 10px;
     margin-bottom: 6px;
   }
-  .item-head h2 {
+  .item-head h3 {
     margin: 0;
     font-size: 15.5px;
     font-weight: 600;
@@ -420,7 +395,7 @@
     border-radius: 4px;
     font-size: 11px;
   }
-  .chip.id { font-family: "SF Mono", ui-monospace, Menlo, monospace; font-size: 10.5px; }
+  .chip.id { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; font-size: 10.5px; }
   .chip.wcag { background: var(--accent-soft); color: var(--accent-ink); border-color: var(--accent-soft); }
   .chip.level { font-weight: 600; }
   .chip.surface { background: transparent; }
@@ -430,7 +405,7 @@
   /* Status segmented control */
   .status-seg {
     display: inline-flex;
-    border: 1px solid var(--line);
+    border: 1px solid var(--control-line);
     border-radius: 6px;
     overflow: hidden;
     margin-right: 8px;
@@ -440,7 +415,8 @@
     background: var(--card-2);
     color: var(--muted);
     border: none;
-    border-right: 1px solid var(--line);
+    border-right: 1px solid var(--control-line);
+    min-height: 28px;
     padding: 6px 12px;
     font-size: 12px;
     cursor: pointer;
@@ -468,7 +444,10 @@
     cursor: pointer;
     text-decoration: underline;
     font-family: inherit;
-    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 4px;
   }
 
   .item-controls {
@@ -481,8 +460,9 @@
 
   .note-toggle {
     background: none;
-    border: 1px dashed var(--line);
+    border: 1px dashed var(--control-line);
     color: var(--muted);
+    min-height: 26px;
     padding: 4px 9px;
     border-radius: 5px;
     font-size: 11.5px;
@@ -504,7 +484,7 @@
     width: 100%;
     min-height: 60px;
     background: var(--card-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--control-line);
     color: var(--ink);
     padding: 8px 10px;
     border-radius: 6px;
@@ -520,6 +500,9 @@
     font-size: 11.5px;
     color: var(--muted);
     list-style: none;
+    display: flex;
+    align-items: center;
+    min-height: 24px;
     padding: 4px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -553,7 +536,7 @@
     background: var(--red-bg);
     border-radius: 6px;
     padding: 8px 12px;
-    font-family: "SF Mono", Menlo, monospace;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
     font-size: 12.5px;
     display: inline-block;
     margin: 8px 0 14px;
@@ -567,28 +550,68 @@
     overflow: hidden; clip: rect(0,0,0,0);
     white-space: nowrap; border: 0;
   }
+
+  /* Skip to main content — visible on keyboard focus (2.4.1) */
+  .skip-link {
+    position: absolute;
+    left: 8px; top: -48px;
+    z-index: 100;
+    background: var(--card);
+    color: var(--accent-ink);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus {
+    top: 8px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Required-field hint — paired with .required-empty so the cue isn't color-only (1.4.1) */
+  .ctx-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 2px 0 0;
+  }
+
+  /* Respect reduced-motion preferences (2.3.3) */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="app">
   <aside class="rail" aria-label="Audit controls and summary">
     <h1 class="app-title">a11y-design-review-checklist <span class="dot">·</span> audit</h1>
     <p class="app-tag" id="app-tag">Loading checklist…</p>
 
     <div class="rail-section">
-      <h3>Context</h3>
+      <h2>Context</h2>
       <div class="field">
         <label for="f-component">Component / feature</label>
-        <input id="f-component" type="text" autocomplete="off" placeholder="e.g. annotation pin v2">
+        <input id="f-component" type="text" autocomplete="off" aria-required="true" aria-describedby="ctx-hint" placeholder="e.g. annotation pin v2">
       </div>
       <div class="field">
         <label for="f-auditor">Auditor</label>
-        <input id="f-auditor" type="text" autocomplete="off" placeholder="your name">
+        <input id="f-auditor" type="text" autocomplete="off" aria-required="true" aria-describedby="ctx-hint" placeholder="your name">
       </div>
+      <p class="ctx-hint" id="ctx-hint">Component and auditor are required to export or copy a report.</p>
     </div>
 
     <div class="rail-section">
-      <h3>Mode</h3>
+      <h2>Mode</h2>
       <div class="mode-radios" role="radiogroup" aria-label="Audit mode">
         <label>
           <input type="radio" name="mode" value="pre-pr">
@@ -609,19 +632,20 @@
     </div>
 
     <div class="rail-section">
-      <h3>Search</h3>
+      <h2>Search</h2>
       <div class="field">
+        <label for="f-search" class="sr-only">Search titles and descriptions</label>
         <input id="f-search" type="search" placeholder="Filter titles & descriptions…" autocomplete="off">
       </div>
     </div>
 
     <div class="rail-section">
-      <h3>Surface</h3>
+      <h2>Surface</h2>
       <div class="pills" id="surface-pills" role="group" aria-label="Filter by surface"></div>
     </div>
 
     <div class="rail-section">
-      <h3>Level</h3>
+      <h2>Level</h2>
       <div class="seg" role="group" aria-label="Filter by WCAG level">
         <button type="button" data-level="all" aria-pressed="true">All</button>
         <button type="button" data-level="A" aria-pressed="false">A</button>
@@ -630,7 +654,7 @@
     </div>
 
     <div class="rail-section">
-      <h3>Quick tags</h3>
+      <h2>Quick tags</h2>
       <div class="pills" id="quick-tags" role="group" aria-label="Quick tag filters"></div>
       <details class="tags-more">
         <summary>All tags</summary>
@@ -639,7 +663,7 @@
     </div>
 
     <div class="rail-section">
-      <h3>Status</h3>
+      <h2>Status</h2>
       <div class="status-pills pills" id="status-pills" role="group" aria-label="Filter by status">
         <button type="button" class="pill" data-s="unmarked" aria-pressed="false">unmarked</button>
         <button type="button" class="pill" data-s="pass" aria-pressed="false">pass</button>
@@ -650,7 +674,7 @@
     </div>
 
     <div class="rail-section">
-      <h3>Summary</h3>
+      <h2>Summary</h2>
       <div class="summary" id="summary">
         <div class="row"><span>Scoped</span><strong id="s-scoped">—</strong></div>
         <div class="row"><span>Pass</span><strong id="s-pass">0</strong></div>
@@ -680,24 +704,15 @@
         <button class="btn danger" id="btn-reset" type="button">Reset</button>
       </div>
     </div>
-
-    <div class="rail-section">
-      <h3>Theme</h3>
-      <div class="theme-row" role="radiogroup" aria-label="Theme">
-        <button type="button" data-theme="system" aria-pressed="true">System</button>
-        <button type="button" data-theme="light" aria-pressed="false">Light</button>
-        <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
-      </div>
-    </div>
   </aside>
 
-  <main class="col">
+  <main class="col" id="main-content" tabindex="-1">
     <div class="main-head">
       <div>
-        <h1 id="main-h1">Full audit</h1>
+        <h2 id="main-heading">Full audit</h2>
         <p class="sub" id="main-sub">All items, no surface scope.</p>
       </div>
-      <span class="count-chip" id="count-chip"><strong>0</strong> of 0 items</span>
+      <span class="count-chip" id="count-chip" role="status" aria-live="polite" aria-atomic="true"><strong>0</strong> of 0 items</span>
     </div>
 
     <div id="items"></div>
@@ -749,7 +764,6 @@
   };
 
   const LS_STATE_KEY = "a11y-checklist-state-v1";
-  const LS_THEME_KEY = "a11y-checklist-theme-v1";
   const LS_MODE_KEY  = "a11y-checklist-mode-v1";
   const LS_CTX_KEY   = "a11y-checklist-ctx-v1";
 
@@ -796,39 +810,6 @@
   }
   function saveCtx() {
     try { localStorage.setItem(LS_CTX_KEY, JSON.stringify(state.ctx)); } catch (e) {}
-  }
-
-  // ─── Theme ───────────────────────────────────────────────
-  function applyTheme(pref) {
-    const html = document.documentElement;
-    if (pref === "system") {
-      const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-      html.setAttribute("data-theme", dark ? "dark" : "light");
-    } else {
-      html.setAttribute("data-theme", pref);
-    }
-    document.querySelectorAll(".theme-row button").forEach(b => {
-      b.setAttribute("aria-pressed", String(b.dataset.theme === pref));
-    });
-  }
-  function initTheme() {
-    let pref;
-    try { pref = localStorage.getItem(LS_THEME_KEY) || "system"; }
-    catch (e) { pref = "system"; }
-    applyTheme(pref);
-    document.querySelectorAll(".theme-row button").forEach(b => {
-      b.addEventListener("click", () => {
-        const p = b.dataset.theme;
-        try { localStorage.setItem(LS_THEME_KEY, p); } catch (e) {}
-        applyTheme(p);
-      });
-    });
-    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-      let cur;
-      try { cur = localStorage.getItem(LS_THEME_KEY) || "system"; }
-      catch (e) { cur = "system"; }
-      if (cur === "system") applyTheme("system");
-    });
   }
 
   // ─── Fetch checklist ─────────────────────────────────────
@@ -883,7 +864,13 @@
       b.dataset.surface = name;
       b.setAttribute("aria-pressed", "false");
       b.textContent = name + (c ? " · " + c : " · 0");
-      if (c === 0) b.style.opacity = "0.45";
+      if (c === 0) {
+        // No items for this surface — nothing to filter by. Disable it
+        // (disabled controls are exempt from contrast and leave the tab order).
+        b.disabled = true;
+        b.style.opacity = "0.55";
+        b.title = "No items for this surface";
+      }
       b.addEventListener("click", () => toggleSetFilter("surfaces", name, b));
       surfaceWrap.appendChild(b);
     });
@@ -1009,7 +996,7 @@
       r.checked = (r.value === mode);
     });
     const h = MODE_HEADINGS[mode];
-    document.getElementById("main-h1").textContent = h.h1;
+    document.getElementById("main-heading").textContent = h.h1;
     document.getElementById("main-sub").textContent = h.sub;
     if (!initial) render();
   }
@@ -1110,9 +1097,9 @@
 
     const head = document.createElement("header");
     head.className = "item-head";
-    const h2 = document.createElement("h2");
-    h2.textContent = it.title;
-    head.appendChild(h2);
+    const h3 = document.createElement("h3");
+    h3.textContent = it.title;
+    head.appendChild(h3);
     card.appendChild(head);
 
     const meta = document.createElement("div");
@@ -1542,18 +1529,59 @@
       await navigator.clipboard.writeText(md);
       btn.textContent = "Copied ✓";
       btn.disabled = true;
-      setTimeout(() => { btn.textContent = originalLabel; btn.disabled = false; updateExportButton(); }, 1500);
+      setTimeout(() => { btn.textContent = originalLabel; btn.disabled = false; updateExportEnabled(); }, 1500);
     } catch (err) {
-      // Fallback: stick the markdown in a textarea so the user can copy manually
-      const ta = document.createElement("textarea");
-      ta.value = md;
-      ta.setAttribute("readonly", "");
-      ta.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;height:60%;z-index:9999;padding:12px;font-family:monospace;font-size:12px;";
-      document.body.appendChild(ta);
-      ta.select();
-      alert("Clipboard write was blocked. Copy the text manually (Cmd+C), then dismiss this alert and close the textarea.");
-      ta.remove();
+      // Fallback: show the markdown in a dialog the user can copy from manually.
+      // The textarea stays on screen (with a Close button) until dismissed.
+      showCopyFallback(md);
     }
+  }
+
+  function showCopyFallback(md) {
+    const overlay = document.createElement("div");
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", "Copy PR comment manually");
+    overlay.style.cssText = "position:fixed;inset:0;z-index:9999;background:rgba(17,24,39,0.45);display:flex;align-items:center;justify-content:center;padding:24px;";
+
+    const panel = document.createElement("div");
+    panel.style.cssText = "background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:18px;width:min(720px,92vw);max-height:82vh;display:flex;flex-direction:column;gap:12px;box-shadow:0 8px 32px rgba(17,24,39,0.25);";
+
+    const heading = document.createElement("p");
+    heading.style.cssText = "margin:0;font-weight:600;";
+    heading.textContent = "Clipboard access was blocked — copy the text below manually.";
+
+    const ta = document.createElement("textarea");
+    ta.value = md;
+    ta.setAttribute("readonly", "");
+    ta.setAttribute("aria-label", "PR comment markdown");
+    ta.style.cssText = "width:100%;flex:1 1 auto;min-height:320px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.5;border:1px solid var(--control-line);border-radius:6px;padding:10px;background:var(--card-2);color:var(--ink);resize:vertical;";
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "btn primary";
+    close.style.alignSelf = "flex-end";
+    close.textContent = "Close";
+
+    function dismiss() {
+      document.removeEventListener("keydown", onKey);
+      overlay.remove();
+      const trigger = document.getElementById("btn-copy-pr");
+      if (trigger) trigger.focus();
+    }
+    function onKey(e) { if (e.key === "Escape") dismiss(); }
+
+    close.addEventListener("click", dismiss);
+    overlay.addEventListener("click", e => { if (e.target === overlay) dismiss(); });
+    document.addEventListener("keydown", onKey);
+
+    panel.appendChild(heading);
+    panel.appendChild(ta);
+    panel.appendChild(close);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    ta.focus();
+    ta.select();
   }
 
   // ─── Import ──────────────────────────────────────────────
@@ -1624,7 +1652,6 @@
   }
 
   // ─── Boot ────────────────────────────────────────────────
-  initTheme();
   loadChecklist();
 })();
 </script>
