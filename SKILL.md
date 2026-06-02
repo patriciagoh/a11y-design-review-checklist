@@ -17,8 +17,9 @@ When invoked:
 
 ## 1. Detect the design-review surfaces
 
-Read `checklist.json` to get the exact `surface` values and the items under each. Then scan the
-user's repository (their cwd) for design-review / collaboration surfaces, e.g.:
+First, read `checklist.json` and extract the canonical set of `surface` values (and the items
+under each) — that list, not the examples below, is authoritative. Then scan the user's repository
+(their cwd) to determine which of those surfaces are actually present. Typical surfaces look like:
 
 - annotation pins / markups on an artifact or canvas
 - comment threads / reply chains / @mentions
@@ -32,7 +33,8 @@ user's repository (their cwd) for design-review / collaboration surfaces, e.g.:
 
 Tell the user which surfaces you detected and how many checklist items apply, and ask them to
 confirm or adjust (add/remove a surface, or point you at specific directories). Don't audit
-surfaces that clearly aren't present.
+surfaces that clearly aren't present. If you detect no design-review surfaces at all, stop and tell
+the user (this checklist only covers design-review / collaboration UI) rather than inventing scope.
 
 ## 3. Evaluate each scoped item against the code
 
@@ -61,13 +63,18 @@ Write `audit-report.json` in the user's repo with this shape:
   "meta": { "date": "<YYYY-MM-DD>", "mode": "skill", "auditor": "claude" },
   "summary": { "pass": 0, "fail": 0, "na": 0, "needs_investigation": 0, "scoped": 0 },
   "results": [
-    { "id": "<checklist item id>", "status": "fail",
-      "fix": "<concrete fix>", "location": "src/Foo.tsx:42", "note": "<optional>" }
+    { "id": "<id>", "status": "fail", "fix": "<concrete fix>", "location": "src/Foo.tsx:42", "note": "<optional>" },
+    { "id": "<id>", "status": "pass", "location": "src/Bar.tsx:18" },
+    { "id": "<id>", "status": "needs_investigation", "note": "<what a human must verify>" },
+    { "id": "<id>", "status": "na" }
   ]
 }
 ```
 
-`scoped` is the number of items audited; the `summary` counts must match `results`.
+Field rules: a `pass` includes `location`; a `fail` includes `fix` + `location`; a
+`needs_investigation` includes `note`. `scoped` is the count of items you evaluated after step 2
+(not the full checklist length), and the `summary` counts must add up across `results`. If
+`audit-report.json` already exists in the user's repo, warn before overwriting it.
 
 ## 5. Render the PR comment
 
@@ -80,7 +87,9 @@ node <skill-dir>/generate-pr-comment.js \
   --surface "<primary surface>" > a11y-design-review-audit.md
 ```
 
-(`<skill-dir>` is this skill's directory.) Write the output to `a11y-design-review-audit.md` in the
+Here `<skill-dir>` is the absolute path of the directory this `SKILL.md` was loaded from (provided
+to you when the skill is invoked) — that's where `generate-pr-comment.js` and `checklist.json`
+live, **not** the user's repo. Write the rendered output to `a11y-design-review-audit.md` in the
 user's repo.
 
 ## 6. Report back
