@@ -89,7 +89,7 @@ The web UI exports (and the PR generator consumes) JSON in this shape:
     "auditor": "patricia",
     "date": "2026-05-29",
     "mode": "pre-pr",
-    "checklist_version": "1.1.0"
+    "checklist_version": "1.2.0"
   },
   "results": [
     {

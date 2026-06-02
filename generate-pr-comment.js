@@ -40,7 +40,7 @@ function printHelp() {
 Generates a GitHub PR comment in Markdown from an audit report JSON.
 
 Required flags:
-  --report <path>          Path to the audit report JSON (exported from the web UI)
+  --report <path>          Path to the audit report JSON (from the web UI or the audit skill)
   --component <name>       Component name (e.g. "FeedbackPanel")
   --surface <surface>      Primary CoLab surface (e.g. "Annotation pins & markups")
 
