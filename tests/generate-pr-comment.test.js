@@ -53,6 +53,18 @@ test('legacy report without fix/location still renders (no Suggested fix / Locat
   assert.doesNotMatch(res.stdout, /\*\*Location:\*\*/);
 });
 
+test('renders fix without location (no orphaned Location line, details stays closed)', () => {
+  const res = run({
+    meta: { date: '2026-06-02', mode: 'skill', auditor: 'claude' },
+    summary: { pass: 0, fail: 1, na: 0, needs_investigation: 0, scoped: 1 },
+    results: [{ id: REAL_ID, status: 'fail', fix: 'Add alt text.', note: 'missing' }],
+  });
+  assert.equal(res.status, 0, res.stderr);
+  assert.match(res.stdout, /\*\*Suggested fix:\*\*/);
+  assert.doesNotMatch(res.stdout, /\*\*Location:\*\*/);
+  assert.match(res.stdout, /<\/details>/);
+});
+
 test('renders needs_investigation items', () => {
   const res = run({
     meta: {},

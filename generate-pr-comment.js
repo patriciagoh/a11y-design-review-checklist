@@ -95,7 +95,10 @@ function renderItemBlock(result, item, repoUrl) {
   // Audit-mode extras: only emitted when the report supplies them, so reports
   // exported from the web UI (which lack these fields) render exactly as before.
   if (result.location && String(result.location).trim()) {
-    lines.push(`- **Location:** \`${escape(String(result.location).trim())}\``);
+    // Strip backticks — a file:line value should never contain them, and they
+    // would break the inline code span (GFM doesn't honor backslash escapes there).
+    const loc = escape(String(result.location).trim()).replace(/`/g, '');
+    lines.push(`- **Location:** \`${loc}\``);
   }
   lines.push(`- **Understanding:** ${understandingUrl}`);
   if (result.fix && String(result.fix).trim()) {
