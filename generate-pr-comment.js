@@ -83,20 +83,34 @@ function renderItemBlock(result, item, repoUrl) {
   const noteBlock = result.note && result.note.trim()
     ? `\n> ${result.note.trim().replace(/\n/g, '\n> ')}`
     : '\n> _(no note left)_';
-  return [
+
+  const lines = [
     `<details>`,
     `<summary><strong>${escape(item.title)}</strong> &nbsp;·&nbsp; <code>${item.id}</code></summary>`,
     ``,
     `- **WCAG ${item.wcag_criterion}** ${escape(item.wcag_title)} (Level ${item.level})`,
     `- **Surface:** ${escape(item.surface)}`,
-    `- **Understanding:** ${understandingUrl}`,
+  ];
+
+  // Audit-mode extras: only emitted when the report supplies them, so reports
+  // exported from the web UI (which lack these fields) render exactly as before.
+  if (result.location && String(result.location).trim()) {
+    lines.push(`- **Location:** \`${escape(String(result.location).trim())}\``);
+  }
+  lines.push(`- **Understanding:** ${understandingUrl}`);
+  if (result.fix && String(result.fix).trim()) {
+    lines.push(``, `**Suggested fix:** ${escape(String(result.fix).trim())}`);
+  }
+
+  lines.push(
     ``,
     `**Engineer note:**${noteBlock}`,
     ``,
     `[View item in checklist](${repoUrl}/blob/main/checklist.md#${slugifyHeader(item.title)})`,
     `</details>`,
     ``,
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 function renderSurfaceContext(failedResults, itemsById) {
