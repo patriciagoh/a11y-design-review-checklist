@@ -1,0 +1,29 @@
+name: Bug report
+description: A checklist item, the audit skill, a CLI, or the hosted UI isn't working
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Checklist content (an item is wrong/unclear)
+        - The audit skill (SKILL.md)
+        - A CLI (validate / generate-md / pr-comment)
+        - The hosted audit UI
+        - Docs
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
