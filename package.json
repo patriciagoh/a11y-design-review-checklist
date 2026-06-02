@@ -29,7 +29,7 @@
     "generate-md": "node scripts/generate-markdown.js",
     "check-md": "node scripts/generate-markdown.js --check",
     "pr-comment": "node generate-pr-comment.js",
-    "test": "node --test tests/"
+    "test": "node --test tests/*.test.js"
   },
   "engines": {
     "node": ">=18"
