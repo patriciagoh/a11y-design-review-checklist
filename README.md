@@ -7,6 +7,8 @@ Built as **infrastructure for teams building, auditing, or testing design review
 > **Try it online →** https://patriciagoh.github.io/a11y-design-review-checklist/
 >
 > The audit UI is hosted on GitHub Pages. No install needed — pick a surface, walk the checklist, export a report, post it to your PR.
+>
+> The UI is styled with the [matcha-oat-design-system](https://github.com/patriciagoh/matcha-oat-design-system) tokens (single source of truth).
 
 ## Why this exists
 
@@ -212,6 +214,7 @@ Exit 0 = passes schema + semantic checks. Exit 1 = failures (printed to stderr).
 
 ### Changelog
 
+- **1.3.0** (2026-06-02) — Reskinned the audit UI to the Matcha Oat design system (consumes matcha-oat-design-system tokens; WCAG 2.2 AA preserved).
 - **1.2.0** (2026-06-02) — Added a Claude skill (`SKILL.md`) that audits a design-review UI against the checklist and renders a PR comment with fix suggestions; the PR-comment generator now shows a per-failure suggested fix + `file:line`. Added OSS-hygiene files (Code of Conduct, Security policy, Architecture, issue templates) and bumped CI to Node 24.
 - **1.1.2** (2026-05-29) — Distribution change. Stopped publishing to npm; GitHub + Pages is now the only release channel. `package.json` marked private. The earlier npm versions (1.0.0, 1.1.0) were later unpublished (2026-06-02) and no longer exist on npm.
 - **1.1.1** (2026-05-29) — Tooling-only patch. Added in-UI **Copy PR comment** button (one-click clipboard render, byte-for-byte parity with the CLI generator). Added hosted Pages URL to the README. No checklist data changes. (Never published to npm.)

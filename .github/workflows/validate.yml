@@ -15,9 +15,15 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
+      - name: Design tokens in sync with matcha-oat-design-system
+        run: |
+          npm run sync-tokens
+          git diff --exit-code tokens.css fonts.css
       - name: Schema + semantic validation
         run: npm run validate
       - name: Markdown sync check
         run: npm run check-md
       - name: Unit tests
         run: npm test
+      - name: No hardcoded design values (tokens only)
+        run: node node_modules/matcha-oat-design-system/scripts/check-no-raw-values.mjs index.html
