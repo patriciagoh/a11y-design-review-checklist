@@ -42,7 +42,7 @@ This project is **not published to npm.** The hosted UI on Pages is the primary 
 | **Vendor it into your repo** | `git submodule add https://github.com/patriciagoh/a11y-design-review-checklist vendor/a11y-design-review-checklist` |
 | **Fork + extend + run CLIs** | `git clone https://github.com/patriciagoh/a11y-design-review-checklist && cd a11y-design-review-checklist && npm install` |
 
-> **Note:** `npm install` here installs the project's own dev dependencies (ajv, ajv-formats) so the CLIs run locally. It does *not* fetch this package from npm — the package is intentionally unpublished. Earlier versions (1.0.0 and 1.1.0) exist on npm but are deprecated; new releases ship via GitHub only.
+> **Note:** `npm install` here installs the project's own dev dependencies (ajv, ajv-formats) so the CLIs run locally. It does *not* fetch this package from npm — there is no npm package. Versions 1.0.0 and 1.1.0 were briefly published, then unpublished; everything ships via GitHub + Pages.
 
 ## Run an audit (the web UI)
 
@@ -211,7 +211,7 @@ Exit 0 = passes schema + semantic checks. Exit 1 = failures (printed to stderr).
 
 ### Changelog
 
-- **1.1.2** (2026-05-29) — Distribution change. Stopped publishing to npm; GitHub + Pages is now the only release channel. `package.json` marked private. Earlier npm versions (1.0.0, 1.1.0) deprecated with a redirect message — they still install but warn.
+- **1.1.2** (2026-05-29) — Distribution change. Stopped publishing to npm; GitHub + Pages is now the only release channel. `package.json` marked private. The earlier npm versions (1.0.0, 1.1.0) were later unpublished (2026-06-02) and no longer exist on npm.
 - **1.1.1** (2026-05-29) — Tooling-only patch. Added in-UI **Copy PR comment** button (one-click clipboard render, byte-for-byte parity with the CLI generator). Added hosted Pages URL to the README. No checklist data changes. (Never published to npm.)
 - **1.1.0** (2026-05-29) — Added `surface` field (required, 9-value enum) for CoLab-style scoping. Added 9 new tags (`canvas`, `viewer`, `status`, `color`, `workflow`, `touch-target`, `toolbar`, `wcag22`, `ai-content`). Added 8 new items covering 3D viewer keyboard controls, status badge color reliance, toolbar target sizes, AI comment attribution, measurement output, section plane announcements, notebook heading structure, and review key accessibility. Shipped the interactive web UI (`index.html`) and the PR comment generator (`generate-pr-comment.js`).
 - **1.0.0** (2026-05-28) — Initial release. 87 items across all WCAG 2.2 AA criteria.
